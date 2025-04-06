@@ -1,24 +1,34 @@
 <template>
     <header class="navbar">
         <div class="navbar-left">
-            <div class="logo">OPlayer</div>
-        </div>
-
-        <div class="navbar-right">
+            <!-- <div class="logo"></div> -->
             <div class="navbar-item" @click="showSettings">
                 <!-- <div class="navbar-icon">
                     <i class="icon-settings"></i>
                 </div> -->
-                <img src="../../assets/images/settings.svg" alt="" width="24" height="24" class="navbar-icon-settings"
-                    style="color: white;" />
+                <img src="../../assets/images/settings.svg" alt="" width="24" height="24"
+                    class="navbar-icon-settings" />
+            </div>
+
+            <div class="navbar-item" @click="showHome">
+                <img src="../../assets/images/home.svg" alt="" width="24" height="24" class="navbar-icon-home" />
+            </div>
+
+            <div class="navbar-item" @click="showAbout">
+                <img src="../../assets/images/info.svg" alt="" width="24" height="24" class="navbar-icon-info" />
+            </div>
+
+
+        </div>
+
+        <div class="navbar-right">
+
+
+            <div class="navbar-item">
+                <img src="../../assets/images/clock.svg" alt="" width="24" height="24" class="navbar-icon-settings" />
             </div>
 
             <div class="navbar-item">
-                <!-- <div class="navbar-icon">
-                    <i class="icon-clock"></i>
-                </div> -->
-                <img src="../../assets/images/clock.svg" alt="" width="24" height="24" class="navbar-icon-settings"
-                    style="color: white;" />
                 <span class="clock">{{ currentTime }}</span>
             </div>
 
@@ -73,6 +83,14 @@ const showSettings = () => {
     router.push('/settings');
 };
 
+const showHome = () => {
+    router.push('/');
+};
+
+const showAbout = () => {
+    router.push('/about');
+};
+
 const showNotifications = () => {
     // 显示通知面板
     // 这里可以触发一个事件或使用状态管理
@@ -101,9 +119,9 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
+    height: 45px;
     padding: 0 20px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(25, 25, 25, 0.7);
     backdrop-filter: blur(10px);
     color: white;
     position: fixed;
@@ -192,5 +210,6 @@ onUnmounted(() => {
 
 .clock {
     font-weight: 500;
+    user-select: none;
 }
 </style>
