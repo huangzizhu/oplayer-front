@@ -1,0 +1,84 @@
+oplayer-front/
+│
+├── public/                  # 静态资源
+│   ├── favicon.ico
+│   └── index.html
+│
+├── src/
+│   ├── assets/              # 资源文件
+│   │   ├── fonts/           # 字体文件
+│   │   ├── images/          # 图片资源
+│   │   └── styles/          # 全局样式
+│   │       ├── variables.scss  # SCSS变量
+│   │       ├── animations.scss # 动画效果
+│   │       └── main.scss       # 主样式文件
+│   │
+│   ├── components/          # 可复用组件
+│   │   ├── common/          # 通用组件
+│   │   │   ├── OButton.vue     # 自定义按钮
+│   │   │   ├── OCard.vue       # 卡片组件
+│   │   │   ├── OSlider.vue     # 滑块组件
+│   │   │   └── OModal.vue      # 模态框组件
+│   │   │
+│   │   ├── layout/          # 布局组件
+│   │   │   ├── NavBar.vue      # 导航条组件
+│   │   │   ├── FooterBar.vue   # 底部栏组件
+│   │   │   └── MainLayout.vue  # 主布局组件
+│   │   │
+│   │   ├── music/           # 音乐相关组件
+│   │   │   ├── TrackInfo.vue      # 曲目信息组件
+│   │   │   ├── TrackList.vue      # 曲目列表组件
+│   │   │   ├── FFTSpectrum.vue    # FFT频谱组件
+│   │   │   ├── MusicPlayer.vue    # 音乐播放器组件
+│   │   │   └── TrackCard.vue      # 单曲卡片组件
+│   │   │
+│   │   ├── ui/              # UI特效组件
+│   │   │   ├── CircleMenu.vue    # 圆形菜单(粉饼)组件
+│   │   │   ├── SelectWheel.vue   # 选曲转轮组件
+│   │   │   └── BackgroundBlur.vue # 背景模糊效果组件
+│   │   │
+│   │   └── search/          # 搜索相关组件
+│   │       ├── SearchBar.vue     # 搜索栏组件
+│   │       └── FilterOptions.vue # 筛选选项组件
+│   │
+│   ├── views/               # 视图页面
+│   │   ├── MainView.vue        # 主界面(osu主界面)
+│   │   ├── MusicSelectView.vue # 选曲界面
+│   │   ├── PlaylistView.vue    # 歌单详情页
+│   │   └── SettingsView.vue    # 设置页面
+│   │
+│   ├── router/              # 路由配置
+│   │   └── index.js
+│   │
+│   ├── store/               # Vuex/Pinia状态管理
+│   │   ├── index.js
+│   │   ├── modules/
+│   │   │   ├── player.js    # 播放器状态
+│   │   │   ├── tracks.js    # 曲目数据
+│   │   │   └── ui.js        # UI状态
+│   │   │
+│   │   └── plugins/         # 存储插件
+│   │
+│   ├── services/            # API服务
+│   │   ├── api.js           # API配置
+│   │   ├── musicService.js  # 音乐服务
+│   │   └── userService.js   # 用户服务
+│   │
+│   ├── utils/               # 工具函数
+│   │   ├── audioProcessor.js # 音频处理
+│   │   ├── formatters.js     # 格式化工具
+│   │   └── animations.js     # 动画效果工具
+│   │
+│   ├── hooks/               # 自定义Hooks
+│   │   ├── useAudio.js      # 音频处理Hook
+│   │   ├── useAnimation.js  # 动画Hook
+│   │   └── useWindowSize.js # 窗口大小Hook
+│   │
+│   ├── App.vue              # 根组件
+│   └── main.js              # 入口文件
+│
+├── .eslintrc.js             # ESLint配置
+├── .prettierrc              # Prettier配置
+├── vite.config.js           # Vite配置
+├── package.json             # 依赖管理
+└── README.md                # 项目说明
