@@ -2,51 +2,37 @@
     <header class="navbar">
         <div class="navbar-left">
             <!-- <div class="logo"></div> -->
-            <div class="navbar-item" @click="showSettings">
-                <!-- <div class="navbar-icon">
-                    <i class="icon-settings"></i>
-                </div> -->
+            <div class="navbar-item" :class="{ 'active': activeItem === 'settings' }" @click="onSettingsClick">
                 <img src="../../assets/images/settings.svg" alt="" width="24" height="24"
                     class="navbar-icon-settings" />
             </div>
 
-            <div class="navbar-item" @click="showHome">
+            <div class="navbar-item" :class="{ 'active': activeItem === 'home' }" @click="showHome">
                 <img src="../../assets/images/home.svg" alt="" width="24" height="24" class="navbar-icon-home" />
             </div>
 
-            <div class="navbar-item" @click="showAbout">
+            <div class="navbar-item" :class="{ 'active': activeItem === 'about' }" @click="showAbout">
                 <img src="../../assets/images/info.svg" alt="" width="24" height="24" class="navbar-icon-info" />
             </div>
-
-
         </div>
 
         <div class="navbar-right">
-
-
-            <div class="navbar-item">
-                <img src="../../assets/images/clock.svg" alt="" width="24" height="24" class="navbar-icon-settings" />
-            </div>
-
-            <div class="navbar-item">
+            <div class="navbar-item-clock">
+                <img src="../../assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
                 <span class="clock">{{ currentTime }}</span>
             </div>
 
-
-            <div class="navbar-item" @click="showNotifications">
+            <div class="navbar-item" :class="{ 'active': activeItem === 'notifications' }" @click="showNotifications">
                 <div class="navbar-icon">
-                    <!-- <i class="icon-notifications"></i> -->
-                    <div v-if="notificationCount > 0" class="notification-badge">
+                    <!-- <div v-if="notificationCount > 0" class="notification-badge">
                         {{ notificationCount }}
-                    </div>
-                    <img src="../../assets/images/notification.svg" alt="" width="28" height="28"
+                    </div> -->
+                    <img src="../../assets/images/notification.svg" alt="" width="24" height="24"
                         class="navbar-icon-settings" style="fill: white;" />
                 </div>
-
             </div>
 
-            <div class="navbar-item" @click="showUserProfile">
-                <!-- <span>{{ username }}</span> -->
+            <div class="navbar-item" :class="{ 'active': activeItem === 'profile' }" @click="showUserProfile">
                 <div class="navbar-icon user-avatar">
                     <img src="../../assets/images/avatar.jpg" alt="用户头像">
                 </div>
@@ -56,15 +42,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
+defineProps({
+    activeItem: {
+        type: String,
+        default: ''
+    }
+});
 
-// 用户信息
-// const username = ref('用户');
-// const userAvatar = ref('../../assets/images/avatar.jpg'); // 默认头像路径
-const notificationCount = ref(2);
+const emit = defineEmits(['settingsClicked', 'aboutClicked']);
+
+const router = useRouter();
 
 // 当前时间
 const currentTime = ref('00:00');
@@ -79,8 +69,8 @@ const updateTime = () => {
 };
 
 // 导航功能
-const showSettings = () => {
-    router.push('/settings');
+const onSettingsClick = () => {
+    emit('settingsClicked');
 };
 
 const showHome = () => {
@@ -88,6 +78,7 @@ const showHome = () => {
 };
 
 const showAbout = () => {
+    emit('aboutClicked');
     router.push('/about');
 };
 
@@ -121,14 +112,14 @@ onUnmounted(() => {
     align-items: center;
     height: 45px;
     padding: 0 20px;
-    background: rgba(25, 25, 25, 0.7);
+    background: rgba(25, 25, 25, 1);
     backdrop-filter: blur(10px);
     color: white;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 1000;
 }
 
 .navbar-left {
@@ -160,10 +151,34 @@ onUnmounted(() => {
     padding: 5px;
     cursor: pointer;
     border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.navbar-item.active {
+    background: rgba(255, 65, 105, 0.5);
+    /* OSU! lazer风格的红色高亮 */
+}
+
+.navbar-item:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-item-clock {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 8px;
     transition: background-color 0.2s;
+    font-size: 12px;
+    gap: 5px;
 }
 
 .navbar-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-item-clock:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 

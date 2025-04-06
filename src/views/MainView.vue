@@ -1,14 +1,16 @@
 <template>
     <div class="main-view">
         <!-- 背景视差效果 -->
-        <BackgroundParallax :backgroundImage="backgroundImage" :intensity="30" />
+        <BackgroundParallax :backgroundImage="backgroundImage" :intensity="30" :dimmed="isSettingsVisible" />
+
 
         <!-- 导航栏 -->
-        <NavBar />
+        <NavBar :activeItem="activeNavItem" @settingsClicked="toggleSettings" />
 
         <!-- 中央菜单 -->
         <CircleMenu @menuSelected="handleMenuSelect" />
-
+        <!-- 设置菜单 -->
+        <SettingsMenu :isVisible="isSettingsVisible" @close="closeSettings" />
         <!-- 主要内容区域 - 占满全屏 -->
         <div class="content-area">
             <router-view v-slot="{ Component }">
@@ -17,6 +19,8 @@
                 </transition>
             </router-view>
         </div>
+
+
     </div>
 </template>
 
@@ -26,6 +30,8 @@ import { useRouter } from 'vue-router';
 import NavBar from '../components/layout/NavBar.vue';
 import CircleMenu from '../components/ui/CircleMenu.vue';
 import BackgroundParallax from '../components/ui/BackgroundParallax.vue';
+import SettingsMenu from '../components/ui/SettingsMenu.vue';
+
 
 const router = useRouter();
 
@@ -33,12 +39,24 @@ const router = useRouter();
 import testBackground from '../assets/images/test-background.jpg';
 
 const backgroundImage = ref(testBackground);
-
+const isSettingsVisible = ref(false);
+const activeNavItem = ref('');
 // 处理菜单项选择
 const handleMenuSelect = (item) => {
     console.log('选择了菜单项:', item.label);
     router.push(item.route);
 };
+
+const toggleSettings = () => {
+    isSettingsVisible.value = !isSettingsVisible.value;
+    activeNavItem.value = isSettingsVisible.value ? 'settings' : '';
+};
+
+const closeSettings = () => {
+    isSettingsVisible.value = false;
+    activeNavItem.value = '';
+};
+
 </script>
 
 <style scoped>

@@ -1,12 +1,15 @@
 <template>
     <div class="about-view">
         <BackgroundParallax :backgroundImage="backgroundImage" :intensity="30" />
-        <NavBar />
+        <NavBar :activeItem="activeNavItem" @settingsClicked="toggleSettings" />
         <div class="about-content">
-            <h1>关于Oplayer</h1>
+            <h1>About Oplayer</h1>
             <p>这是一个关于我们页面的示例。</p>
             <p>这里可以放置一些关于应用程序的信息。</p>
         </div>
+
+        <!-- 设置菜单 -->
+        <SettingsMenu :isVisible="isSettingsVisible" @close="closeSettings" />
     </div>
 </template>
 
@@ -14,10 +17,30 @@
 import NavBar from '../components/layout/NavBar.vue';
 import BackgroundParallax from '../components/ui/BackgroundParallax.vue';
 import testBackground from '../assets/images/test-background.jpg';
-import { ref } from 'vue';
+import SettingsMenu from '../components/ui/SettingsMenu.vue';
+import { ref, defineProps } from 'vue';
+
+
+defineProps({
+    isVisible: {
+        type: Boolean,
+        default: false
+    }
+});
 
 const backgroundImage = ref(testBackground);
+const isSettingsVisible = ref(false);
+const activeNavItem = ref('');
 
+const toggleSettings = () => {
+    isSettingsVisible.value = !isSettingsVisible.value;
+    activeNavItem.value = isSettingsVisible.value ? 'settings' : '';
+};
+
+const closeSettings = () => {
+    isSettingsVisible.value = false;
+    activeNavItem.value = '';
+};
 </script>
 
 <style scoped>

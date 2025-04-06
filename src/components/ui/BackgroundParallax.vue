@@ -3,7 +3,7 @@
         backgroundImage: `url(${backgroundImage})`,
         transform: `translate(${offsetX}px, ${offsetY}px) scale(1.1)`
     }">
-        <div class="background-overlay"></div>
+        <div class="background-overlay" :class="{ 'dimmed': dimmed }"></div>
     </div>
 </template>
 
@@ -18,6 +18,10 @@ const props = defineProps({
     intensity: {
         type: Number,
         default: 20 // 视差效果强度，值越大移动越明显
+    },
+    dimmed: {
+        type: Boolean,
+        default: false // 是否暗化背景
     }
 });
 
@@ -72,5 +76,11 @@ onUnmounted(() => {
     background: rgba(0, 0, 0, 0.4);
     /* 半透明黑色遮罩 */
     z-index: -1;
+    transition: background 0.3s ease;
+}
+
+.background-overlay.dimmed {
+    background: rgba(0, 0, 0, 0.7);
+    /* 当设置菜单打开时，背景更暗 */
 }
 </style>
