@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainView from '../views/MainView.vue'
-import MusicSelectView from '../views/MusicSelectView.vue'
-import PlaylistView from '../views/PlaylistView.vue'
-import SettingsView from '../views/SettingsView.vue'
+// import MusicSelectView from '../views/MusicSelectView.vue'
+// import PlaylistView from '../views/PlaylistView.vue'
+// import SettingsView from '../views/SettingsView.vue'
 
 const routes = [
   {
@@ -15,36 +15,36 @@ const routes = [
       showFooterBar: false
     }
   },
-  {
-    path: '/music',
-    name: 'MusicSelect',
-    component: MusicSelectView,
-    meta: {
-      title: 'OPlayer - 选曲界面',
-      showNavBar: true,
-      showFooterBar: true
-    }
-  },
-  {
-    path: '/playlist/:id',
-    name: 'Playlist',
-    component: PlaylistView,
-    meta: {
-      title: 'OPlayer - 歌单',
-      showNavBar: true,
-      showFooterBar: true
-    }
-  },
-  {
-    path: '/settings',
-    name: 'Settings',
-    component: SettingsView,
-    meta: {
-      title: 'OPlayer - 设置',
-      showNavBar: true,
-      showFooterBar: false
-    }
-  }
+  // {
+  //   path: '/music',
+  //   name: 'MusicSelect',
+  //   component: MusicSelectView,
+  //   meta: {
+  //     title: 'OPlayer - 选曲界面',
+  //     showNavBar: true,
+  //     showFooterBar: true
+  //   }
+  // },
+  // {
+  //   path: '/playlist/:id',
+  //   name: 'Playlist',
+  //   component: PlaylistView,
+  //   meta: {
+  //     title: 'OPlayer - 歌单',
+  //     showNavBar: true,
+  //     showFooterBar: true
+  //   }
+  // },
+  // {
+  //   path: '/settings',
+  //   name: 'Settings',
+  //   component: SettingsView,
+  //   meta: {
+  //     title: 'OPlayer - 设置',
+  //     showNavBar: true,
+  //     showFooterBar: false
+  //   }
+  // }
 ]
 
 const router = createRouter({
