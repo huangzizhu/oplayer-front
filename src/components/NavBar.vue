@@ -1,51 +1,53 @@
 <template>
     <header class="navbar">
         <div class="navbar-left">
-            <!-- <div class="logo"></div> -->
-            <div class="navbar-item" :class="{ 'active': activeItem === 'settings' }" @click="onSettingsClick">
-                <img src="../../assets/images/settings.svg" alt="" width="24" height="24"
-                    class="navbar-icon-settings" />
+            <div class="navbar-item" :class="{ 'active': navBarStore.isSettingsActive }" @click="handleSettingsClick">
+                <img src="@/assets/images/settings.svg" alt="" width="24" height="24" class="navbar-icon-settings" />
             </div>
 
-            <div class="navbar-item" :class="{ 'active': activeItem === 'home' }" @click="showHome">
-                <img src="../../assets/images/home.svg" alt="" width="24" height="24" class="navbar-icon-home" />
+            <div class="navbar-item" @click="handleHomeClick">
+                <img src="@/assets/images/home.svg" alt="" width="24" height="24" class="navbar-icon-home" />
             </div>
 
-            <div class="navbar-item" :class="{ 'active': activeItem === 'about' }" @click="showAbout">
-                <img src="../../assets/images/info.svg" alt="" width="24" height="24" class="navbar-icon-info" />
+            <div class="navbar-item" :class="{ 'active': navBarStore.isAboutActive }" @click="handleAboutClick">
+                <img src="@/assets/images/info.svg" alt="" width="24" height="24" class="navbar-icon-info" />
             </div>
         </div>
 
         <div class="navbar-right">
             <div class="navbar-item-clock">
-                <img src="../../assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
-                <span class="clock">{{ currentTime }}</span>
+                <img src="@/assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
+                <span class="clock">{{ navBarStore.currentTime }}</span>
             </div>
 
-            <div class="navbar-item" :class="{ 'active': activeItem === 'notifications' }" @click="showNotifications">
+            <div class="navbar-item" :class="{ 'active': navBarStore.isNotificationsActive }"
+                @click="handleNotificationsClick">
                 <div class="navbar-icon">
                     <!-- <div v-if="notificationCount > 0" class="notification-badge">
                         {{ notificationCount }}
                     </div> -->
-                    <img src="../../assets/images/notification.svg" alt="" width="24" height="24"
+                    <img src="@/assets/images/notification.svg" alt="" width="24" height="24"
                         class="navbar-icon-settings" style="fill: white;" />
                 </div>
             </div>
 
-            <div class="navbar-item" :class="{ 'active': activeItem === 'profile' }" @click="showUserProfile">
+            <div class="navbar-item" :class="{ 'active': navBarStore.isProfileActive }" @click="handleUserProfileClick">
                 <div class="navbar-icon user-avatar">
-                    <img src="../../assets/images/avatar.jpg" alt="用户头像">
+                    <img src="@/assets/images/avatar.jpg" alt="用户头像">
                 </div>
             </div>
+            
         </div>
     </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
+import { onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
+import { useNavBarStore } from '@/store/NavBar';
 
-defineProps({
+// 定义属性和事件
+const props = defineProps({
     activeItem: {
         type: String,
         default: ''
@@ -54,54 +56,43 @@ defineProps({
 
 const emit = defineEmits(['settingsClicked', 'aboutClicked']);
 
+// 初始化 router 和 store
 const router = useRouter();
+const navBarStore = useNavBarStore();
 
-// 当前时间
-const currentTime = ref('00:00');
-let clockInterval = null;
+// 如果通过属性传入了激活的选项，则设置它
+if (props.activeItem) {
+    navBarStore.setActiveItem(props.activeItem);
+}
 
-// 更新时间的函数
-const updateTime = () => {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    currentTime.value = `${hours}:${minutes}`;
+// 封装处理点击的方法
+const handleSettingsClick = () => {
+    navBarStore.onSettingsClick(emit);
 };
 
-// 导航功能
-const onSettingsClick = () => {
-    emit('settingsClicked');
+const handleHomeClick = () => {
+    navBarStore.navigateToHome(router);
 };
 
-const showHome = () => {
-    router.push('/');
+const handleAboutClick = () => {
+    navBarStore.navigateToAbout(router, emit);
 };
 
-const showAbout = () => {
-    emit('aboutClicked');
-    router.push('/about');
+const handleNotificationsClick = () => {
+    navBarStore.showNotifications();
 };
 
-const showNotifications = () => {
-    // 显示通知面板
-    // 这里可以触发一个事件或使用状态管理
+const handleUserProfileClick = () => {
+    navBarStore.showUserProfile();
 };
 
-const showUserProfile = () => {
-    // 显示用户信息面板
-    // 这里可以触发一个事件或使用状态管理
-};
-
+// 组件生命周期钩子
 onMounted(() => {
-    updateTime();
-    // 每分钟更新一次时间
-    clockInterval = setInterval(updateTime, 60000);
+    navBarStore.startClock();
 });
 
 onUnmounted(() => {
-    if (clockInterval) {
-        clearInterval(clockInterval);
-    }
+    navBarStore.stopClock();
 });
 </script>
 
@@ -156,7 +147,6 @@ onUnmounted(() => {
 
 .navbar-item.active {
     background: rgba(255, 65, 105, 0.5);
-    /* OSU! lazer风格的红色高亮 */
 }
 
 .navbar-item:active {
