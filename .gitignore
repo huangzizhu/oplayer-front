@@ -2,7 +2,7 @@
 node_modules
 /dist
 BACKUP
-
+Prompt.txt
 
 # local env files
 .env.local

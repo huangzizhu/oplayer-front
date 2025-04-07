@@ -1,22 +1,46 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 
 export const useNavBarStore = defineStore('navBar', () => {
-    // 状态
-    const activeItem = ref('');
+    // 状态 - 使用对象存储多个激活项状态
+    const activeItems = reactive({
+        settings: false,
+        home: false,
+        about: false,
+        notifications: false,
+        profile: false
+    });
+
     const currentTime = ref('00:00');
     let clockInterval = null;
 
     // 计算属性
-    const isSettingsActive = computed(() => activeItem.value === 'settings');
-    const isHomeActive = computed(() => activeItem.value === 'home');
-    const isAboutActive = computed(() => activeItem.value === 'about');
-    const isNotificationsActive = computed(() => activeItem.value === 'notifications');
-    const isProfileActive = computed(() => activeItem.value === 'profile');
+    const isSettingsActive = computed(() => activeItems.settings);
+    const isHomeActive = computed(() => activeItems.home);
+    const isAboutActive = computed(() => activeItems.about);
+    const isNotificationsActive = computed(() => activeItems.notifications);
+    const isProfileActive = computed(() => activeItems.profile);
 
     // 方法
-    const setActiveItem = (item) => {
-        activeItem.value = item;
+    const toggleActiveItem = (item) => {
+        // Home 是特殊情况，不会被设置为激活
+        if (item === 'home') return;
+
+        // 切换指定项的激活状态
+        activeItems[item] = !activeItems[item];
+    };
+
+    const setActiveItem = (item, isActive = true) => {
+        // Home 是特殊情况，不会被设置为激活
+        if (item === 'home') return;
+
+        activeItems[item] = isActive;
+    };
+
+    const clearActiveItems = () => {
+        Object.keys(activeItems).forEach(key => {
+            activeItems[key] = false;
+        });
     };
 
     const updateTime = () => {
@@ -41,34 +65,40 @@ export const useNavBarStore = defineStore('navBar', () => {
 
     // 导航功能
     const navigateToHome = (router) => {
-        setActiveItem('home');
+        // Home不高亮，但可以清除其他高亮
+        clearActiveItems();
         router.push('/');
     };
 
-    const navigateToAbout = (router, emit) => {
-        setActiveItem('about');
-        if (emit) emit('aboutClicked');
-        router.push('/about');
+    // 点击功能 - 都具有切换能力
+    const toggleSettings = (emit) => {
+        toggleActiveItem('settings');
+        emit('toggleSettings', isSettingsActive.value);
     };
 
-    const showNotifications = () => {
-        setActiveItem('notifications');
-        // 显示通知面板的逻辑
+    const toggleAbout = (router, emit) => {
+        toggleActiveItem('about');
+        emit('toggleAbout', isAboutActive.value);
     };
 
-    const showUserProfile = () => {
-        setActiveItem('profile');
-        // 显示用户信息面板的逻辑
+    const toggleNotifications = () => {
+        toggleActiveItem('notifications');
+        return isNotificationsActive.value;
     };
 
-    const onSettingsClick = (emit) => {
-        setActiveItem('settings');
-        if (emit) emit('settingsClicked');
+    const toggleProfile = () => {
+        toggleActiveItem('profile');
+        return isProfileActive.value;
     };
+
+    // 检查是否有任何弹出组件处于活动状态
+    const hasActiveOverlay = computed(() => {
+        return Object.values(activeItems).some(isActive => isActive);
+    });
 
     return {
         // 状态
-        activeItem,
+        activeItems,
         currentTime,
 
         // 计算属性
@@ -77,16 +107,23 @@ export const useNavBarStore = defineStore('navBar', () => {
         isAboutActive,
         isNotificationsActive,
         isProfileActive,
+        hasActiveOverlay,
 
         // 方法
+        toggleActiveItem,
         setActiveItem,
+        clearActiveItems,
         updateTime,
         startClock,
         stopClock,
+
+        // 导航功能
         navigateToHome,
-        navigateToAbout,
-        showNotifications,
-        showUserProfile,
-        onSettingsClick
+
+        // 切换功能
+        toggleSettings,
+        toggleAbout,
+        toggleNotifications,
+        toggleProfile
     };
 });
