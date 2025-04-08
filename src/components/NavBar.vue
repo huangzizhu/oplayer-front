@@ -1,5 +1,6 @@
 <template>
-    <header class="navbar">
+    <header class="navbar" @mouseenter="handleMouseEnterOverlay(overlayNavBar)"
+        @mouseleave="handleMouseLeaveOverlay(overlayNavBar)" ref="overlayNavBar">
         <div class="navbar-left">
             <div class="navbar-item" ref="settingsBtn" :class="{ 'active': navBarStore.isSettingsActive }"
                 @click="handleSettingsClick" @mouseenter="handleMouseEnter(settingsBtn, navBarStore.isSettingsActive)"
@@ -20,6 +21,15 @@
         </div>
 
         <div class="navbar-right">
+            <div class="navbar-item" ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
+                @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
+                @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
+                <div class="navbar-icon user-avatar">
+                    <img src="@/assets/images/avatar.jpg" alt="用户头像">
+                </div>
+                <span class="clock">{{ navBarStore.usrName }}</span>
+            </div>
+
             <div class="navbar-item-clock" ref="clockBtn" @mouseenter="handleMouseEnter(clockBtn, false)"
                 @mouseleave="handleMouseLeave(clockBtn, false)">
                 <img src="@/assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
@@ -36,23 +46,20 @@
                 </div>
             </div>
 
-            <div class="navbar-item" ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
-                @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
-                @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
-                <div class="navbar-icon user-avatar">
-                    <img src="@/assets/images/avatar.jpg" alt="用户头像">
-                </div>
-            </div>
+
         </div>
 
-        <!-- 遮罩层 - 用于点击外部区域关闭弹出组件 -->
-        <div v-if="navBarStore.hasVisiblePanel" ref="overlay" class="navbar-overlay" @click="handleOverlayClick"></div>
+
+
     </header>
+
+    <!-- 遮罩层 - 用于点击外部区域关闭弹出组件 -->
+    <div ref="overlay" class="navbar-overlay" @click="handleOverlayClick"></div>
 
     <!-- 将面板组件直接放入NavBar中 -->
     <div class="overlay-components">
         <!-- 设置面板 -->
-        <div ref="settingsPanel" class="settings-panel panel" v-if="navBarStore.isSettingsPanelVisible" @click.stop>
+        <div ref="settingsPanel" class="settings-panel panel" v-show="navBarStore.isSettingsPanelVisible" @click.stop>
             <h3>设置面板</h3>
             <div class="panel-content">
                 <!-- 设置面板内容 -->
@@ -61,7 +68,7 @@
         </div>
 
         <!-- 关于面板 -->
-        <div ref="aboutPanel" class="about-panel panel" v-if="navBarStore.isAboutPanelVisible" @click.stop>
+        <div ref="aboutPanel" class="about-panel panel" v-show="navBarStore.isAboutPanelVisible" @click.stop>
             <h3>关于面板</h3>
             <div class="panel-content">
                 <!-- 关于面板内容 -->
@@ -70,7 +77,7 @@
         </div>
 
         <!-- 通知面板 -->
-        <div ref="notificationsPanel" class="notifications-panel panel" v-if="navBarStore.isNotificationsPanelVisible"
+        <div ref="notificationsPanel" class="notifications-panel panel" v-show="navBarStore.isNotificationsPanelVisible"
             @click.stop>
             <h3>通知面板</h3>
             <div class="panel-content">
@@ -80,7 +87,7 @@
         </div>
 
         <!-- 用户资料面板 -->
-        <div ref="profilePanel" class="profile-panel panel" v-if="navBarStore.isProfilePanelVisible" @click.stop>
+        <div ref="profilePanel" class="profile-panel panel" v-show="navBarStore.isProfilePanelVisible" @click.stop>
             <h3>用户资料</h3>
             <div class="panel-content">
                 <!-- 用户资料内容 -->
@@ -104,6 +111,7 @@ const notificationsBtn = ref(null);
 const clockBtn = ref(null);
 const profileBtn = ref(null);
 const overlay = ref(null);
+const overlayNavBar = ref(null);
 
 // 面板引用
 const settingsPanel = ref(null);
@@ -132,18 +140,27 @@ if (props.activeItem) {
 const handleSettingsClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(settingsBtn.value);
-    const isActive = navBarStore.toggleSettings();
 
-    // 根据切换结果决定是显示还是隐藏面板
-    if (isActive) {
+    // 获取当前状态
+    const currentlyActive = navBarStore.isSettingsActive;
+
+    if (!currentlyActive) {
+        // 如果当前未激活，先更新状态再显示面板
+        navBarStore.toggleSettings();
         nextTick(() => {
             if (settingsPanel.value) {
                 animations.showPanelLeft(settingsPanel.value);
             }
         });
     } else {
+        // 如果当前已激活，先执行动画再更新状态
         if (settingsPanel.value) {
-            animations.hidePanelLeft(settingsPanel.value);
+            animations.hidePanelLeft(settingsPanel.value).then(() => {
+                // 动画完成后再更新状态
+                navBarStore.toggleSettings();
+            });
+        } else {
+            navBarStore.toggleSettings();
         }
     }
 };
@@ -156,18 +173,27 @@ const handleHomeClick = () => {
 const handleAboutClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(aboutBtn.value);
-    const isActive = navBarStore.toggleAbout();
 
-    // 根据切换结果决定是显示还是隐藏面板
-    if (isActive) {
+    // 获取当前状态
+    const currentlyActive = navBarStore.isAboutActive;
+
+    if (!currentlyActive) {
+        // 如果当前未激活，先更新状态再显示面板
+        navBarStore.toggleAbout();
         nextTick(() => {
             if (aboutPanel.value) {
                 animations.showPanelLeft(aboutPanel.value);
             }
         });
     } else {
+        // 如果当前已激活，先执行动画再更新状态
         if (aboutPanel.value) {
-            animations.hidePanelLeft(aboutPanel.value);
+            animations.hidePanelLeft(aboutPanel.value).then(() => {
+                // 动画完成后再更新状态
+                navBarStore.toggleAbout();
+            });
+        } else {
+            navBarStore.toggleAbout();
         }
     }
 };
@@ -175,18 +201,27 @@ const handleAboutClick = (event) => {
 const handleNotificationsClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(notificationsBtn.value);
-    const isActive = navBarStore.toggleNotifications();
 
-    // 根据切换结果决定是显示还是隐藏面板
-    if (isActive) {
+    // 获取当前状态
+    const currentlyActive = navBarStore.isNotificationsActive;
+
+    if (!currentlyActive) {
+        // 如果当前未激活，先更新状态再显示面板
+        navBarStore.toggleNotifications();
         nextTick(() => {
             if (notificationsPanel.value) {
                 animations.showPanelRight(notificationsPanel.value);
             }
         });
     } else {
+        // 如果当前已激活，先执行动画再更新状态
         if (notificationsPanel.value) {
-            animations.hidePanelRight(notificationsPanel.value);
+            animations.hidePanelRight(notificationsPanel.value).then(() => {
+                // 动画完成后再更新状态
+                navBarStore.toggleNotifications();
+            });
+        } else {
+            navBarStore.toggleNotifications();
         }
     }
 };
@@ -194,18 +229,27 @@ const handleNotificationsClick = (event) => {
 const handleUserProfileClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(profileBtn.value);
-    const isActive = navBarStore.toggleProfile();
 
-    // 根据切换结果决定是显示还是隐藏面板
-    if (isActive) {
+    // 获取当前状态
+    const currentlyActive = navBarStore.isProfileActive;
+
+    if (!currentlyActive) {
+        // 如果当前未激活，先更新状态再显示面板
+        navBarStore.toggleProfile();
         nextTick(() => {
             if (profilePanel.value) {
                 animations.showPanelRight(profilePanel.value);
             }
         });
     } else {
+        // 如果当前已激活，先执行动画再更新状态
         if (profilePanel.value) {
-            animations.hidePanelRight(profilePanel.value);
+            animations.hidePanelRight(profilePanel.value).then(() => {
+                // 动画完成后再更新状态
+                navBarStore.toggleProfile();
+            });
+        } else {
+            navBarStore.toggleProfile();
         }
     }
 };
@@ -220,8 +264,35 @@ const handleOverlayClick = (event) => {
         return;
     }
 
-    // 否则关闭所有面板
-    navBarStore.clearActiveItems();
+    // 获取所有激活面板
+    const activePanels = [];
+    if (navBarStore.isSettingsPanelVisible && settingsPanel.value) {
+        activePanels.push({ panel: settingsPanel.value, type: 'left' });
+    }
+    if (navBarStore.isAboutPanelVisible && aboutPanel.value) {
+        activePanels.push({ panel: aboutPanel.value, type: 'left' });
+    }
+    if (navBarStore.isNotificationsPanelVisible && notificationsPanel.value) {
+        activePanels.push({ panel: notificationsPanel.value, type: 'right' });
+    }
+    if (navBarStore.isProfilePanelVisible && profilePanel.value) {
+        activePanels.push({ panel: profilePanel.value, type: 'right' });
+    }
+
+    // 如果有激活的面板，先执行动画再更新状态
+    if (activePanels.length > 0) {
+        Promise.all(activePanels.map(item => {
+            return item.type === 'left' ?
+                animations.hidePanelLeft(item.panel) :
+                animations.hidePanelRight(item.panel);
+        })).then(() => {
+            // 所有动画完成后更新状态
+            navBarStore.clearActiveItems();
+        });
+    } else {
+        // 没有激活面板时直接清除状态
+        navBarStore.clearActiveItems();
+    }
 };
 
 const handleMouseEnter = (element, isActive) => {
@@ -231,6 +302,12 @@ const handleMouseEnter = (element, isActive) => {
 
 const handleMouseLeave = (element, isActive) => {
     animations.leaveNavItem(element, isActive);
+};
+const handleMouseLeaveOverlay = (element) => {
+    animations.leaveOverlay(element);
+};
+const handleMouseEnterOverlay = (element) => {
+    animations.hoverOverlay(element);
 };
 
 // 监视激活状态并应用动画
@@ -344,7 +421,7 @@ onUnmounted(() => {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .navbar-right {

@@ -6,15 +6,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import AboutView from '../views/AboutView.vue'
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Main',
-  //   component: MainView,
-  //   meta: {
-  //     title: 'OPlayer - 主界面',
-  //     showNavBar: true,
-  //     showFooterBar: false
-  //   }
+  {
+    path: '/',
+    name: 'Main',
+    meta: {
+      title: 'OPlayer - 主界面',
+      showNavBar: true,
+      showFooterBar: false
+    }
   // },
   // {
   //   path: '/music',
@@ -26,37 +25,7 @@ const routes = [
   //     showFooterBar: true
   //   }
   // },
-  // {
-  //   path: '/playlist/:id',
-  //   name: 'Playlist',
-  //   component: PlaylistView,
-  //   meta: {
-  //     title: 'OPlayer - 歌单',
-  //     showNavBar: true,
-  //     showFooterBar: true
-  //   }
-  // },
-  // {
-  //   path: '/settings',
-  //   name: 'Settings',
-  //   component: SettingsView,
-  //   meta: {
-  //     title: 'OPlayer - 设置',
-  //     showNavBar: true,
-  //     showFooterBar: false
-  //   }
-  // },
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   component: AboutView,
-  //   meta: {
-  //     title: 'OPlayer - 关于',
-  //     showNavBar: true,
-  //     showFooterBar: false
-  //   },
-
-  // }
+  }
 ]
 
 const router = createRouter({
