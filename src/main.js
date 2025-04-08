@@ -11,7 +11,7 @@ import './assets/styles/main.scss'
 import './assets/styles/variables.scss'
 import './assets/styles/animations.scss'
 
-// 将gsap显式暴露到全局，便于调试
+// 将gsap显式暴露到全局
 window.gsap = gsap;
 
 const app = createApp(App)

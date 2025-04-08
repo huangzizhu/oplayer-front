@@ -20,9 +20,7 @@
         </div>
 
         <div class="navbar-right">
-            <!-- 同样的模式应用到其他导航项目... -->
-            <div class="navbar-item-clock" ref="clockBtn" 
-                @mouseenter="handleMouseEnter(clockBtn, false)"
+            <div class="navbar-item-clock" ref="clockBtn" @mouseenter="handleMouseEnter(clockBtn, false)"
                 @mouseleave="handleMouseLeave(clockBtn, false)">
                 <img src="@/assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
                 <span class="clock">{{ navBarStore.currentTime }}</span>
@@ -48,12 +46,52 @@
         </div>
 
         <!-- 遮罩层 - 用于点击外部区域关闭弹出组件 -->
-        <div v-if="navBarStore.hasActiveOverlay" ref="overlay" class="navbar-overlay" @click="handleOverlayClick"></div>
+        <div v-if="navBarStore.hasVisiblePanel" ref="overlay" class="navbar-overlay" @click="handleOverlayClick"></div>
     </header>
+
+    <!-- 将面板组件直接放入NavBar中 -->
+    <div class="overlay-components">
+        <!-- 设置面板 -->
+        <div ref="settingsPanel" class="settings-panel panel" v-if="navBarStore.isSettingsPanelVisible" @click.stop>
+            <h3>设置面板</h3>
+            <div class="panel-content">
+                <!-- 设置面板内容 -->
+                <p>这里是设置面板内容</p>
+            </div>
+        </div>
+
+        <!-- 关于面板 -->
+        <div ref="aboutPanel" class="about-panel panel" v-if="navBarStore.isAboutPanelVisible" @click.stop>
+            <h3>关于面板</h3>
+            <div class="panel-content">
+                <!-- 关于面板内容 -->
+                <p>这里是关于面板内容</p>
+            </div>
+        </div>
+
+        <!-- 通知面板 -->
+        <div ref="notificationsPanel" class="notifications-panel panel" v-if="navBarStore.isNotificationsPanelVisible"
+            @click.stop>
+            <h3>通知面板</h3>
+            <div class="panel-content">
+                <!-- 通知面板内容 -->
+                <p>这里是通知面板内容</p>
+            </div>
+        </div>
+
+        <!-- 用户资料面板 -->
+        <div ref="profilePanel" class="profile-panel panel" v-if="navBarStore.isProfilePanelVisible" @click.stop>
+            <h3>用户资料</h3>
+            <div class="panel-content">
+                <!-- 用户资料内容 -->
+                <p>这里是用户资料内容</p>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineProps, defineEmits, ref, watch, nextTick } from 'vue';
+import { onMounted, onUnmounted, defineProps, ref, watch, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useNavBarStore } from '@/store/NavBar';
 import animations from '@/utils/animations';
@@ -67,6 +105,12 @@ const clockBtn = ref(null);
 const profileBtn = ref(null);
 const overlay = ref(null);
 
+// 面板引用
+const settingsPanel = ref(null);
+const aboutPanel = ref(null);
+const notificationsPanel = ref(null);
+const profilePanel = ref(null);
+
 // 定义属性和事件
 const props = defineProps({
     activeItem: {
@@ -74,14 +118,6 @@ const props = defineProps({
         default: ''
     }
 });
-
-// 定义可能的事件
-const emit = defineEmits([
-    'toggleSettings',   // 当设置面板切换时
-    'toggleAbout',      // 当关于面板切换时
-    'toggleNotifications', // 当通知面板切换时
-    'toggleProfile'     // 当个人资料面板切换时
-]);
 
 // 初始化 router 和 store
 const router = useRouter();
@@ -96,7 +132,20 @@ if (props.activeItem) {
 const handleSettingsClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(settingsBtn.value);
-    navBarStore.toggleSettings(emit);
+    const isActive = navBarStore.toggleSettings();
+
+    // 根据切换结果决定是显示还是隐藏面板
+    if (isActive) {
+        nextTick(() => {
+            if (settingsPanel.value) {
+                animations.showPanelLeft(settingsPanel.value);
+            }
+        });
+    } else {
+        if (settingsPanel.value) {
+            animations.hidePanelLeft(settingsPanel.value);
+        }
+    }
 };
 
 const handleHomeClick = () => {
@@ -107,30 +156,72 @@ const handleHomeClick = () => {
 const handleAboutClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(aboutBtn.value);
-    navBarStore.toggleAbout(router, emit);
+    const isActive = navBarStore.toggleAbout();
+
+    // 根据切换结果决定是显示还是隐藏面板
+    if (isActive) {
+        nextTick(() => {
+            if (aboutPanel.value) {
+                animations.showPanelLeft(aboutPanel.value);
+            }
+        });
+    } else {
+        if (aboutPanel.value) {
+            animations.hidePanelLeft(aboutPanel.value);
+        }
+    }
 };
 
 const handleNotificationsClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(notificationsBtn.value);
     const isActive = navBarStore.toggleNotifications();
-    emit('toggleNotifications', isActive);
+
+    // 根据切换结果决定是显示还是隐藏面板
+    if (isActive) {
+        nextTick(() => {
+            if (notificationsPanel.value) {
+                animations.showPanelRight(notificationsPanel.value);
+            }
+        });
+    } else {
+        if (notificationsPanel.value) {
+            animations.hidePanelRight(notificationsPanel.value);
+        }
+    }
 };
 
 const handleUserProfileClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(profileBtn.value);
     const isActive = navBarStore.toggleProfile();
-    emit('toggleProfile', isActive);
+
+    // 根据切换结果决定是显示还是隐藏面板
+    if (isActive) {
+        nextTick(() => {
+            if (profilePanel.value) {
+                animations.showPanelRight(profilePanel.value);
+            }
+        });
+    } else {
+        if (profilePanel.value) {
+            animations.hidePanelRight(profilePanel.value);
+        }
+    }
 };
 
 // 处理遮罩层点击 - 关闭所有面板
-const handleOverlayClick = () => {
+const handleOverlayClick = (event) => {
+    // 检查点击是否发生在面板内部
+    const panels = [settingsPanel.value, aboutPanel.value, notificationsPanel.value, profilePanel.value];
+
+    // 如果点击了某个面板或其子元素，不关闭面板
+    if (panels.some(panel => panel && panel.contains(event.target))) {
+        return;
+    }
+
+    // 否则关闭所有面板
     navBarStore.clearActiveItems();
-    emit('toggleSettings', false);
-    emit('toggleAbout', false);
-    emit('toggleNotifications', false);
-    emit('toggleProfile', false);
 };
 
 const handleMouseEnter = (element, isActive) => {
@@ -176,7 +267,7 @@ watch(() => navBarStore.isProfileActive, (newVal) => {
 });
 
 // 监视遮罩层状态
-watch(() => navBarStore.hasActiveOverlay, (newVal) => {
+watch(() => navBarStore.hasVisiblePanel, (newVal) => {
     if (newVal && overlay.value) {
         animations.showOverlay(overlay.value);
     } else if (overlay.value) {
@@ -212,14 +303,14 @@ onMounted(() => {
     });
 
     navBarStore.startClock();
-    // 添加全局点击事件，用于检测点击组件外部
-    window.addEventListener('click', handleOverlayClick);
+    // 添加全局点击事件，用于检测点击外部区域而不是面板内部
+    document.addEventListener('click', handleOverlayClick);
 });
 
 onUnmounted(() => {
     navBarStore.stopClock();
     // 移除全局点击事件
-    window.removeEventListener('click', handleOverlayClick);
+    document.removeEventListener('click', handleOverlayClick);
 });
 </script>
 
@@ -342,8 +433,67 @@ onUnmounted(() => {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
-    z-index: 999;
+    z-index: 989;
+    /* 低于面板的层级 */
     backdrop-filter: blur(2px);
     opacity: 0;
+}
+
+/* 覆盖组件容器 */
+.overlay-components {
+    position: fixed;
+    top: 45px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 45px);
+    pointer-events: none;
+    /* 默认允许点击穿透 */
+    z-index: 990;
+}
+
+/* 通用面板样式 */
+.panel {
+    position: absolute;
+    pointer-events: auto;
+    /* 重新启用面板内部的点击 */
+    background: rgba(35, 35, 35, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+/* 每个面板的位置和大小 */
+.settings-panel {
+    top: 10px;
+    left: 10px;
+    width: 300px;
+    height: 500px;
+}
+
+.about-panel {
+    top: 10px;
+    left: 10px;
+    width: 400px;
+    height: 300px;
+}
+
+.notifications-panel {
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    height: 400px;
+}
+
+.profile-panel {
+    top: 10px;
+    right: 10px;
+    width: 350px;
+    height: 450px;
+}
+
+.panel-content {
+    margin-top: 15px;
 }
 </style>

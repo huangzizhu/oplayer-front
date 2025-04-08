@@ -11,6 +11,14 @@ export const useNavBarStore = defineStore('navBar', () => {
         profile: false
     });
 
+    // 面板显示状态 - 与激活项分开管理
+    const panelVisibility = reactive({
+        settings: false,
+        about: false,
+        notifications: false,
+        profile: false
+    });
+
     const currentTime = ref('00:00');
     let clockInterval = null;
 
@@ -21,6 +29,12 @@ export const useNavBarStore = defineStore('navBar', () => {
     const isNotificationsActive = computed(() => activeItems.notifications);
     const isProfileActive = computed(() => activeItems.profile);
 
+    // 面板显示计算属性
+    const isSettingsPanelVisible = computed(() => panelVisibility.settings);
+    const isAboutPanelVisible = computed(() => panelVisibility.about);
+    const isNotificationsPanelVisible = computed(() => panelVisibility.notifications);
+    const isProfilePanelVisible = computed(() => panelVisibility.profile);
+
     // 方法
     const toggleActiveItem = (item) => {
         // Home 是特殊情况，不会被设置为激活
@@ -28,6 +42,9 @@ export const useNavBarStore = defineStore('navBar', () => {
 
         // 切换指定项的激活状态
         activeItems[item] = !activeItems[item];
+
+        // 同步面板可见性状态
+        panelVisibility[item] = activeItems[item];
     };
 
     const setActiveItem = (item, isActive = true) => {
@@ -35,12 +52,27 @@ export const useNavBarStore = defineStore('navBar', () => {
         if (item === 'home') return;
 
         activeItems[item] = isActive;
+
+        // 同步面板可见性状态
+        panelVisibility[item] = isActive;
     };
 
     const clearActiveItems = () => {
         Object.keys(activeItems).forEach(key => {
             activeItems[key] = false;
         });
+
+        // 同步清除面板可见性
+        Object.keys(panelVisibility).forEach(key => {
+            panelVisibility[key] = false;
+        });
+    };
+
+    // 直接控制面板可见性而不影响导航栏高亮
+    const setPanelVisibility = (panel, isVisible) => {
+        if (panel in panelVisibility) {
+            panelVisibility[panel] = isVisible;
+        }
     };
 
     const updateTime = () => {
@@ -71,14 +103,14 @@ export const useNavBarStore = defineStore('navBar', () => {
     };
 
     // 点击功能 - 都具有切换能力
-    const toggleSettings = (emit) => {
+    const toggleSettings = () => {
         toggleActiveItem('settings');
-        emit('toggleSettings', isSettingsActive.value);
+        return isSettingsActive.value;
     };
 
-    const toggleAbout = (router, emit) => {
+    const toggleAbout = () => {
         toggleActiveItem('about');
-        emit('toggleAbout', isAboutActive.value);
+        return isAboutActive.value;
     };
 
     const toggleNotifications = () => {
@@ -96,9 +128,15 @@ export const useNavBarStore = defineStore('navBar', () => {
         return Object.values(activeItems).some(isActive => isActive);
     });
 
+    // 检查面板状态
+    const hasVisiblePanel = computed(() => {
+        return Object.values(panelVisibility).some(isVisible => isVisible);
+    });
+
     return {
         // 状态
         activeItems,
+        panelVisibility,
         currentTime,
 
         // 计算属性
@@ -107,12 +145,21 @@ export const useNavBarStore = defineStore('navBar', () => {
         isAboutActive,
         isNotificationsActive,
         isProfileActive,
+
+        // 面板显示计算属性
+        isSettingsPanelVisible,
+        isAboutPanelVisible,
+        isNotificationsPanelVisible,
+        isProfilePanelVisible,
+
         hasActiveOverlay,
+        hasVisiblePanel,
 
         // 方法
         toggleActiveItem,
         setActiveItem,
         clearActiveItems,
+        setPanelVisibility,
         updateTime,
         startClock,
         stopClock,

@@ -5,7 +5,7 @@ const buttonPress = (element) => {
     if (!element) return;
 
     // 确认gsap对象是否存在
-    console.log("GSAP in animations:", gsap);
+    // console.log("GSAP in animations:", gsap);
 
     gsap.timeline()
         .to(element, {
