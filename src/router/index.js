@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // import MainView from '../views/MainView.vue'
-// // import MusicSelectView from '../views/MusicSelectView.vue'
+import MusicSelectView from '@/components/MusicSelectView.vue'
 // // import PlaylistView from '../views/PlaylistView.vue'
 // import SettingsView from '../views/SettingsView.vue'
 // import AboutView from '../views/AboutView.vue'
@@ -14,18 +14,17 @@ const routes = [
       showNavBar: true,
       showFooterBar: false
     }
-  // },
-  // {
-  //   path: '/music',
-  //   name: 'MusicSelect',
-  //   component: MusicSelectView,
-  //   meta: {
-  //     title: 'OPlayer - 选曲界面',
-  //     showNavBar: true,
-  //     showFooterBar: true
-  //   }
-  // },
-  }
+  },
+  {
+    path: '/music',
+    name: 'MusicSelect',
+    component: MusicSelectView,
+    meta: {
+      title: 'OPlayer - 选曲界面',
+      showNavBar: true,
+      showFooterBar: true
+    }
+  },
 ]
 
 const router = createRouter({
