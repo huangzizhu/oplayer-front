@@ -1,6 +1,7 @@
 <template>
-  <div class="menu-card" :class="[`card-${item.position}`]" @mouseenter="$emit('mouseenter', $event)"
-    @mouseleave="$emit('mouseleave', $event)" @click="$emit('click', $event)">
+  <div class="menu-card" :class="[`card-${item.position}`]"
+    :style="{ background: item.backgroundColor || 'rgba(255, 255, 255, 1)' }"
+    @mouseenter="$emit('mouseenter', $event)" @mouseleave="$emit('mouseleave', $event)" @click="$emit('click', $event)">
     <div class="menu-card-icon">
       <img :src="iconSrc" :alt="item.label" />
     </div>
@@ -39,25 +40,27 @@ defineEmits(['mouseenter', 'mouseleave', 'click']);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 70px;
+  height: 100px;
   width: 180px;
   background: rgba(255, 255, 255, 0.1);
   /* margin: 0 10px; */
-  padding: 10px;
+  /* padding: 10px; */
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(5px);
+  margin: 0 -10px;
 }
 
 .card-left {
-  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  clip-path: polygon(20px 0, 100% 0, calc(100% - 20px) 100%, 0 100%);
   transform-origin: right center;
 }
 
 .card-right {
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 10px 100%);
+  /* clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 10px 100%); */
+  clip-path: polygon(20px 0, 100% 0, calc(100% - 20px) 100%, 0 100%);
   transform-origin: left center;
 }
 
@@ -96,7 +99,7 @@ defineEmits(['mouseenter', 'mouseleave', 'click']);
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+  /* background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent); */
 }
 
 .menu-card::after {

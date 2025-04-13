@@ -60,7 +60,8 @@ const leftMenuItems = reactive([
     icon: 'settings',
     label: '设置',
     route: '/settings',
-    position: 'left'
+    position: 'left',
+    backgroundColor: 'rgba(85, 85, 85, 1)',
   },
 ]);
 
@@ -70,14 +71,16 @@ const rightMenuItems = reactive([
     icon: 'music',
     label: '音乐',
     route: '/music',
-    position: 'right'
+    position: 'right',
+    backgroundColor: 'rgba(102, 68, 204, 1)',
   },
   {
     id: 'playlists',
     icon: 'playlist',
     label: '播放列表',
     route: '/playlists',
-    position: 'right'
+    position: 'right',
+    backgroundColor: 'rgba(238, 170, 0, 1)'
   },
   // {
   //   id: 'favorites',
@@ -85,6 +88,7 @@ const rightMenuItems = reactive([
   //   label: '收藏',
   //   route: '/favorites',
   //   position: 'right'
+  //   backgroundColor: 'rgba(165,204,0,1)'
   // },
   // {
   //   id: 'explore',
@@ -92,6 +96,7 @@ const rightMenuItems = reactive([
   //   label: '发现',
   //   route: '/explore',
   //   position: 'right'
+  //   backgroundColor: 'rgb(238,51,153,1)'
   // }
 ]);
 
@@ -112,11 +117,12 @@ const toggleMenu = () => {
 // 展开菜单动画
 const expandMenu = () => {
   // 1. 首先显示条带
-  gsap.set(menuStrip.value, { scaleY: 0, opacity: 0 });
+  gsap.set(menuStrip.value, { scaleY: 0, opacity: 0, background: 'rgba(255, 255, 255, 1)' });
   gsap.to(menuStrip.value, {
     scaleY: 1,
     opacity: 1,
-    duration: 0.1,
+    duration: 0.15,
+    background: 'rgba(35, 35, 35, 1)',
     ease: "power2.out"
   });
 
@@ -124,7 +130,7 @@ const expandMenu = () => {
   gsap.to(pinkDisc.value, {
     scale: 0.7,
     x: -window.innerWidth * 0.15,
-    duration: 0.2,
+    duration: 0.15,
     ease: "power2.out",
     onComplete: () => {
       circleMenuStore.setExpanded(true);
@@ -147,7 +153,7 @@ const collapseMenu = () => {
         gsap.to(pinkDisc.value, {
           scale: 1,
           x: 0,
-          duration: 0.2,
+          duration: 0.15,
           ease: "power2.inOut"
         });
 
@@ -155,7 +161,8 @@ const collapseMenu = () => {
         gsap.to(menuStrip.value, {
           scaleY: 0,
           opacity: 0,
-          duration: 0.2,
+          duration: 0.15,
+          background: 'rgba(255, 255, 255, 1)',
           ease: "power2.inOut",
           onComplete: () => {
             circleMenuStore.setExpanded(false);
@@ -164,9 +171,9 @@ const collapseMenu = () => {
         });
       }
     });
-
+    //-window.innerWidth * 0.4
     tl.to(leftItemsArray, {
-      x: -window.innerWidth * 0.4,
+      x: -window.innerWidth * 0.20,
       opacity: 0,
       stagger: 0.05,
       duration: 0.3,
@@ -174,7 +181,7 @@ const collapseMenu = () => {
     }, 0);
 
     tl.to(rightItemsArray, {
-      x: window.innerWidth * 0.3,
+      x: window.innerWidth * 0.20,
       opacity: 0,
       stagger: 0.05,
       duration: 0.3,
@@ -190,8 +197,8 @@ const showMenuItems = () => {
     const rightItemsArray = Array.from(rightItems.value.children);
 
     // 初始设置
-    gsap.set(leftItemsArray, { x: -window.innerWidth * 0.3, opacity: 0 });
-    gsap.set(rightItemsArray, { x: window.innerWidth * 0.15, opacity: 0 });
+    gsap.set(leftItemsArray, { x: -window.innerWidth * 0.20, opacity: 0 });
+    gsap.set(rightItemsArray, { x: window.innerWidth * 0.10, opacity: 0 });
 
     // 创建时间线
     const tl = gsap.timeline({
@@ -202,21 +209,21 @@ const showMenuItems = () => {
 
     // 从左到右依次显示左侧菜单项
     tl.to(leftItemsArray, {
-      x: -window.innerWidth * 0.2,
+      x: -window.innerWidth * 0.15,
       opacity: 1,
       stagger: 0.1,
-      duration: 0.2,
+      duration: 0.15,
       ease: "power2.out"
     });
 
     // 从左到右依次显示右侧菜单项
     tl.to(rightItemsArray, {
-      x: -window.innerWidth * 0.1,
+      x: -window.innerWidth * 0,
       opacity: 1,
       stagger: 0.1,
-      duration: 0.2,
+      duration: 0.15,
       ease: "power2.out"
-    }, "-=0.3"); // 稍微提前开始右侧动画
+    }, "-=0.15"); // 稍微提前开始右侧动画
   }
 };
 
@@ -246,8 +253,8 @@ const handleMenuItemHover = (item, event, side) => {
   // 卡片扩展效果
   gsap.to(card, {
     width: '250px',
-    duration: 0.2,
-    ease: "power2.out"
+    duration: 0.4,
+    ease: "bounce"
   });
 
   // 获取所有同侧卡片
@@ -259,9 +266,9 @@ const handleMenuItemHover = (item, event, side) => {
   sideItems.forEach(otherCard => {
     if (otherCard !== card) {
       gsap.to(otherCard, {
-        x: side === 'left' ? -20 : 20,
-        duration: 0.2,
-        ease: "power2.out"
+        x: side === 'left' ? -0 : 0,
+        duration: 0.4,
+        ease: "bounce"
       });
     }
   });
@@ -490,8 +497,8 @@ onBeforeUnmount(() => {
 .menu-items-container {
   position: absolute;
   width: 100%;
-  height: 80px;
-  z-index: 1002;
+  height: 120px;
+  z-index: 901;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -504,19 +511,21 @@ onBeforeUnmount(() => {
   align-items: center;
   height: 100%;
   pointer-events: auto;
+  z-index: 901;
+  position: absolute;
 }
 
 .left-items {
   position: absolute;
-  right: 50%;
-  margin-right: 60px;
+  right: 54%;
   justify-content: flex-end;
+  z-index: 901;
 }
 
 .right-items {
   position: absolute;
-  left: 50%;
-  margin-left: 60px;
+  left: 39%;
   justify-content: flex-start;
+  z-index: 901;
 }
 </style>
