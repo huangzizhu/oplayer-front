@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // import MainView from '../views/MainView.vue'
-import MusicSelectView from '@/components/MusicSelectView.vue'
+import MusicSelectView from '@/components/view/MusicSelectView.vue'
+import MainView from '@/components/view/MainView.vue'
 // // import PlaylistView from '../views/PlaylistView.vue'
 // import SettingsView from '../views/SettingsView.vue'
 // import AboutView from '../views/AboutView.vue'
@@ -9,6 +10,7 @@ const routes = [
   {
     path: '/',
     name: 'Main',
+    component: MainView,
     meta: {
       title: 'OPlayer - 主界面',
       showNavBar: true,

@@ -132,8 +132,8 @@ const hideOverlay = (element) => {
 const highlightNavItem = (element) => {
     if (!element) return;
 
-    // 先清除已有的动画
-    gsap.killTweensOf(element);
+    // // 先清除已有的动画
+    // gsap.killTweensOf(element);
 
     gsap.to(element, {
         backgroundColor: "rgba(255, 65, 105, 0.7)",
@@ -146,8 +146,8 @@ const highlightNavItem = (element) => {
 const removeHighlight = (element) => {
     if (!element) return;
 
-    // 先清除已有的动画
-    gsap.killTweensOf(element);
+    // // 先清除已有的动画
+    // gsap.killTweensOf(element);
 
     gsap.to(element, {
         backgroundColor: "transparent",
@@ -161,7 +161,7 @@ const hoverNavItem = (element) => {
     if (!element) return;
 
     // 先清除已有的悬停动画
-    gsap.killTweensOf(element, { backgroundColor: true });
+    // gsap.killTweensOf(element, { backgroundColor: true });
 
     gsap.to(element, {
         backgroundColor: "rgba(255, 255, 255, 0.15)",
@@ -178,7 +178,7 @@ const leaveNavItem = (element, isActive) => {
     if (isActive) return;
 
     // 先清除已有的离开动画
-    gsap.killTweensOf(element, { backgroundColor: true });
+    // gsap.killTweensOf(element, { backgroundColor: true });
 
     gsap.to(element, {
         backgroundColor: "transparent",
@@ -191,10 +191,9 @@ const leaveOverlay = (element) => {
     if (!element) return;
     // 先清除已有的离开动画
     gsap.killTweensOf(element, { backgroundColor: true });
-    // 增加下阴影效果
     gsap.to(element, {
-        boxShadow: "0 0px 0px rgba(0, 0, 0, 0.8)",
-        duration: 0.3,
+        boxShadow: "0 0px 0px rgba(0, 0, 0, 0.9)",
+        duration: 0.1,
         ease: "power1.out",
     });
 
@@ -206,8 +205,8 @@ const hoverOverlay = (element) => {
     gsap.killTweensOf(element, { backgroundColor: true });
 
     gsap.to(element, {
-        boxShadow: "0 4px 80px rgba(0, 0, 0, 0.8)",
-        duration: 0.3,
+        boxShadow: "0 5px 80px rgba(0, 0, 0, 0.8)",
+        duration: 0.4,
         ease: "power1.out"
     });
 };
@@ -256,6 +255,129 @@ const pulseBackground = (element) => {
     });
 };
 
+// 粉饼菜单展开动画
+const expandCircleMenu = (discElement, stripElement, callback) => {
+    if (!discElement || !stripElement) return;
+
+    const tl = gsap.timeline({
+        onComplete: () => {
+            if (callback) callback();
+        }
+    });
+
+    // 条带展开
+    tl.fromTo(stripElement,
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.2, ease: "power2.out" }
+    );
+
+    // 粉饼缩小并移到左侧
+    tl.to(discElement, {
+        scale: 0.7,
+        x: -window.innerWidth * 0.4,
+        duration: 0.2,
+        ease: "power2.out"
+    }, "-=0.3");
+
+    return tl;
+};
+
+// 粉饼菜单折叠动画
+const collapseCircleMenu = (discElement, stripElement, callback) => {
+    if (!discElement || !stripElement) return;
+
+    const tl = gsap.timeline({
+        onComplete: () => {
+            if (callback) callback();
+        }
+    });
+
+    // 粉饼回到中心
+    tl.to(discElement, {
+        scale: 1,
+        x: 0,
+        duration: 0.5,
+        ease: "power2.inOut"
+    });
+
+    // 收起条带
+    tl.to(stripElement, {
+        scaleX: 0,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.inOut"
+    }, "-=0.3");
+
+    return tl;
+};
+
+// 菜单卡片悬停效果
+const menuCardHover = (cardElement, siblingElements, side) => {
+    if (!cardElement) return;
+
+    // 卡片扩展
+    gsap.to(cardElement, {
+        width: '200px',
+        duration: 0.3,
+        ease: "power2.out"
+    });
+
+    // 处理其他卡片
+    if (siblingElements && siblingElements.length) {
+        siblingElements.forEach(el => {
+            gsap.to(el, {
+                x: side === 'left' ? -20 : 20,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        });
+    }
+};
+
+// 菜单卡片图标跳动效果
+const iconBounce = (iconElement) => {
+    if (!iconElement) return;
+
+    gsap.timeline()
+        .to(iconElement, {
+            scale: 1.2,
+            duration: 0.2,
+            ease: "power1.out"
+        })
+        .to(iconElement, {
+            scale: 1,
+            duration: 0.3,
+            ease: "elastic.out(1, 0.3)"
+        });
+};
+
+// 菜单项淡出动画（进入页面时）
+const menuItemsFadeOut = (targetItem, otherItems, direction) => {
+    if (!targetItem || !otherItems) return;
+
+    const tl = gsap.timeline();
+
+    // 点击的项目放大并淡出
+    tl.to(targetItem, {
+        scale: 1.2,
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in"
+    });
+
+    // 其他项目按方向移出
+    otherItems.forEach(item => {
+        tl.to(item, {
+            x: direction === 'left' ? -100 : 100,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in"
+        }, "-=0.25");
+    });
+
+    return tl;
+};
+
 export default {
     //导航栏
     buttonPress,
@@ -277,6 +399,13 @@ export default {
     //背景
     fadeInBackground,
     transitionBackground,
-    pulseBackground
+    pulseBackground,
+
+    // 粉饼菜单
+    expandCircleMenu,
+    collapseCircleMenu,
+    menuCardHover,
+    iconBounce,
+    menuItemsFadeOut
 
 };

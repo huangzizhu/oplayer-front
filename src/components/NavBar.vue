@@ -510,7 +510,7 @@ onUnmounted(() => {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
-    z-index: 989;
+    z-index: 500;
     /* 低于面板的层级 */
     backdrop-filter: blur(2px);
     opacity: 0;
@@ -543,10 +543,10 @@ onUnmounted(() => {
 
 /* 每个面板的位置和大小 */
 .settings-panel {
-    top: 10px;
-    left: 10px;
-    width: 300px;
-    height: 500px;
+    top: 0px;
+    left: 0px;
+    width: 40%;
+    height: 100%;
 }
 
 .about-panel {

@@ -28,8 +28,8 @@ const handleMouseMove = (e) => {
     const maxOffset = Math.min(window.innerWidth, window.innerHeight) * 0.04;
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    const mousePercentX = (e.clientX - centerX) / centerX; // -1 到 1
-    const mousePercentY = (e.clientY - centerY) / centerY; // -1 到 1
+    const mousePercentX = (e.clientX - centerX) / centerX;
+    const mousePercentY = (e.clientY - centerY) / centerY;
 
     const targetX = -maxOffset * mousePercentX;
     const targetY = -maxOffset * mousePercentY;
