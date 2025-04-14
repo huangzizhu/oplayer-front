@@ -429,6 +429,7 @@ onBeforeUnmount(() => {
   justify-content: center;
   align-items: center;
   pointer-events: none;
+  font-family: 'Comfortaa-Light'
 }
 
 
@@ -465,6 +466,7 @@ onBeforeUnmount(() => {
   align-items: center;
   overflow: hidden;
   transition: transform 0.2s ease;
+  font-family: 'Comfortaa-Light'
 }
 
 .disc-logo {

@@ -5,18 +5,18 @@
             <div class="navbar-item" ref="settingsBtn" :class="{ 'active': navBarStore.isSettingsActive }"
                 @click="handleSettingsClick" @mouseenter="handleMouseEnter(settingsBtn, navBarStore.isSettingsActive)"
                 @mouseleave="handleMouseLeave(settingsBtn, navBarStore.isSettingsActive)">
-                <img src="@/assets/images/settings.svg" alt="" width="24" height="24" class="navbar-icon-settings" />
+                <img src="@/assets/images/settings.svg" alt="" width="48" height="24" class="navbar-icon-settings" />
             </div>
 
             <div class="navbar-item" ref="homeBtn" @click="handleHomeClick"
                 @mouseenter="handleMouseEnter(homeBtn, false)" @mouseleave="handleMouseLeave(homeBtn, false)">
-                <img src="@/assets/images/home.svg" alt="" width="24" height="24" class="navbar-icon-home" />
+                <img src="@/assets/images/home.svg" alt="" width="48" height="24" class="navbar-icon-home" />
             </div>
 
             <div class="navbar-item" ref="aboutBtn" :class="{ 'active': navBarStore.isAboutActive }"
                 @click="handleAboutClick" @mouseenter="handleMouseEnter(aboutBtn, navBarStore.isAboutActive)"
                 @mouseleave="handleMouseLeave(aboutBtn, navBarStore.isAboutActive)">
-                <img src="@/assets/images/info.svg" alt="" width="24" height="24" class="navbar-icon-info" />
+                <img src="@/assets/images/info.svg" alt="" width="48" height="24" class="navbar-icon-info" />
             </div>
         </div>
 

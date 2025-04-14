@@ -51,6 +51,7 @@ defineEmits(['mouseenter', 'mouseleave', 'click']);
   overflow: hidden;
   backdrop-filter: blur(5px);
   margin: 0 -10px;
+  font-family: 'Comfortaa-Light'
 }
 
 .card-left {
@@ -89,6 +90,7 @@ defineEmits(['mouseenter', 'mouseleave', 'click']);
   text-align: center;
   font-weight: 500;
   letter-spacing: 0.5px;
+  font-family: 'Comfortaa-Light'
 }
 
 /* 添加微小的立体感和发光效果 */

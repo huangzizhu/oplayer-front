@@ -10,6 +10,7 @@ import animations from './utils/animations'
 import './assets/styles/main.scss'
 import './assets/styles/variables.scss'
 import './assets/styles/animations.scss'
+import './assets/styles/fonts.css'
 
 // 将gsap显式暴露到全局
 window.gsap = gsap;
