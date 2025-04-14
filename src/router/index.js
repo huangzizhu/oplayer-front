@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainView from '../views/MainView.vue'
-// import MusicSelectView from '../views/MusicSelectView.vue'
-// import PlaylistView from '../views/PlaylistView.vue'
-import SettingsView from '../views/SettingsView.vue'
-import AboutView from '../views/AboutView.vue'
+// import MainView from '../views/MainView.vue'
+import MusicSelectView from '@/components/view/MusicSelectView.vue'
+import MainView from '@/components/view/MainView.vue'
+// // import PlaylistView from '../views/PlaylistView.vue'
+// import SettingsView from '../views/SettingsView.vue'
+// import AboutView from '../views/AboutView.vue'
 
 const routes = [
   {
@@ -16,47 +17,16 @@ const routes = [
       showFooterBar: false
     }
   },
-  // {
-  //   path: '/music',
-  //   name: 'MusicSelect',
-  //   component: MusicSelectView,
-  //   meta: {
-  //     title: 'OPlayer - 选曲界面',
-  //     showNavBar: true,
-  //     showFooterBar: true
-  //   }
-  // },
-  // {
-  //   path: '/playlist/:id',
-  //   name: 'Playlist',
-  //   component: PlaylistView,
-  //   meta: {
-  //     title: 'OPlayer - 歌单',
-  //     showNavBar: true,
-  //     showFooterBar: true
-  //   }
-  // },
   {
-    path: '/settings',
-    name: 'Settings',
-    component: SettingsView,
+    path: '/music',
+    name: 'MusicSelect',
+    component: MusicSelectView,
     meta: {
-      title: 'OPlayer - 设置',
+      title: 'OPlayer - 选曲界面',
       showNavBar: true,
-      showFooterBar: false
+      showFooterBar: true
     }
   },
-  {
-    path: '/about',
-    name: 'About',
-    component: AboutView,
-    meta: {
-      title: 'OPlayer - 关于',
-      showNavBar: true,
-      showFooterBar: false
-    },
-
-  }
 ]
 
 const router = createRouter({

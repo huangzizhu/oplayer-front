@@ -1,0 +1,22 @@
+@font-face {
+    font-family: 'Comfortaa-Light';
+    src: url('../fonts/Comfortaa-Light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 可以添加其他字体变体 */
+@font-face {
+    font-family: 'Comfortaa';
+    src: url('../fonts/Comfortaa-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comfortaa';
+    src: url('../fonts/Comfortaa-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
