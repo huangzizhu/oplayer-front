@@ -4,9 +4,9 @@
             <div class="cover-img">
 
             </div>
-            <span class="cover-text">
-                Tojita Sekai
-            </span>
+            <div class="cover-text">
+                <p>Tojita Sekai</p>
+            </div>
         </div>
     </div>
 
@@ -18,12 +18,13 @@
 
 <style scoped>
 .music-cover-container {
+    top: 45px;
     width: 700px;
-    height: 500px;
-    display: flex;
-    background-color: #0000002e;
-    overflow: hidden;
-    position: relative;
+    height: 450px;
+    /* display: flex; */
+    /* background-color: rgba(0, 0, 0, 0.4); */
+    /* overflow: hidden; */
+    position: absolute;
     clip-path: polygon(0px 0, 100% 0, calc(100% - 20px) 100%, 0 100%);
 }
 
@@ -31,31 +32,27 @@
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
+    box-shadow: 0px 0px 15px 15px rgba(255, 255, 255, 1);
 }
 
 .cover-img {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4);
-    box-shadow: 0px 0px 4px 50px rgba(255, 255, 255, 1);
+    
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
 }
 
 .cover-text {
     position: absolute;
-    top: 90%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 4%;
+    top: 85%;
+    text-align: left;
     color: #fff;
     font-size: 24px;
-    font-weight: bold;
-    z-index: 2;
     font-family: 'Comfortaa-Light';
 }
 </style>

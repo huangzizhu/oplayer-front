@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+// import { defineStore } from 'pinia';
+// import { ref } from 'vue';
 
-export const useMusicInfo = defineStore('musicInfo', () => {
+// export const useMusicInfo = defineStore('musicInfo', () => {
 
-})
+// })
