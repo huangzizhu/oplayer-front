@@ -314,8 +314,10 @@ const handleMouseEnterOverlay = (element) => {
 watch(() => navBarStore.isSettingsActive, (newVal) => {
     if (newVal) {
         animations.highlightNavItem(settingsBtn.value);
+        animations.showPanelLeft(settingsPanel.value);
     } else {
         animations.removeHighlight(settingsBtn.value);
+        animations.hidePanelLeft(settingsPanel.value);
     }
 });
 
@@ -510,10 +512,11 @@ onUnmounted(() => {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
-    z-index: 500;
+    z-index: 950;
     /* 低于面板的层级 */
     backdrop-filter: blur(2px);
     opacity: 0;
+    pointer-events: none;
 }
 
 /* 覆盖组件容器 */

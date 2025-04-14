@@ -312,9 +312,10 @@ const handleMenuItemLeave = (item, event, side) => {
     }
   });
 };
-// import { useNavBarStore } from '@/store/NavBar';
-// import animations from '@/utils/animations';
-// const navBarStore = useNavBarStore();
+// 引入NavBarStore
+import { useNavBarStore } from '@/store/NavBar';
+// 初始化store
+const navBarStore = useNavBarStore();
 // 处理卡片点击
 const handleMenuItemClick = (item) => {
   if (circleMenuStore.isTransitioning) return;
@@ -334,6 +335,13 @@ const handleMenuItemClick = (item) => {
 
   // 根据路由方向，设置退出方向
   circleMenuStore.setExitDirection(item.position);
+  if (item.id === 'settings') {
+    // 显示设置面板而不是跳转路由
+    event.stopPropagation(); 
+    navBarStore.toggleSettings();
+    circleMenuStore.setTransitioning(false);
+    return;
+  }
 
 
   // 点击的卡片放大并淡出
@@ -380,9 +388,8 @@ const handleMenuItemClick = (item) => {
           // 所有动画完成后，再跳转路由
           circleMenuStore.setExpanded(false);
           circleMenuStore.setTransitioning(false);
-          // 根据点击的项目执行不同操作
+          // 其他菜单项正常跳转路由
           router.push(item.route);
-          // router.push(targetRoute);
         }
       });
     }
