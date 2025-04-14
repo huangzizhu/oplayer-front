@@ -92,14 +92,12 @@ defineEmits(['mouseenter', 'mouseleave', 'click']);
 }
 
 /* 添加微小的立体感和发光效果 */
-.menu-card::before {
+/* .menu-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  /* background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent); */
 }
 
 .menu-card::after {
@@ -108,7 +106,5 @@ defineEmits(['mouseenter', 'mouseleave', 'click']);
   bottom: 0;
   left: 10px;
   right: 10px;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.3);
-}
+} */
 </style>

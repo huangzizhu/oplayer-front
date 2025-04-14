@@ -78,27 +78,28 @@ const rightMenuItems = reactive([
     id: 'playlists',
     icon: 'playlist',
     label: '播放列表',
-    route: '/playlists',
+    route: '/',
     position: 'right',
-    backgroundColor: 'rgba(238, 170, 0, 1)'
+    backgroundColor: 'rgba(238, 170, 0, 1)',
   },
-  // {
-  //   id: 'favorites',
-  //   icon: 'heart',
-  //   label: '收藏',
-  //   route: '/favorites',
-  //   position: 'right'
-  //   backgroundColor: 'rgba(165,204,0,1)'
-  // },
-  // {
-  //   id: 'explore',
-  //   icon: 'explore',
-  //   label: '发现',
-  //   route: '/explore',
-  //   position: 'right'
-  //   backgroundColor: 'rgb(238,51,153,1)'
-  // }
+  {
+    id: 'favorites',
+    icon: 'heart',
+    label: '收藏',
+    route: '/',
+    position: 'right',
+    backgroundColor: 'rgba(165,204,0,1)',
+  },
+  {
+    id: 'exit',
+    icon: 'exit',
+    label: '退出',
+    route: '/',
+    position: 'right',
+    backgroundColor: 'rgb(238,51,153,1)',
+  }
 ]);
+
 
 // 菜单切换方法
 const toggleMenu = () => {
@@ -254,7 +255,8 @@ const handleMenuItemHover = (item, event, side) => {
   gsap.to(card, {
     width: '250px',
     duration: 0.4,
-    ease: "bounce"
+    ease: "bounce",
+    overwrite: true,
   });
 
   // 获取所有同侧卡片
@@ -266,8 +268,8 @@ const handleMenuItemHover = (item, event, side) => {
   sideItems.forEach(otherCard => {
     if (otherCard !== card) {
       gsap.to(otherCard, {
-        x: side === 'left' ? -0 : 0,
-        duration: 0.4,
+        // x: side === 'left' ? -0 : 0,
+        duration: 0.5,
         ease: "bounce"
       });
     }
@@ -289,7 +291,8 @@ const handleMenuItemLeave = (item, event, side) => {
   gsap.to(card, {
     width: '180px',
     duration: 0.2,
-    ease: "power2.out"
+    ease: "power2.out",
+    overwrite: true,
   });
 
   // 获取所有同侧卡片
@@ -303,17 +306,19 @@ const handleMenuItemLeave = (item, event, side) => {
       gsap.to(otherCard, {
         x: 0,
         duration: 0.2,
-        ease: "power2.out"
+        ease: "power2.out",
+        overwrite: true,
       });
     }
   });
 };
-
+// import { useNavBarStore } from '@/store/NavBar';
+// import animations from '@/utils/animations';
+// const navBarStore = useNavBarStore();
 // 处理卡片点击
 const handleMenuItemClick = (item) => {
   if (circleMenuStore.isTransitioning) return;
   circleMenuStore.setTransitioning(true);
-
   // 获取所有卡片
   const allLeftItems = Array.from(leftItems.value.children);
   const allRightItems = Array.from(rightItems.value.children);
@@ -327,46 +332,61 @@ const handleMenuItemClick = (item) => {
   const otherLeftItems = allLeftItems.filter(card => card !== targetCard);
   const otherRightItems = allRightItems.filter(card => card !== targetCard);
 
-  // 动画时间线
-  const tl = gsap.timeline({
-    onComplete: () => {
-      // 根据路由方向，执行菜单淡出动画
-      circleMenuStore.setExitDirection(item.position);
+  // 根据路由方向，设置退出方向
+  circleMenuStore.setExitDirection(item.position);
 
-      // 跳转路由
-      setTimeout(() => {
-        router.push(item.route);
-        // 折叠菜单
-        collapseMenu();
-      }, 300);
-    }
-  });
 
   // 点击的卡片放大并淡出
-  tl.to(targetCard, {
-    scale: 1.2,
+  gsap.to(targetCard, {
+    scale: 1,
     opacity: 0,
     duration: 0.2,
     ease: "power2.in"
   });
 
   // 左侧卡片向左移动并淡出
-  tl.to(otherLeftItems, {
-    x: -100,
+  gsap.to(otherLeftItems, {
+    x: -window.innerWidth * 0.20,
     opacity: 0,
     stagger: 0.05,
-    duration: 0.2,
+    duration: 0.1,
     ease: "power2.in"
-  }, "-=0.2");
+  });
 
   // 右侧卡片向右移动并淡出
-  tl.to(otherRightItems, {
-    x: 100,
+  gsap.to(otherRightItems, {
+    x: window.innerWidth * 0.20,
     opacity: 0,
     stagger: 0.05,
-    duration: 0.2,
-    ease: "power2.in"
-  }, "-=0.2");
+    duration: 0.1,
+    ease: "power2.in",
+    onComplete: () => {
+      // 直接执行收起操作，确保条带动画先完成
+      // 执行粉饼回中心和条带收起
+      gsap.to(pinkDisc.value, {
+        scale: 0,
+        x: -window.innerWidth * 0.30,
+        duration: 0.1,
+        ease: "power2.inOut"
+      });
+
+      gsap.to(menuStrip.value, {
+        scaleY: 0,
+        opacity: 0,
+        duration: 0.1,
+        background: 'rgba(255, 255, 255, 1)',
+        ease: "power2.inOut",
+        onComplete: () => {
+          // 所有动画完成后，再跳转路由
+          circleMenuStore.setExpanded(false);
+          circleMenuStore.setTransitioning(false);
+          // 根据点击的项目执行不同操作
+          router.push(item.route);
+          // router.push(targetRoute);
+        }
+      });
+    }
+  });
 };
 
 // 监听路由变化，特殊处理音乐页面
