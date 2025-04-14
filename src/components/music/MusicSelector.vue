@@ -1,5 +1,9 @@
 <template>
 
+    <div class="music-selector-container">
+        
+    </div>
+
 </template>
 
 <script setup>

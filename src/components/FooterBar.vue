@@ -11,7 +11,7 @@
 <style scoped>
 .footerbar {
     width: 100%;
-    height: 40px;
+    height: 50px;
     background-color: rgb(25, 25, 25, 1);
     color: white;
     text-align: center;

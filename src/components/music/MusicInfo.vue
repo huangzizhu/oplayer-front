@@ -1,6 +1,5 @@
 <template>
-
-    
+    <div class="music-info-container"></div>
 
 </template>
 

@@ -1,6 +1,5 @@
 <template>
-
-    
+    <div class="FFT-container"></div>
 
 </template>
 

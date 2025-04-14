@@ -1,4 +1,5 @@
 <template>
+    <div class="progress-bar-container"></div>
 
 </template>
 
