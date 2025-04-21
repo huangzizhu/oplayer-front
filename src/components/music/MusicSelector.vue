@@ -1,8 +1,8 @@
 <template>
 
-    <div class="music-selector-container">
-        
-    </div>
+  <div class="music-selector-container">
+
+  </div>
 
 </template>
 

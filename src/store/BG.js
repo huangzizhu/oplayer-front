@@ -49,10 +49,22 @@ export const useBgStore = defineStore('bg', () => {
         windowHeight.value = window.innerHeight;
     }
 
-    function changeBackground(newImage) {
+    function changeBackground(imagePath) {
+        // 如果传入的是URL字符串，直接使用
+        if (typeof imagePath === 'string') {
+            opacity.value = 0;
+
+            setTimeout(() => {
+                currentBgImage.value = imagePath;
+                opacity.value = 1;
+            }, 300);
+            return;
+        }
+
+        // 原有逻辑 - 随机选择
         opacity.value = 0;
         setTimeout(() => {
-            currentBgImage.value = newImage || bgImages.value[Math.floor(Math.random() * bgImages.value.length)];
+            currentBgImage.value = bgImages.value[Math.floor(Math.random() * bgImages.value.length)];
             opacity.value = 1;
         }, 300);
     }
@@ -67,6 +79,6 @@ export const useBgStore = defineStore('bg', () => {
         initBackground,
         updateMousePosition,
         handleResize,
-        changeBackground
+        changeBackground,
     };
 });

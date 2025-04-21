@@ -500,6 +500,7 @@ onUnmounted(() => {
 }
 
 .clock {
+    font-family: 'Comfortaa-Light', sans-serif;
     font-weight: 500;
     user-select: none;
 }

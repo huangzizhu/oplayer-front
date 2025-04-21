@@ -489,6 +489,7 @@ onBeforeUnmount(() => {
   transition: transform 0.2s ease;
   z-index: 903;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
 .image-tri {
@@ -499,6 +500,7 @@ onBeforeUnmount(() => {
   top: 0%;
   left: 0%;
   z-index: 902;
+  -webkit-user-drag: none;
   /* filter: brightness(0) invert(1); */
 }
 

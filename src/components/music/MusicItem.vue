@@ -1,5 +1,5 @@
 <template>
-    <div class="music-item-container"></div>
+  <div class="music-item-container"></div>
 
 
 
