@@ -8,14 +8,19 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@mui/icons-material": "^7.0.2",
+    "ant-design-vue": "^4.2.6",
+    "axios": "^1.8.4",
     "core-js": "^3.8.3",
-    "element-plus": "^2.9.7",
+    "crypto-js": "^4.2.0",
+    "element-plus": "^2.9.8",
     "gasp": "^0.0.2",
     "gsap": "^3.12.7",
     "material-icons": "^1.13.14",
     "pinia": "^3.0.1",
     "register-service-worker": "^1.7.2",
+    "uuid": "^11.1.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
@@ -34,7 +39,8 @@
     "less": "^4.3.0",
     "less-loader": "^12.2.0",
     "sass": "^1.32.7",
-    "sass-loader": "^12.0.0"
+    "sass-loader": "^12.0.0",
+    "tailwindcss": "^3.4.17"
   },
   "eslintConfig": {
     "root": true,

@@ -21,10 +21,6 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  distanceFromCenter: {
-    type: Number,
-    required: true
-  },
   isActive: {
     type: Boolean,
     default: false
