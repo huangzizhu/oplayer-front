@@ -21,13 +21,13 @@
         </div>
 
         <div class="navbar-right">
-            <div class="navbar-item" ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
+            <div class="navbar-item" id='profile' ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
                 @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
                 @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
                 <div class="navbar-icon user-avatar">
-                    <img src="@/assets/images/avatar.jpg" alt="用户头像">
+                    <img :src="userStore.userAvatarUrl" alt="用户头像">
                 </div>
-                <span class="clock">{{ navBarStore.usrName }}</span>
+                <span class="clock">{{ navBarStore.userName }}</span>
             </div>
 
             <div class="navbar-item-clock" ref="clockBtn" @mouseenter="handleMouseEnter(clockBtn, false)"
@@ -88,10 +88,8 @@
 
         <!-- 用户资料面板 -->
         <div ref="profilePanel" class="profile-panel panel" v-show="navBarStore.isProfilePanelVisible" @click.stop>
-            <h3>用户资料</h3>
             <div class="panel-content">
-                <!-- 用户资料内容 -->
-                <p>这里是用户资料内容</p>
+                <UserProfileCard></UserProfileCard>
             </div>
         </div>
     </div>
@@ -102,6 +100,8 @@ import { onMounted, onUnmounted, defineProps, ref, watch, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useNavBarStore } from '@/store/NavBar';
 import animations from '@/utils/animations';
+import UserProfileCard from "@/components/view/user/UserProfileCard.vue";
+import {useUserStore} from "@/store/User";
 
 // 按钮引用
 const settingsBtn = ref(null);
@@ -130,6 +130,7 @@ const props = defineProps({
 // 初始化 router 和 store
 const router = useRouter();
 const navBarStore = useNavBarStore();
+const userStore = useUserStore();
 
 // 如果通过属性传入了激活的选项，则设置它
 if (props.activeItem) {
@@ -440,7 +441,10 @@ onUnmounted(() => {
     cursor: pointer;
     border-radius: 8px;
 }
-
+#profile{
+  width: 5em;
+  margin-right: 3em;
+}
 .navbar-item-clock {
     display: flex;
     align-items: center;
@@ -461,8 +465,8 @@ onUnmounted(() => {
 
 .navbar-icon {
     position: relative;
-    width: 32px;
-    height: 32px;
+    width: 2em;
+    height: 2em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -568,12 +572,29 @@ onUnmounted(() => {
 
 .profile-panel {
     top: 10px;
-    right: 10px;
+    right: 5em;
     width: 350px;
     height: 450px;
 }
 
 .panel-content {
-    margin-top: 15px;
+  position: relative;  /* 创建定位上下文 */
+  width: 100%;        /* 确保容器有宽度 */
+  height: 100%;
+  background: radial-gradient(
+      circle at 70% 30%,
+      rgba(230, 100, 159, 0.15) 0%,
+      transparent 40%
+  );
+}
+
+.panel-content > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

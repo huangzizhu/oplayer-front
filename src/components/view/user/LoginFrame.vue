@@ -1,45 +1,235 @@
 <template>
-  <div class="login-frame">
-    <el-form label-width="80px">
-      {{loginForm}}
-      <p class="title">Oplay</p>
-      <el-form-item label="用户名" prop="username">
-        <el-input
-            v-model="loginForm.username"
-            placeholder="请输入用户名"
-            style="width: 200px;"
-        ></el-input>
-      </el-form-item>
 
-      <el-form-item label="密码" prop="password">
-        <el-input
-            type="password"
-            v-model="loginForm.password"
-            placeholder="请输入密码"
-            style="width: 200px;"
-        ></el-input>
-      </el-form-item>
+  <div class="login-box">
+    <!-- 1. Logo和文字区域 -->
+    <div class="logo-section">
+      <h2>用户登录</h2>
+    </div>
 
-      <el-form-item>
-        <el-button class="button" type="primary" @click="login"
-        >登 录</el-button
+    <!-- 2. 用户名输入 -->
+    <div class="input-group" :class="{ 'active': isUsernameActive }">
+      <label for="username">用户名</label>
+      <input
+          id="username"
+          type="text"
+          v-model="username"
+          @focus="isUsernameActive = true"
+          @blur="isUsernameActive = false"
+          placeholder="请输入用户名"
+      >
+    </div>
+
+    <!-- 3. 密码输入 -->
+    <div class="input-group" :class="{ 'active': isPasswordActive }">
+      <label for="password">密码</label>
+      <input
+          id="password"
+          type="password"
+          v-model="password"
+          @focus="isPasswordActive = true"
+          @blur="isPasswordActive = false"
+          placeholder="请输入密码"
+      >
+    </div>
+
+    <!-- 4. 验证码输入和图片 -->
+    <div class="input-group" :class="{ 'active': isCaptchaActive }">
+      <label for="captcha">验证码</label>
+      <div class="captcha-section">
+        <input
+            id="captcha"
+            type="text"
+            v-model="captcha"
+            @focus="isCaptchaActive = true"
+            @blur="isCaptchaActive = false"
+            placeholder="请输入验证码"
         >
-        <el-button class="button" type="info" @click="clear">重 置</el-button>
-      </el-form-item>
-    </el-form>
-  </div>
+        <img
+            id="image"
+            :src="captchaImageSrc"
+            alt="验证码"
+            @click="handleRefreshCaptcha"
+            width="45%"
+        />
+      </div>
+    </div>
 
+    <!-- 5. 登录按钮 -->
+    <button class="login-btn" @click="handleLogin">登录</button>
+
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const loginForm = ref({ username: "", password: "" });
+import { ref, onMounted } from 'vue';
+import {hashPassword, refreshCaptcha} from '@/utils/UserUtils';
+import { useRouter } from 'vue-router';
+import {login} from "@/utils/api/UserApi";
+import {ElMessage} from "element-plus";
+import { defineEmits } from 'vue';
+
+const router = useRouter();
+
+// 定义响应式数据
+const emit = defineEmits(['login-success']);
+const captchaImageSrc = ref('')
+const hashedPassword = ref('');
+const username = ref('');
+const password = ref('');
+const captcha = ref('');
+const isUsernameActive = ref(false);
+const isPasswordActive = ref(false);
+const isCaptchaActive = ref(false);
+const uuid = ref('')
+const loginForm = ref({
+  username: '',
+  hashedPassword: '',
+  captcha: '',
+  uuid: ''
+});
+// 定义方法
+const handleLogin = async () => {
+  if(!username.value || !password.value || !captcha.value) {
+    ElMessage.error("请填写所有字段");
+    return;
+  }
+  loginForm.value.username = username.value;
+  hashPassword(hashedPassword,password);
+  loginForm.value.hashedPassword = hashedPassword.value;
+  loginForm.value.captcha = captcha.value;
+  loginForm.value.uuid = uuid.value;
+  const response = await login(loginForm.value);
+  console.log(response.code)
+  if(response.code){
+    ElMessage.success("登陆成功");
+    localStorage.setItem("loginUser", JSON.stringify(response.data.token));
+    emit('login-success');
+    router.push("/user");
+  }
+  else {
+    ElMessage.error(response.data.msg);
+  }
+
+};
+
+const handleRefreshCaptcha = () => {
+  refreshCaptcha(uuid,captchaImageSrc);
+};
+
+onMounted(() => {
+  handleRefreshCaptcha();
+});
 </script>
 
 <style scoped>
-.login-frame {
-  width: 60%;
-  margin: 0 auto;
-  padding-top: 100px;
+/* This was made with GlassGenerator.netlify.app */
+.login-box {
+  color: white;
+  display: flex;
+  gap: 20px;
+  border-radius: 21px;
+  backdrop-filter: blur(11px);
+  background-color: rgba(0,0,0, 0.382);
+  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
+  border: 0px rgba(255,255,255,0.4) solid;
+  border-bottom: 0px rgba(40,40,40,0.35) solid;
+  border-right: 0px rgba(40,40,40,0.35) solid;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  flex-direction: column;
+}
+
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.logo-section h2 {
+  color: white; /* 设置文字颜色为白色 */
+}
+
+.logo-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+h2 {
+  color: #333;
+  margin: 0;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 14px;
+}
+
+.input-group input {
+  color: white;
+  background-color: #24222A;
+  padding: 1em 1em;
+  border: 1px solid #302E38;
+  border-radius: 0.5em;
+  font-size: 1em;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input-group.active input {
+  background-color: #302E38;
+  border-color: #8C66FF;
+  box-shadow: 0 0 0 2px rgba(140, 102, 255, 0.2);
+}
+.captcha-section {
+  display: flex;
+  height: 40px; /* 设置输入框和图片容器的高度 */
+  border-radius: 4px;
+  align-items: end; /* 垂直居中对齐 */
+}
+.input-group  {
+  font-size: 14px;
+  margin-bottom: 1em;
+}
+.captcha-section input {
+  flex: 1; /* 输入框占据剩余空间 */
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login-btn {
+  background-color: #8C66FF;
+  color: white;
+  margin-top: 10px;
+}
+
+.login-btn:hover {
+  background-color: #7a5ae0;
+}
+
+.register-btn {
+  background-color: white;
+  color: #8C66FF;
+  border: 1px solid #8C66FF;
+}
+
+.register-btn:hover {
+  background-color: #f5f2ff;
 }
 </style>
