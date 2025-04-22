@@ -57,6 +57,7 @@ const songArtist = ref('Camellia')
       box-shadow:
         inset -15px 0 10px 15px @shadow-color-dark,
         inset 0 0 20px 15px @shadow-color-light;
+
       .cover-img {
         width: 100%;
         height: 100%;
@@ -70,8 +71,8 @@ const songArtist = ref('Camellia')
           width: 100%;
           height: 100%;
           object-fit: cover;
-          user-select: none;
           -webkit-user-drag: none;
+          user-select: none;
         }
       }
 

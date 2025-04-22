@@ -10,7 +10,7 @@
     <MusicSelector></MusicSelector>
 
 
-    <FooterBar></FooterBar>
+    <!-- <FooterBar></FooterBar> -->
   </div>
 </template>
 
@@ -21,7 +21,7 @@ import FFT from '@/components/music/FFT.vue'
 import SearchBar from '@/components/music/SearchBar.vue'
 import ProgressBar from '@/components/music/ProgressBar.vue'
 import MusicSelector from '@/components/music/MusicSelector.vue'
-import FooterBar from '@/components/FooterBar.vue'
+// import FooterBar from '@/components/FooterBar.vue'
 
 import { ref } from 'vue'
 const musicCover = ref(null)

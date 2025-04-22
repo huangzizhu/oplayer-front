@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount,} from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, } from 'vue';
 import { useBgStore } from '@/store/BG';
 import animations from '@/utils/animations';
 import gsap from 'gsap';
@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .bg-container {
     position: fixed;
     top: 0;
@@ -80,28 +80,28 @@ onBeforeUnmount(() => {
     overflow: hidden;
     z-index: -1;
     user-select: none;
-}
 
-.bg-image {
-    position: absolute;
-    top: -10%;
-    left: -10%;
-    width: 120%;
-    height: 120%;
-    background-size: cover;
-    background-position: center;
-    will-change: transform;
-    user-select: none;
-}
+    .bg-image {
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        background-size: cover;
+        background-position: center;
+        will-change: transform;
+        user-select: none;
+    }
 
-.bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(0px);
-    user-select: none;
+    .bg-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(0px);
+        user-select: none;
+    }
 }
 </style>
