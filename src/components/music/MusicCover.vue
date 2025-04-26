@@ -3,13 +3,13 @@
   <div class="music-cover-container">
     <div class="cover-glow">
       <div class="cover">
-        <div class="cover-img">
+        <div class="cover-img" :style="coverStyle">
           <!-- 添加实际图片 -->
-          <img src="../../../public/images/cover.jpg" alt="Album Cover">
+          <!-- <img src="../../../public/images/cover.jpg" alt="Album Cover"> -->
         </div>
         <div class="cover-text">
-          <p class="cover-song-title">{{ songTitle }}</p>
-          <p class="cover-song-artist">{{ songArtist }}</p>
+          <p class="cover-song-title">{{ musicCoverStore.songTitle }}</p>
+          <p class="cover-song-artist">{{ musicCoverStore.songArtist }}</p>
         </div>
       </div>
     </div>
@@ -17,14 +17,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const songTitle = ref('Tojita Sekai')
-const songArtist = ref('Camellia')
+import { computed } from 'vue';
+import { useMusicCover } from '@/store/MusicCover';
+const musicCoverStore = useMusicCover()
+
+const coverStyle = computed(() => ({
+  backgroundImage: `url(${musicCoverStore.coverImage})`,
+  'object-fit': 'cover',
+  '-webkit-user-drag': 'none',
+  'background-position': 'center',
+  'background-repeat': 'no-repeat',
+  'background-size': 'cover',
+}));
+
 </script>
 
 <style lang="less" scoped>
-@cover-width: 720px;
-@cover-height: 300px;
+@cover-width: 35%;
+@cover-height: 350px;
 @cover-bg-color: rgba(35, 35, 35, 0.7);
 @text-color: #fff;
 @glow-color-primary: rgba(255, 255, 255, 1);
