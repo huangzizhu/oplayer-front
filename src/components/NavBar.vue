@@ -1,47 +1,48 @@
 <template>
   <header class="navbar" @mouseenter="handleMouseEnterOverlay(overlayNavBar)"
-    @mouseleave="handleMouseLeaveOverlay(overlayNavBar)" ref="overlayNavBar">
+          @mouseleave="handleMouseLeaveOverlay(overlayNavBar)" ref="overlayNavBar">
     <div class="navbar-left">
       <div class="navbar-item" ref="settingsBtn" :class="{ 'active': navBarStore.isSettingsActive }"
-        @click="handleSettingsClick" @mouseenter="handleMouseEnter(settingsBtn, navBarStore.isSettingsActive)"
-        @mouseleave="handleMouseLeave(settingsBtn, navBarStore.isSettingsActive)">
+           @click="handleSettingsClick" @mouseenter="handleMouseEnter(settingsBtn, navBarStore.isSettingsActive)"
+           @mouseleave="handleMouseLeave(settingsBtn, navBarStore.isSettingsActive)">
         <img src="@/assets/images/settings.svg" alt="" width="48" height="24" class="navbar-icon-settings" />
       </div>
 
-      <div class="navbar-item" ref="homeBtn" @click="handleHomeClick" @mouseenter="handleMouseEnter(homeBtn, false)"
-        @mouseleave="handleMouseLeave(homeBtn, false)">
+      <div class="navbar-item" ref="homeBtn" @click="handleHomeClick"
+           @mouseenter="handleMouseEnter(homeBtn, false)" @mouseleave="handleMouseLeave(homeBtn, false)">
         <img src="@/assets/images/home.svg" alt="" width="48" height="24" class="navbar-icon-home" />
       </div>
 
-      <div class="navbar-item" ref="aboutBtn" :class="{ 'active': navBarStore.isAboutActive }" @click="handleAboutClick"
-        @mouseenter="handleMouseEnter(aboutBtn, navBarStore.isAboutActive)"
-        @mouseleave="handleMouseLeave(aboutBtn, navBarStore.isAboutActive)">
+      <div class="navbar-item" ref="aboutBtn" :class="{ 'active': navBarStore.isAboutActive }"
+           @click="handleAboutClick" @mouseenter="handleMouseEnter(aboutBtn, navBarStore.isAboutActive)"
+           @mouseleave="handleMouseLeave(aboutBtn, navBarStore.isAboutActive)">
         <img src="@/assets/images/info.svg" alt="" width="48" height="24" class="navbar-icon-info" />
       </div>
     </div>
 
     <div class="navbar-right">
-      <div class="navbar-item" ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
-        @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
-        @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
+      <div class="navbar-item" id='profile' ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
+           @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
+           @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
         <div class="navbar-icon user-avatar">
-          <img src="@/assets/images/avatar.jpg" alt="用户头像">
+          <img :src="userStore.userAvatarUrl" alt="用户头像">
         </div>
-        <span class="clock">{{ navBarStore.usrName }}</span>
+        <span class="clock">{{ navBarStore.userName }}</span>
       </div>
 
       <div class="navbar-item-clock" ref="clockBtn" @mouseenter="handleMouseEnter(clockBtn, false)"
-        @mouseleave="handleMouseLeave(clockBtn, false)">
+           @mouseleave="handleMouseLeave(clockBtn, false)">
         <img src="@/assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
         <span class="clock">{{ navBarStore.currentTime }}</span>
       </div>
 
       <div class="navbar-item" ref="notificationsBtn" :class="{ 'active': navBarStore.isNotificationsActive }"
-        @click="handleNotificationsClick"
-        @mouseenter="handleMouseEnter(notificationsBtn, navBarStore.isNotificationsActive)"
-        @mouseleave="handleMouseLeave(notificationsBtn, navBarStore.isNotificationsActive)">
+           @click="handleNotificationsClick"
+           @mouseenter="handleMouseEnter(notificationsBtn, navBarStore.isNotificationsActive)"
+           @mouseleave="handleMouseLeave(notificationsBtn, navBarStore.isNotificationsActive)">
         <div class="navbar-icon">
-          <img src="@/assets/images/notification.svg" alt="" width="24" height="24" class="navbar-icon-settings" />
+          <img src="@/assets/images/notification.svg" alt="" width="24" height="24"
+               class="navbar-icon-settings" />
         </div>
       </div>
 
@@ -77,7 +78,7 @@
 
     <!-- 通知面板 -->
     <div ref="notificationsPanel" class="notifications-panel panel" v-show="navBarStore.isNotificationsPanelVisible"
-      @click.stop>
+         @click.stop>
       <h3>通知面板</h3>
       <div class="panel-content">
         <!-- 通知面板内容 -->
@@ -87,20 +88,20 @@
 
     <!-- 用户资料面板 -->
     <div ref="profilePanel" class="profile-panel panel" v-show="navBarStore.isProfilePanelVisible" @click.stop>
-      <h3>用户资料</h3>
       <div class="panel-content">
-        <!-- 用户资料内容 -->
-        <p>这里是用户资料内容</p>
+        <UserProfileCard ref="userProfileCard"></UserProfileCard>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineProps, ref, watch, nextTick } from 'vue';
+import { onMounted, onUnmounted, defineProps, ref, watch, nextTick} from 'vue';
 import { useRouter } from 'vue-router';
 import { useNavBarStore } from '@/store/NavBar';
 import animations from '@/utils/animations';
+import UserProfileCard from "@/components/view/user/profile/UserProfileCard.vue";
+import {useUserStore} from "@/store/User";
 
 // 按钮引用
 const settingsBtn = ref(null);
@@ -129,6 +130,7 @@ const props = defineProps({
 // 初始化 router 和 store
 const router = useRouter();
 const navBarStore = useNavBarStore();
+const userStore = useUserStore();
 
 // 如果通过属性传入了激活的选项，则设置它
 if (props.activeItem) {
@@ -224,20 +226,20 @@ const handleNotificationsClick = (event) => {
     }
   }
 };
-
+const userProfileCard = ref(null);
 const handleUserProfileClick = (event) => {
   event.stopPropagation(); // 阻止事件冒泡
   animations.buttonPress(profileBtn.value);
-
+  userStore.profilePanel = profilePanel;
   // 获取当前状态
   const currentlyActive = navBarStore.isProfileActive;
-
   if (!currentlyActive) {
     // 如果当前未激活，先更新状态再显示面板
     navBarStore.toggleProfile();
     nextTick(() => {
       if (profilePanel.value) {
         animations.showPanelRight(profilePanel.value);
+        userProfileCard.value.loadInfo();
       }
     });
   } else {
@@ -282,8 +284,8 @@ const handleOverlayClick = (event) => {
   if (activePanels.length > 0) {
     Promise.all(activePanels.map(item => {
       return item.type === 'left' ?
-        animations.hidePanelLeft(item.panel) :
-        animations.hidePanelRight(item.panel);
+          animations.hidePanelLeft(item.panel) :
+          animations.hidePanelRight(item.panel);
     })).then(() => {
       // 所有动画完成后更新状态
       navBarStore.clearActiveItems();
@@ -293,6 +295,7 @@ const handleOverlayClick = (event) => {
     navBarStore.clearActiveItems();
   }
 };
+
 
 const handleMouseEnter = (element, isActive) => {
   if (isActive) return; // 如果元素已激活，不执行悬停动画
@@ -439,7 +442,10 @@ onUnmounted(() => {
   cursor: pointer;
   border-radius: 8px;
 }
-
+#profile{
+  width: 5em;
+  margin-right: 3em;
+}
 .navbar-item-clock {
   display: flex;
   align-items: center;
@@ -460,8 +466,8 @@ onUnmounted(() => {
 
 .navbar-icon {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 2em;
+  height: 2em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -567,12 +573,29 @@ onUnmounted(() => {
 
 .profile-panel {
   top: 10px;
-  right: 10px;
+  right: 5em;
   width: 350px;
   height: 450px;
 }
 
 .panel-content {
-  margin-top: 15px;
+  position: relative;  /* 创建定位上下文 */
+  width: 100%;        /* 确保容器有宽度 */
+  height: 100%;
+  background: radial-gradient(
+      circle at 70% 30%,
+      rgba(230, 100, 159, 0.15) 0%,
+      transparent 40%
+  );
+}
+
+.panel-content > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

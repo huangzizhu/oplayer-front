@@ -10,6 +10,7 @@ import { ref, computed, onMounted, onBeforeUnmount, } from 'vue';
 import { useBgStore } from '@/store/BG';
 import animations from '@/utils/animations';
 import gsap from 'gsap';
+import {getUserInfo} from "@/utils/UserUtils";
 
 const bgStore = useBgStore();
 const bgContainer = ref(null);
@@ -46,7 +47,7 @@ const handleMouseMove = (e) => {
 
 onMounted(() => {
     bgStore.initBackground();
-
+    getUserInfo();
     // 应用背景淡入动画
     if (bgImage.value) {
         animations.fadeInBackground(bgImage.value);
