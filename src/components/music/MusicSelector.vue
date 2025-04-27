@@ -3,7 +3,8 @@
   <div class="music-selector-container" ref="selectorContainerRef">
     <div class="music-list" ref="musicListRef" @wheel="handleWheel">
       <MusicItem v-for="(music, index) in musicSelectorStore.musicLibrary" :key="music.id" :music="music" :index="index"
-        :isActive="index === musicSelectorStore.selectedIndex" />
+        :isActive="index === musicSelectorStore.selectedIndex"
+         />
     </div>
   </div>
 
@@ -63,11 +64,11 @@ const updateActiveItem = () => {
   const visibleItems = Array.from(musicListRef.value.querySelectorAll('.music-item-container'));
   const containerCenter = selectorContainerRef.value.getBoundingClientRect().top + selectorContainerRef.value.clientHeight / 2;
 
-  visibleItems.forEach((item, index) => {
+  visibleItems.forEach((item) => {
     const itemRect = item.getBoundingClientRect();
     const distance = Math.abs((itemRect.top + itemRect.height / 2) - containerCenter);
     if (distance < 50) { // 阈值范围
-      musicSelectorStore.selectMusic(index);
+      
     }
   });
 };
@@ -95,7 +96,7 @@ onUnmounted(() => {
 .music-selector-container {
   position: absolute;
   top: 0%;
-  left: 55%;
+  left: 35%;
   right: 0px;
   height: 100%;
   bottom: -15px;
@@ -105,24 +106,21 @@ onUnmounted(() => {
 
   .music-list {
     position: absolute;
-    padding-left: 50px;
+    padding-left: 38%;
     top: 0;
     left: 0;
-    // width: 100%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    // overflow-y: overlay;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    overflow-y: scroll; // 强制显示滚动条
-    margin-right: -17px; // 抵消滚动条宽度
-    padding-right: 17px; // 补偿内容空间
-    width: calc(100%); // 扩展宽度覆盖滚动条区域
+    overflow-y: overlay;
+    width: calc(100%);
     // z-index: 2;
 
     &::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
       background: transparent;
       // z-index: 1; 
     }
@@ -138,8 +136,6 @@ onUnmounted(() => {
     &::-webkit-scrollbar-button {
       display: none;
     }
-
-
   }
 }
 </style>

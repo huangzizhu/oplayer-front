@@ -1,16 +1,20 @@
 <template>
   <div class="search-bar-container">
     <div class="input-box">
-      <input type="text" placeholder="输入以搜索" class="search-input" @blur="handleBlur" ref="searchInput" />
+      <input type="text" placeholder="输入以搜索" class="search-input" @blur="handleBlur" ref="searchInput"
+        v-model="searchBarStore.searchText" />
       <div class="icon-container">
         <img src="@/assets/images/search.svg" alt="搜索" class="search-icon" />
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
+import { useSearchBar } from '@/store/SearchBar';
+const searchBarStore = useSearchBar();
+
+
 // import { ref, onMounted, onUnmounted } from 'vue';
 // // 创建对input元素的引用
 // const searchInput = ref(null);
@@ -42,19 +46,18 @@
 // onUnmounted(() => {
 //   document.removeEventListener('click', focusInput);
 // });
-
 </script>
 
 <style lang="less" scoped>
 .search-bar-container {
   top: 45px;
-  left: 690px;
+  left: 30%;
   width: 100%;
   height: 200px;
   position: absolute;
   z-index: 10;
   background-color: rgba(10, 10, 10, 0.95);
-  font-family: 'Comfortaa-Light', sans-serif;
+  font-family: "Comfortaa-Light", sans-serif;
 
   .input-box {
     width: 60%;
@@ -77,7 +80,7 @@
       outline: none;
       box-shadow: inset -15px 0 10px 15px rgba(0, 0, 0, 0.5),
         inset 0 0 20px 15px rgba(0, 0, 0, 0.5);
-      font-family: 'Comfortaa-Light', sans-serif;
+      font-family: "Comfortaa-Light", sans-serif;
     }
 
     .icon-container {
@@ -94,7 +97,6 @@
         height: 25px;
       }
     }
-
   }
 }
 </style>

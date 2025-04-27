@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import { useBgStore } from './BG';
 
 export const useMusicSelector = defineStore('musicSelector', () => {
   // 当前选中的曲目索引
@@ -18,7 +19,11 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/cover.jpg",
       difficulty: 9.2,
       length: "3:42",
-      background: "/images/bg-tojita.jpg"
+      background: "/images/cover.jpg",
+      tags: ["Drumstep", "Qualia", "MelodicDubstep"],
+      mapper: "Sotarks",
+      origin: "Original",
+      format: "FLAC",
     },
     {
       id: 2,
@@ -28,7 +33,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/CyphisoniaEP.jpg",
       difficulty: 8.5,
       length: "4:10",
-      background: "/images/bg-ghost.jpg"
+      background: "/images/CyphisoniaEP.jpg"
     },
     {
       id: 3,
@@ -38,7 +43,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/PLANETSHAPER.jpg",
       difficulty: 7.8,
       length: "5:05",
-      background: "/images/bg-planet.jpg"
+      background: "/images/PLANETSHAPER.jpg"
     },
     {
       id: 4,
@@ -48,7 +53,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/PLANETSHAPER.jpg",
       difficulty: 9.7,
       length: "6:08",
-      background: "/images/bg-exit.jpg"
+      background: "/images/PLANETSHAPER.jpg"
     },
     {
       id: 5,
@@ -58,7 +63,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/bg-crystallized.jpg"
+      background: "/images/crystallized.jpg"
     },
     {
       id: 6,
@@ -105,7 +110,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/bg-crystallized.jpg"
+      background: "/images/crystallized.jpg"
     },
     {
       id: 11,
@@ -115,7 +120,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/bg-crystallized.jpg"
+      background: "/images/crystallized.jpg"
     },
     {
       id: 12,
@@ -125,7 +130,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/bg-crystallized.jpg"
+      background: "/images/crystallized.jpg"
     },
     {
       id: 13,
@@ -135,7 +140,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/bg-crystallized.jpg"
+      background: "/images/crystallized.jpg"
     },
     {
       id: 14,
@@ -157,7 +162,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       length: "4:10",
       background: "/images/bg-ghost.jpg"
     },
-    
+
 
 
   ]);
@@ -166,16 +171,13 @@ export const useMusicSelector = defineStore('musicSelector', () => {
   const selectedMusic = computed(() => {
     return musicLibrary.value[selectedIndex.value];
   });
-
+  
+  const bgStore = useBgStore();
   // 设置选中的曲目
   function selectMusic(index) {
-    // 确保索引在范围内
     if (index >= 0 && index < musicLibrary.value.length) {
       selectedIndex.value = index;
-
-      // 更新背景和封面组件可以在这里触发
-      // 如果有其他store，例如背景store，可以在这里调用它的方法
-      // bgStore.changeBackground(selectedMusic.value.background);
+      bgStore.changeBackground(selectedMusic.value.background);
     }
   }
 

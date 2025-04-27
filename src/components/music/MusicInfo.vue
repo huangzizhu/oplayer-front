@@ -18,25 +18,36 @@
         <div class="info-grid">
           <div class="info-item">
             <div class="label">艺术家</div>
-            <div class="value">Camellia</div>
+            <div class="value" @click="handleInfoClick(`artist`, musicSelector.selectedMusic.artist)">{{
+              musicSelector.selectedMusic.artist }}</div>
           </div>
           <div class="info-item">
             <div class="label">BPM</div>
-            <div class="value">175</div>
+            <div class="value" @click="handleInfoClick(`bpm`, musicSelector.selectedMusic.bpm)">{{
+              musicSelector.selectedMusic.bpm
+            }}</div>
           </div>
           <div class="info-item">
             <div class="label">来源</div>
-            <div class="value">原创</div>
+            <div class="value" @click="handleInfoClick(`origin`, musicSelector.selectedMusic.origin)">{{
+              musicSelector.selectedMusic.origin }}</div>
           </div>
           <div class="info-item">
             <div class="label">音频格式</div>
-            <div class="value">MP3 (320kbps)</div>
+            <div class="value" @click="handleInfoClick(`format`, musicSelector.selectedMusic.format)">{{
+              musicSelector.selectedMusic.format }}</div>
           </div>
+        </div>
+
+        <div class="section-title">标签</div>
+        <div class="tags-container">
+          <span v-for="(tag, index) in musicSelector.selectedMusic.tags" :key="index" class="tag-item"
+            @click="handleTagClick(tag)">{{ tag }}</span>
         </div>
 
         <div class="section-title">描述</div>
         <div class="description">
-          超高速的音乐体验，Camellia 标志性的高能电子音乐风格。
+          {{ musicSelector.selectedMusic.description || 'No Description' }}
         </div>
       </div>
 
@@ -116,12 +127,17 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useMusicSelector } from '@/store/MusicSelector.js';
+import { useSearchBar } from '@/store/SearchBar';
+
+const musicSelector = useMusicSelector();
+const SearchBar = useSearchBar();
 
 // 定义标签页
 const tabs = [
   { id: 'details', name: 'Details' },
-  { id: 'beatmaps', name: '谱面' },
-  { id: 'leaderboard', name: '排行榜' }
+  { id: 'beatmaps', name: 'Beatmaps' },
+  { id: 'leaderboard', name: 'Leaderboard' }
 ];
 
 // 当前激活的标签页
@@ -142,6 +158,17 @@ const indicatorStyle = computed(() => {
     transform: `translateX(${index * 100}%)`
   };
 });
+
+const handleTagClick = (tag) => {
+  // 处理标签点击事件
+  console.log(`Clicked on tag: ${tag}`);
+  SearchBar.searchText = tag
+};
+const handleInfoClick = (Infotype, info) => {
+  // 处理信息点击事件
+  console.log(`Clicked on info: ${info}`);
+  SearchBar.searchText = `${Infotype}=${info}`
+};
 </script>
 
 <style lang="less" scoped>
@@ -161,9 +188,9 @@ const indicatorStyle = computed(() => {
 
 // 主容器
 .music-info-container {
-  top: 350px;
+  top: 400px;
   left: 5px;
-  width: 690px;
+  width: 33%;
   height: 59%;
   position: absolute;
   // background-color: @bg-color;
@@ -176,6 +203,7 @@ const indicatorStyle = computed(() => {
   // 导航栏
   .music-info-navbar {
     height: 50px;
+    width: 50%;
     display: flex;
     position: relative;
     // background-color: rgba(0, 0, 0, 0.3);
@@ -186,7 +214,7 @@ const indicatorStyle = computed(() => {
       align-items: center;
       justify-content: center;
       color: @text-dim;
-      font-size: 16px;
+      font-size: 12px;
       letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -211,6 +239,7 @@ const indicatorStyle = computed(() => {
       box-shadow: 0 0 10px @highlight-color;
     }
   }
+
   .divider {
     width: 100%;
     height: 1px;
@@ -225,6 +254,7 @@ const indicatorStyle = computed(() => {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
+
     // 标签内容通用样式
     .tab-content {
       height: 100%;
@@ -257,6 +287,34 @@ const indicatorStyle = computed(() => {
           .value {
             color: @text-link;
             font-size: 16px;
+            cursor: pointer;
+
+            &:hover {
+              color: rgba(68, 170, 250, 0.7);
+              transition: color 0.2s ease;
+            }
+          }
+
+        }
+      }
+
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+
+        .tag-item {
+          color: @text-link;
+          padding: 5px 10px;
+          border-radius: 15px;
+          cursor: pointer;
+          // transition: all 0.3s ease;
+
+          &:hover {
+            color: rgba(68, 170, 250, 0.7);
+            transition: color 0.2s ease;
           }
         }
       }
