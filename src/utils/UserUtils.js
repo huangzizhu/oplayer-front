@@ -71,7 +71,7 @@ export const formatDate = (dateString) => {
     // 格式化为 "xxxx年xx月xx日"
     return `${year}年${month}月${day}日`;
 }
-const checkBackgroundImage = (imageUrl) => {
+export const checkBackgroundImage = (imageUrl) => {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.src = imageUrl;
@@ -79,3 +79,14 @@ const checkBackgroundImage = (imageUrl) => {
         img.onerror = () => reject(new Error("背景图片加载失败")); // 图片加载失败
     });
 };
+
+// 格式化时长
+export const formatDuration = (minutes) => {
+    if (minutes === null || minutes === undefined) minutes = 0;
+    const mins = parseInt(minutes)
+    if (mins < 60) return `${mins}min`
+
+    const hours = Math.floor(mins / 60)
+    const remainingMins = mins % 60
+    return `${hours}h${remainingMins > 0 ? `${remainingMins}min` : ''}`
+}

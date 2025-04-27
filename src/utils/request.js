@@ -2,8 +2,12 @@ import axios from "axios";
 
 
 const request = axios.create({
-  baseURL: "/api",
+  baseURL: "/op",
   timeout: 50000,
+});
+const uapiRequest = axios.create({
+    baseURL: "/uapi",
+    timeout: 50000,
 });
 
 request.interceptors.request.use(
@@ -28,4 +32,4 @@ request.interceptors.response.use(
   }
 );
 
-export default request;
+export  {request,uapiRequest};

@@ -329,7 +329,7 @@ const handleRegister = async () => {
   hashPassword(hashedPassword,password);
   regForm.value.uuid = uuid.value;
   regForm.value.username = username.value;
-  regForm.value.password = hashedPassword.value;
+  regForm.value.hashedPassword = hashedPassword.value;
   regForm.value.email = email.value;
   regForm.value.emailCode = emailCode.value;
   regForm.value.imageCode = captcha.value;
@@ -385,7 +385,7 @@ onMounted(()=>{
   padding: 30px;
   flex-direction: column;
   position: relative; /* 新增 */
-  overflow: hidden; /* 新增 */
+  overflow-y: hidden;
 }
 .register-box::before,
 .register-box::after {

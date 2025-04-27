@@ -45,16 +45,16 @@
     <div class="stats-row">
       <div class="stats-section">
         <div class="stat-item">
-          <div class="stat-value">1,234</div>
-          <div class="stat-label">粉丝</div>
+          <div class="stat-value">{{uid}}</div>
+          <div class="stat-label">UID</div>
         </div>
         <div class="stat-item">
-          <div class="stat-value">567</div>
-          <div class="stat-label">关注</div>
+          <div class="stat-value">{{playCount}}</div>
+          <div class="stat-label">播放</div>
         </div>
         <div class="stat-item">
-          <div class="stat-value">89</div>
-          <div class="stat-label">歌单</div>
+          <div class="stat-value">{{duration}}</div>
+          <div class="stat-label">时长</div>
         </div>
       </div>
     </div>
@@ -68,11 +68,18 @@
         </div>
         <div class="grid-item">
           <div class="detail-label">性别</div>
-          <div class="detail-value">{{ gender === 1 ? '男' : '女' }}</div>
+          <div class="detail-value">
+            <span v-if="gender === 1">男</span>
+            <span v-else-if="gender ===2">女</span>
+            <span v-else>未填写</span>
+          </div>
         </div>
         <div class="grid-item">
           <div class="detail-label">出生日期</div>
-          <div class="detail-value">{{ formatDate(birthDate) }}</div>
+          <div class="detail-value">
+            <span v-if="birthDate">{{ formatDate(birthDate) }}</span>
+            <span v-else>未填写</span>
+          </div>
         </div>
         <div class="grid-item">
           <div class="detail-label">注册时间</div>
@@ -88,6 +95,9 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import UserClock from "@/components/view/user/profile/UserClock.vue"
 import MiniCalender from "@/components/view/user/profile/MiniCalender.vue";
+import {getIp, getRegion, getSays, getWeather} from "@/utils/api/OtherApi";
+import {ElMessage} from "element-plus";
+
 const props = defineProps({
   birthDate: {
     type: String,
@@ -105,6 +115,18 @@ const props = defineProps({
     type: String,
     required: true
   },
+  uid: {
+    type: Number,
+    required: true
+  },
+  playCount: {
+    type: Number,
+    required: true
+  },
+  duration: {
+    type: String,
+    required: true
+  }
 });
 // 每日一言
 const dailyQuote = ref('');
@@ -131,9 +153,18 @@ const formatDate = (dateString) => {
 // 获取天气数据
 const fetchWeather = async () => {
   try {
-    // 这里替换为实际的天气API调用
-    // const response = await fetch('your-weather-api');
-    // weatherData.value = await response.json();
+    let city;
+    const ipResponse = await getIp();
+    console.log(ipResponse);
+    if(ipResponse.status !== 200) city = "北京";
+    else city = ipResponse.data.data.city;
+    const weatherResponse = await getWeather(city);
+    console.log(weatherResponse.data);
+    weatherData.value.city = weatherResponse.data.city;
+    weatherData.value.temperature = weatherResponse.data.temperature;
+    weatherData.value.wind_direction = weatherResponse.data.wind_direction;
+    weatherData.value.wind_power = weatherResponse.data.wind_power;
+    weatherData.value.weather = weatherResponse.data.weather;
   } catch (error) {
     console.error('获取天气数据失败:', error);
   }
@@ -142,9 +173,8 @@ const fetchWeather = async () => {
 // 获取每日一言
 const fetchDailyQuote = async () => {
   try {
-    // 这里替换为实际的每日一言API调用
-    // const response = await fetch('your-quote-api');
-    // dailyQuote.value = await response.json();
+    const response = await getSays();
+    dailyQuote.value = response.data;
   } catch (error) {
     console.error('获取每日一言失败:', error);
   }

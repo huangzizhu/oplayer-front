@@ -28,7 +28,11 @@
         <UserInfo :birth-date="birthDate"
                   :gender="gender"
                   :reg-time="regTime"
-                  :phone="phone"></UserInfo>
+                  :phone="phone"
+                  :uid="id"
+                  :play-count="playCount"
+                  :duration="duration"
+        ></UserInfo>
         </div>
 
         <div class="right-space"></div>
@@ -54,7 +58,7 @@ import CollectionPlace from "@/components/view/user/profile/mediaDisplay/Collect
 import PlaylistPlace from "@/components/view/user/profile/mediaDisplay/PlaylistPlace.vue";
 import UserCard from "@/components/view/user/profile/UserCard.vue";
 import {useUserStore} from "@/store/User";
-import {formatDate, getUserInfo} from "@/utils/UserUtils";
+import {formatDuration, getUserInfo} from "@/utils/UserUtils";
 import UserInfo from "@/components/view/user/profile/UserInfo.vue";
 
 const router = useRouter()
@@ -71,8 +75,11 @@ const phone = ref('')
 const gender = ref('')
 const birthDate = ref('')
 const regTime = ref('2023-01-01')
+const id = ref(0);
+const playCount = ref(0);
+const duration = ref('');
 
-// 模拟从API获取用户数据
+//获取用户数据
 const getUser = async () => {
   const user = await getUserInfo();
   background.value = user.background;
@@ -84,6 +91,9 @@ const getUser = async () => {
   birthDate.value = user.birthDate;
   regTime.value = user.regTime;
   gender.value = user.gender === 1 ? '男' : '女';
+  id.value = user.id;
+  playCount.value = user.userBehavior.totalPlayCount;
+  duration.value = formatDuration(user.userBehavior.totalPlayDuration);
 }
 
 const handleAvatarError = () => {

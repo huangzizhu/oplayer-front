@@ -74,8 +74,9 @@ import {useUserStore} from '@/store/User'
 import animations from '@/utils/animations';
 import {useNavBarStore} from "@/store/NavBar";
 import {getUserInfo} from "@/utils/UserUtils";
+import {formatDuration} from "@/utils/UserUtils";
 
-const navBarStore = useNavBarStore();
+  const navBarStore = useNavBarStore();
 const userStore = useUserStore();
 const router = useRouter();
 
@@ -86,15 +87,6 @@ const uid = ref("unknown");
 const playCount = ref(0);
 const duration = ref(0);
 
-// 格式化时长
-const formatDuration = (minutes) => {
-  const mins = parseInt(minutes)
-  if (mins < 60) return `${mins}min`
-
-  const hours = Math.floor(mins / 60)
-  const remainingMins = mins % 60
-  return `${hours}h${remainingMins > 0 ? `${remainingMins}min` : ''}`
-}
 
 // 头像加载失败处理
 const handleAvatarError = () => {

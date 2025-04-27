@@ -41,7 +41,7 @@ const emitLoginSuccess = () => {
   userStore.isLoggedIn = true;
 };
 const emitRegSuccess = () => {
-  activeTab.value = 'login';
+  userStore.activeTab = 'login';
 };
 
 const checkLoginStatus = async () => {
@@ -68,6 +68,10 @@ onMounted(()=> {
 </script>
 
 <style scoped>
+.userview {
+  overflow-y: auto; /* 添加垂直滚动条 */
+  max-height: 100vh; /* 限制最大高度为视口高度 */
+}
 /* 保留原有的过渡动画样式 */
 .auth-container {
   position: relative;
