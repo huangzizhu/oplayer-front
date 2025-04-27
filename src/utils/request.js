@@ -1,6 +1,4 @@
 import axios from "axios";
-import { ElMessage } from "element-plus";
-import router from "../router/index";
 
 
 const request = axios.create({
@@ -26,10 +24,6 @@ request.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    if(error.request.status === 401) {
-      ElMessage.error("请先登录");
-      router.push("/user");
-    }
     return Promise.reject(error);
   }
 );

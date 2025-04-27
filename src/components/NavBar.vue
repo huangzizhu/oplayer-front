@@ -89,18 +89,18 @@
         <!-- 用户资料面板 -->
         <div ref="profilePanel" class="profile-panel panel" v-show="navBarStore.isProfilePanelVisible" @click.stop>
             <div class="panel-content">
-                <UserProfileCard></UserProfileCard>
+                <UserProfileCard ref="userProfileCard"></UserProfileCard>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineProps, ref, watch, nextTick } from 'vue';
+import { onMounted, onUnmounted, defineProps, ref, watch, nextTick} from 'vue';
 import { useRouter } from 'vue-router';
 import { useNavBarStore } from '@/store/NavBar';
 import animations from '@/utils/animations';
-import UserProfileCard from "@/components/view/user/UserProfileCard.vue";
+import UserProfileCard from "@/components/view/user/profile/UserProfileCard.vue";
 import {useUserStore} from "@/store/User";
 
 // 按钮引用
@@ -226,20 +226,20 @@ const handleNotificationsClick = (event) => {
         }
     }
 };
-
+const userProfileCard = ref(null);
 const handleUserProfileClick = (event) => {
     event.stopPropagation(); // 阻止事件冒泡
     animations.buttonPress(profileBtn.value);
-
+    userStore.profilePanel = profilePanel;
     // 获取当前状态
     const currentlyActive = navBarStore.isProfileActive;
-
     if (!currentlyActive) {
         // 如果当前未激活，先更新状态再显示面板
         navBarStore.toggleProfile();
         nextTick(() => {
             if (profilePanel.value) {
                 animations.showPanelRight(profilePanel.value);
+                userProfileCard.value.loadInfo();
             }
         });
     } else {
@@ -295,6 +295,7 @@ const handleOverlayClick = (event) => {
         navBarStore.clearActiveItems();
     }
 };
+
 
 const handleMouseEnter = (element, isActive) => {
     if (isActive) return; // 如果元素已激活，不执行悬停动画

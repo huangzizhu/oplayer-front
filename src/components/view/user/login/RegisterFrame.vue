@@ -376,7 +376,7 @@ onMounted(()=>{
   gap: 20px;
   border-radius: 21px;
   backdrop-filter: blur(11px);
-  background-color: rgba(0,0,0, 0.382);
+  background: rgba(35, 36, 42, 0.8);
   box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
   border: 0px rgba(255,255,255,0.4) solid;
   border-bottom: 0px rgba(40,40,40,0.35) solid;
@@ -384,6 +384,59 @@ onMounted(()=>{
   width: 100%;
   padding: 30px;
   flex-direction: column;
+  position: relative; /* 新增 */
+  overflow: hidden; /* 新增 */
+}
+.register-box::before,
+.register-box::after {
+  content: '';
+  position: absolute;
+  top: -2px;  /* 调整为刚好超出边框一点 */
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: 1;
+  animation: animate 8s linear infinite; /* 延长动画时间使过渡更平滑 */
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的缓动函数 */
+  background: linear-gradient(0deg, transparent, #8C66FF, #8C66FF);
+  border-radius: 23px; /* 比容器大1-2px */
+}
+/* 添加遮罩层，只显示边缘 */
+.register-box::before,
+.register-box::after {
+  -webkit-mask:
+      linear-gradient(#fff, #fff) content-box,
+      linear-gradient(#fff, #fff);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px; /* 控制流光宽度 */
+}
+
+.register-box::after {
+  animation-delay: -4s;
+}
+
+.register-box > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 复用登录页面的动画关键帧 */
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
 }
 
 .logo-section {

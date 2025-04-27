@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MusicSelectView from '@/components/view/MusicSelectView.vue'
 import MainView from '@/components/view/MainView.vue'
 import UserView from "@/components/view/UserView.vue";
-import LoginFrame from "@/components/view/user/LoginFrame.vue";
+import LoginFrame from "@/components/view/user/login/LoginFrame.vue";
 // // import PlaylistView from '../views/PlaylistView.vue'
 // import SettingsView from '../views/SettingsView.vue'
 // import AboutView from '../views/AboutView.vue'

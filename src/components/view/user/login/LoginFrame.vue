@@ -107,7 +107,7 @@ const handleLogin = async () => {
     router.push("/user");
   }
   else {
-    ElMessage.error(response.data.msg);
+    ElMessage.error(response.msg);
   }
 
 };
@@ -129,7 +129,7 @@ onMounted(() => {
   gap: 20px;
   border-radius: 21px;
   backdrop-filter: blur(11px);
-  background-color: rgba(0,0,0, 0.382);
+  background: rgba(35, 36, 42, 0.8);
   box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
   border: 0px rgba(255,255,255,0.4) solid;
   border-bottom: 0px rgba(40,40,40,0.35) solid;
@@ -138,6 +138,61 @@ onMounted(() => {
   max-width: 400px;
   padding: 30px;
   flex-direction: column;
+  position: relative; /* 需要设置为relative以便伪元素定位 */
+  overflow: hidden; /* 隐藏超出部分 */
+}
+/* 边缘流光效果 */
+.login-box::before,
+.login-box::after {
+  content: '';
+  position: absolute;
+  top: -2px;  /* 调整为刚好超出边框一点 */
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: 1;
+  animation: animate 8s linear infinite; /* 延长动画时间使过渡更平滑 */
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的缓动函数 */
+  background: linear-gradient(0deg, transparent, #8C66FF, #8C66FF);
+  border-radius: 23px; /* 比容器大1-2px */
+}
+
+.login-box::after {
+  animation-delay: -4s; /* 调整为动画时间的一半 */
+}
+
+/* 添加遮罩层，只显示边缘 */
+.login-box::before,
+.login-box::after {
+  -webkit-mask:
+      linear-gradient(#fff, #fff) content-box,
+      linear-gradient(#fff, #fff);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px; /* 控制流光宽度 */
+}
+
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0; /* 起始时透明 */
+  }
+  5% {
+    opacity: 1; /* 快速淡入 */
+  }
+  95% {
+    opacity: 1; /* 保持可见 */
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0; /* 结束前淡出 */
+  }
+}
+
+/* 内部内容 */
+.login-box > * {
+  position: relative;
+  z-index: 2;
 }
 
 .logo-section {

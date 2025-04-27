@@ -30,7 +30,7 @@
     </div>
 
     <!-- 按钮组 -->
-    <div class="button-group">
+    <div class="button-group" v-if="loginStatus">
       <button
           class="profile-button"
           @click="navigateToUserProfile"
@@ -46,45 +46,45 @@
         <span class="shooting-star"></span>
       </button>
     </div>
+    <div class="button-group" v-else>
+      <button
+          class="profile-button"
+          @click="handleLogin"
+      >
+        登录
+        <span class="shooting-star"></span>
+      </button>
+      <button
+          class="logout-button"
+          @click="handleReg"
+      >
+        注册
+        <span class="shooting-star"></span>
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
-/* eslint-disable */
+  /* eslint-disable */
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import defaultAvatar from '@/assets/images/avatar.jpg'
 import {useUserStore} from '@/store/User'
-import {getLoginStatus} from "@/utils/api/UserApi";
-import {ElMessage} from "element-plus";
+import animations from '@/utils/animations';
+import {useNavBarStore} from "@/store/NavBar";
+import {getUserInfo} from "@/utils/UserUtils";
 
-
+const navBarStore = useNavBarStore();
 const userStore = useUserStore();
-const router = useRouter()
+const router = useRouter();
 
-// 定义props
-const props = defineProps({
-  avatarUrl: {
-    type: String,
-    default: 'https://example.com/default-avatar.jpg'
-  },
-  username: {
-    type: String,
-    default: '用户名'
-  },
-  uid: {
-    type: [String, Number],
-    default: 0
-  },
-  playCount: {
-    type: [String, Number],
-    default: 0
-  },
-  duration: { // 单位分钟
-    type: [String, Number],
-    default: 0
-  }
-})
+const loginStatus = computed(() => userStore.isLoggedIn);
+const avatarUrl = ref(userStore.userAvatarUrl);
+const username = ref('未登录');
+const uid = ref("unknown");
+const playCount = ref(0);
+const duration = ref(0);
 
 // 格式化时长
 const formatDuration = (minutes) => {
@@ -97,40 +97,70 @@ const formatDuration = (minutes) => {
 }
 
 // 头像加载失败处理
-const avatarUrl = ref(props.avatarUrl)
 const handleAvatarError = () => {
   avatarUrl.value = defaultAvatar
 }
 
 // 跳转到个人中心
 const navigateToUserProfile = () => {
-  router.push(`/user/${props.uid}`)
+  animations.hidePanelRight(userStore.profilePanel).then(() => {
+    // 动画完成后再更新状态
+    navBarStore.toggleProfile();})
+  router.push(`/user`)
 }
 
 // 处理退出登录
 const handleLogout = () => {
-  // 这里添加退出登录逻辑
-  console.log('用户退出登录')
+  localStorage.removeItem("loginUser");
+  animations.hidePanelRight(userStore.profilePanel).then(() => {
+    // 动画完成后再更新状态
+    navBarStore.toggleProfile();})
+  userStore.isLoggedIn = false;
+  router.push('/user');
 }
-onMounted(async ()=>{
+
+// 处理登录
+const handleLogin = () => {
+  animations.hidePanelRight(userStore.profilePanel).then(() => {
+    // 动画完成后再更新状态
+    navBarStore.toggleProfile();})
+  userStore.activeTab = "login";
+  router.push('/user');
+}
+// 处理注册
+const handleReg = () => {
+  animations.hidePanelRight(userStore.profilePanel).then(() => {
+    // 动画完成后再更新状态
+    navBarStore.toggleProfile();})
+  userStore.activeTab = "register";
+  router.push('/user');
+}
+
+const loadInfo = async () => {
   const loginUser = JSON.parse(localStorage.getItem("loginUser"));
-  if(!loginUser){
-    props.username = "未登录"
+  const user = await getUserInfo(loginUser);
+  if (!loginUser || !user) {
+    username.value = "未登录"
+    playCount.value = 0
+    duration.value = 0
+    uid.value = 'unknown';
+    userStore.isLoggedIn = false;
     return;
   }
-  try {
-    const response = await getLoginStatus(); // 假设 getLoginStatus 是异步的
-    if (response.code === 1) {
-      props.avatarUrl = response.data.avatarUrl;
+  userStore.userInfo = user;
+  avatarUrl.value = user.avatarUrl;
+  uid.value = user.id;
+  playCount.value = user.userBehavior.totalPlayCount;
+  duration.value = user.userBehavior.duration;
+  if (duration.value === undefined) {
+    duration.value = 0;
+  }
+  username.value = user.username;
+}
+defineExpose({
+  loadInfo
+});
 
-    } else {
-      ElMessage.error(response.msg)
-    }
-  } catch (error) {
-      router.push('/user')
-      ElMessage.error("检查登录状态失败");
-    }
-})
 </script>
 
 <style scoped>

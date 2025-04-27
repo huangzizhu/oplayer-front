@@ -4,8 +4,8 @@
     <div v-else class="auth-container">
       <!-- 使用新的 TabSwitcher 组件 -->
       <TabSwitcher
-          v-model:activeTab="activeTab"
-          @update:activeTab="activeTab = $event"
+          v-model:activeTab="userStore.activeTab"
+          @update:activeTab="userStore.activeTab = $event"
       />
 
       <transition
@@ -18,23 +18,27 @@
 </template>
 
 <script setup>
+/*eslint-disable*/
 import { computed, ref, onMounted } from 'vue';
 import {getLoginStatus} from "@/utils/api/UserApi";
-import LoginFrame from "@/components/view/user/LoginFrame.vue";
-import RegisterFrame from "@/components/view/user/RegisterFrame.vue";
-import UserProfile from '@/components/view/user/UserProfile.vue';
-import TabSwitcher from '@/components/view/user/TabSwitcher.vue';
+import LoginFrame from "@/components/view/user/login/LoginFrame.vue";
+import RegisterFrame from "@/components/view/user/login/RegisterFrame.vue";
+import UserProfile from '@/components/view/user/profile/UserProfile.vue';
+import TabSwitcher from '@/components/view/user/login/TabSwitcher.vue';
 import {ElMessage} from "element-plus";
+import {useUserStore} from "@/store/User";
 
-const activeTab = ref('login');
-const isLoggedIn = ref(true);
+const userStore = useUserStore();
 
 const currentComponent = computed(() => {
-  return activeTab.value === 'login' ? LoginFrame : RegisterFrame;
+  return userStore.activeTab === 'login' ? LoginFrame : RegisterFrame;
+});
+const isLoggedIn = computed(() => {
+  return userStore.isLoggedIn;
 });
 
 const emitLoginSuccess = () => {
-  isLoggedIn.value = true;
+  userStore.isLoggedIn = true;
 };
 const emitRegSuccess = () => {
   activeTab.value = 'login';
@@ -44,13 +48,14 @@ const checkLoginStatus = async () => {
   try {
     const response = await getLoginStatus(); // 假设 getLoginStatus 是异步的
     if (response.code === 1) {
-      isLoggedIn.value = true;
+      userStore.isLoggedIn = true;
     } else {
-      isLoggedIn.value = false; // 确保更新登录状态
+      userStore.isLoggedIn = false; // 确保更新登录状态
     }
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      isLoggedIn.value = false; // 确保更新登录状态
+      ElMessage.error("请先登录");
+      userStore.isLoggedIn = false; // 确保更新登录状态
     } else {
       ElMessage.error("检查登录状态失败");
     }
