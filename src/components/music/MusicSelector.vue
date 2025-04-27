@@ -3,23 +3,23 @@
   <div class="music-selector-container" ref="selectorContainerRef">
     <div class="music-list" ref="musicListRef" @wheel="handleWheel">
       <MusicItem v-for="(music, index) in musicSelectorStore.musicLibrary" :key="music.id" :music="music" :index="index"
-        :isActive="index === musicSelectorStore.selectedIndex"
-         />
+        :isActive="index === musicSelectorStore.selectedIndex" />
     </div>
   </div>
 
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { useMusicSelector } from '@/store/MusicSelector';
 import MusicItem from '@/components/music/MusicItem.vue';
+import { useSearchBar } from '@/store/SearchBar'; // 引入搜索栏状态管理
 import gsap from 'gsap';
 
 const musicSelectorStore = useMusicSelector();
 
 const musicListRef = ref(null);
 const selectorContainerRef = ref(null);
-
+const searchBarStore = useSearchBar(); // 引入搜索栏状态管理
 
 // 添加滚动控制逻辑
 const scrollTarget = ref(0);
@@ -68,10 +68,26 @@ const updateActiveItem = () => {
     const itemRect = item.getBoundingClientRect();
     const distance = Math.abs((itemRect.top + itemRect.height / 2) - containerCenter);
     if (distance < 50) { // 阈值范围
-      
+
     }
   });
 };
+// 监听搜索结果变化，重新初始化视差
+watch(() => searchBarStore.searchResults, () => {
+  // 使用nextTick确保DOM已更新
+  nextTick(() => {
+    // 重置滚动位置
+    if (musicListRef.value) {
+      musicListRef.value.scrollTop = 0;
+      scrollTarget.value = 0;
+
+      // 延迟调用更新视差，确保列表已渲染
+      setTimeout(() => {
+        updateParallax();
+      }, 100);
+    }
+  });
+}, { deep: true });
 
 // 添加滚动监听
 onMounted(() => {
@@ -81,6 +97,7 @@ onMounted(() => {
       musicListRef.value.addEventListener('scroll', updateParallax);
       window.addEventListener('resize', updateParallax);
     }
+    musicSelectorStore.selectMusic(0);
   });
 });
 

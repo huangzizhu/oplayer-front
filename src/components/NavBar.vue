@@ -513,7 +513,6 @@ onUnmounted(() => {
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: 950;
-  /* 低于面板的层级 */
   backdrop-filter: blur(2px);
   opacity: 0;
   pointer-events: none;

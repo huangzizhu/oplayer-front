@@ -19,7 +19,7 @@ import MusicCover from '@/components/music/MusicCover.vue'
 import MusicInfo from '@/components/music/MusicInfo.vue'
 import FFT from '@/components/music/FFT.vue'
 import SearchBar from '@/components/music/SearchBar.vue'
-import ProgressBar from '@/components/music/ProgressBar.vue'
+import ProgressBar from '@/components/music/MusicPlayerControls.vue'
 import MusicSelector from '@/components/music/MusicSelector.vue'
 // import FooterBar from '@/components/FooterBar.vue'
 

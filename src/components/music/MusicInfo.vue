@@ -28,9 +28,9 @@
             }}</div>
           </div>
           <div class="info-item">
-            <div class="label">来源</div>
-            <div class="value" @click="handleInfoClick(`origin`, musicSelector.selectedMusic.origin)">{{
-              musicSelector.selectedMusic.origin }}</div>
+            <div class="label">时长</div>
+            <div class="value" @click="handleInfoClick(`length`, musicSelector.selectedMusic.length)">{{
+              musicSelector.selectedMusic.length }}</div>
           </div>
           <div class="info-item">
             <div class="label">音频格式</div>
@@ -167,7 +167,7 @@ const handleTagClick = (tag) => {
 const handleInfoClick = (Infotype, info) => {
   // 处理信息点击事件
   console.log(`Clicked on info: ${info}`);
-  SearchBar.searchText = `${Infotype}=${info}`
+  SearchBar.searchText = `${info}`
 };
 </script>
 

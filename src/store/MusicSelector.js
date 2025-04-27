@@ -1,183 +1,52 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useBgStore } from './BG';
+import { useMusicLibrary } from './MusicLibrary';
+import { useSearchBar } from './SearchBar';
 
 export const useMusicSelector = defineStore('musicSelector', () => {
+  // 引入音乐库和搜索栏
+  const musicLibraryStore = useMusicLibrary();
+  const searchBarStore = useSearchBar();
+  const bgStore = useBgStore();
+
   // 当前选中的曲目索引
   const selectedIndex = ref(0);
 
   // 滚动位置
   const scrollPosition = ref(0);
 
-  // 曲目库
-  const musicLibrary = ref([
-    {
-      id: 1,
-      title: "Tojita Sekai",
-      artist: "Camellia",
-      bpm: 175,
-      cover: "/images/cover.jpg",
-      difficulty: 9.2,
-      length: "3:42",
-      background: "/images/cover.jpg",
-      tags: ["Drumstep", "Qualia", "MelodicDubstep"],
-      mapper: "Sotarks",
-      origin: "Original",
-      format: "FLAC",
-    },
-    {
-      id: 2,
-      title: "Ghost",
-      artist: "Camellia",
-      bpm: 220,
-      cover: "/images/CyphisoniaEP.jpg",
-      difficulty: 8.5,
-      length: "4:10",
-      background: "/images/CyphisoniaEP.jpg"
-    },
-    {
-      id: 3,
-      title: "PLANET//SHAPER",
-      artist: "Camellia",
-      bpm: 160,
-      cover: "/images/PLANETSHAPER.jpg",
-      difficulty: 7.8,
-      length: "5:05",
-      background: "/images/PLANETSHAPER.jpg"
-    },
-    {
-      id: 4,
-      title: "Exit This Earth's Atomosphere",
-      artist: "Camellia",
-      bpm: 170,
-      cover: "/images/PLANETSHAPER.jpg",
-      difficulty: 9.7,
-      length: "6:08",
-      background: "/images/PLANETSHAPER.jpg"
-    },
-    {
-      id: 5,
-      title: "Crystallized",
-      artist: "Camellia",
-      bpm: 174,
-      cover: "/images/crystallized.jpg",
-      difficulty: 8.9,
-      length: "4:55",
-      background: "/images/crystallized.jpg"
-    },
-    {
-      id: 6,
-      title: "S.A.T.E.L.L.I.T.E.",
-      artist: "Camellia",
-      bpm: 150,
-      cover: "/images/cover.jpg",
-    },
-    {
-      id: 7,
-      title: "+ERABY+E CONNEC+10N",
-      artist: "Camellia",
-      bpm: 120,
-      cover: "/images/TEAOIO.jpg",
-      difficulty: 7.5,
-      length: "3:20",
-      background: "/images/bg-lost-woods.jpg"
-    },
-    {
-      id: 8,
-      title: "The King of Lions",
-      artist: "Camellia",
-      bpm: 190,
-      cover: "/images/king.jpg",
-      difficulty: 9.1,
-      length: "3:32",
-      background: "/images/bg-king.jpg"
-    },
-    {
-      id: 9,
-      title: "Bassdrop Freaks",
-      artist: "Camellia",
-      bpm: 175,
-      cover: "/images/bassdrop.jpg",
-      difficulty: 8.2,
-      length: "4:44",
-      background: "/images/bg-bassdrop.jpg"
-    },
-    {
-      id: 10,
-      title: "Crystallized",
-      artist: "Camellia",
-      bpm: 174,
-      cover: "/images/crystallized.jpg",
-      difficulty: 8.9,
-      length: "4:55",
-      background: "/images/crystallized.jpg"
-    },
-    {
-      id: 11,
-      title: "Crystallized",
-      artist: "Camellia",
-      bpm: 174,
-      cover: "/images/crystallized.jpg",
-      difficulty: 8.9,
-      length: "4:55",
-      background: "/images/crystallized.jpg"
-    },
-    {
-      id: 12,
-      title: "Crystallized",
-      artist: "Camellia",
-      bpm: 174,
-      cover: "/images/crystallized.jpg",
-      difficulty: 8.9,
-      length: "4:55",
-      background: "/images/crystallized.jpg"
-    },
-    {
-      id: 13,
-      title: "Crystallized111",
-      artist: "Camellia",
-      bpm: 174,
-      cover: "/images/crystallized.jpg",
-      difficulty: 8.9,
-      length: "4:55",
-      background: "/images/crystallized.jpg"
-    },
-    {
-      id: 14,
-      title: "Ghost",
-      artist: "Camellia",
-      bpm: 220,
-      cover: "/images/CyphisoniaEP.jpg",
-      difficulty: 8.5,
-      length: "4:10",
-      background: "/images/bg-ghost.jpg"
-    },
-    {
-      id: 15,
-      title: "Ghost",
-      artist: "Camellia",
-      bpm: 220,
-      cover: "/images/CyphisoniaEP.jpg",
-      difficulty: 8.5,
-      length: "4:10",
-      background: "/images/bg-ghost.jpg"
-    },
-
-
-
-  ]);
+  // 计算属性：音乐库 - 考虑搜索结果
+  const musicLibrary = computed(() => {
+    // 如果有搜索结果且搜索激活，则显示搜索结果
+    if (searchBarStore.isSearchActive && searchBarStore.searchResults.length > 0) {
+      return searchBarStore.searchResults;
+    }
+    // 否则显示完整音乐库
+    return musicLibraryStore.musicLibrary;
+  });
 
   // 计算属性：当前选中的曲目
   const selectedMusic = computed(() => {
-    return musicLibrary.value[selectedIndex.value];
+    if (musicLibrary.value.length > 0 && selectedIndex.value < musicLibrary.value.length) {
+      return musicLibrary.value[selectedIndex.value];
+    }
+    // 如果没有音乐或索引超出范围，返回第一首曲目或空对象
+    return musicLibrary.value[0] || {};
   });
-  
-  const bgStore = useBgStore();
+
+  // 监听搜索状态变化，重置选中索引
+  watch(() => searchBarStore.isSearchActive, () => {
+    selectedIndex.value = 0;
+  });
+
   // 设置选中的曲目
   function selectMusic(index) {
     if (index >= 0 && index < musicLibrary.value.length) {
       selectedIndex.value = index;
-      bgStore.changeBackground(selectedMusic.value.background);
+      if (selectedMusic.value.background) {
+        bgStore.changeBackground(selectedMusic.value.background);
+      }
     }
   }
 
@@ -198,8 +67,12 @@ export const useMusicSelector = defineStore('musicSelector', () => {
     scrollPosition.value = position;
   }
 
+  // 获取可见项目
   const getVisibleItems = () => {
-    return musicLibrary.value.slice(Math.max(selectedIndex.value - 2, 0), Math.min(selectedIndex.value + 3, musicLibrary.value.length));
+    return musicLibrary.value.slice(
+      Math.max(selectedIndex.value - 2, 0),
+      Math.min(selectedIndex.value + 3, musicLibrary.value.length)
+    );
   };
 
   return {

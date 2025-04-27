@@ -1,51 +1,83 @@
 <template>
   <div class="search-bar-container">
     <div class="input-box">
-      <input type="text" placeholder="输入以搜索" class="search-input" @blur="handleBlur" ref="searchInput"
-        v-model="searchBarStore.searchText" />
-      <div class="icon-container">
+      <input type="text" placeholder="输入以搜索" class="search-input" ref="searchInput" v-model="searchBarStore.searchText"
+        @blur="handleBlur" />
+      <div class="icon-container" @click="clearSearch" v-if="searchBarStore.isSearchActive">
+        <img src="@/assets/images/exit.svg" alt="清除" class="search-icon" />
+      </div>
+      <div class="icon-container" v-else>
         <img src="@/assets/images/search.svg" alt="搜索" class="search-icon" />
+      </div>
+    </div>
+
+    <!-- 搜索结果统计 -->
+    <div class="search-results-info" v-if="searchBarStore.isSearchActive">
+      <div class="result-count" v-if="searchBarStore.searchResults.length > 0">
+        找到 {{ searchBarStore.searchResults.length }} 个结果
+      </div>
+      <div class="no-results" v-else>
+        未找到匹配结果
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useSearchBar } from '@/store/SearchBar';
+
 const searchBarStore = useSearchBar();
+const searchInput = ref(null);
 
+// 清除搜索
+const clearSearch = () => {
+  searchBarStore.clearSearch();
+  setTimeout(() => {
+    searchInput.value?.focus();
+  }, 10);
+};
 
-// import { ref, onMounted, onUnmounted } from 'vue';
-// // 创建对input元素的引用
-// const searchInput = ref(null);
+// 聚焦方法
+const focusInput = () => {
+  setTimeout(() => {
+    searchInput.value?.focus();
+  }, 100);
+};
 
-// // 聚焦方法
-// const focusInput = () => {
-//   setTimeout(() => {
-//     searchInput.value?.focus();
-//   }, 100);
-// };
+// 失焦时处理
+const handleBlur = () => {
+  // 可以选择是否保持焦点
+  // setTimeout(() => {
+  //   searchInput.value?.focus();
+  // }, 10);
+};
 
-// // 失焦时处理（可以根据需要决定是否保持focus）
-// const handleBlur = () => {
-//   // 如果点击的不是搜索相关元素，可以重新获取焦点
-//   setTimeout(() => {
-//     searchInput.value?.focus();
-//   }, 10);
-// };
+// 组件挂载时添加键盘快捷键
+onMounted(() => {
+  // 添加键盘快捷键
+  window.addEventListener('keydown', handleKeyDown);
+});
 
-// // 组件挂载时自动聚焦
-// onMounted(() => {
-//   focusInput();
+// 组件卸载时移除监听器
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 
-//   // 添加全局点击监听
-//   document.addEventListener('click', focusInput);
-// });
+// 处理键盘快捷键
+const handleKeyDown = (e) => {
+  // Ctrl+F 或 / 触发搜索
+  if ((e.ctrlKey && e.key === 'f') || (!e.target.matches('input, textarea') && e.key === '/')) {
+    e.preventDefault();
+    focusInput();
+  }
 
-// // 组件卸载时移除监听器
-// onUnmounted(() => {
-//   document.removeEventListener('click', focusInput);
-// });
+  // Esc 清除搜索
+  if (e.key === 'Escape' && searchBarStore.isSearchActive) {
+    e.preventDefault();
+    clearSearch();
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -61,7 +93,7 @@ const searchBarStore = useSearchBar();
 
   .input-box {
     width: 60%;
-    height: 40%;
+    height: 80px;
     display: flex;
     padding-left: 200px;
     padding-top: 15px;
@@ -91,11 +123,31 @@ const searchBarStore = useSearchBar();
       height: 30px;
       display: flex;
       align-items: center;
+      cursor: pointer;
 
       .search-icon {
         width: 25px;
         height: 25px;
       }
+
+      &:hover .search-icon {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .search-results-info {
+    position: absolute;
+    top: 70px;
+    left: 210px;
+    font-size: 14px;
+
+    .result-count {
+      color: #44AADD;
+    }
+
+    .no-results {
+      color: #ff6666;
     }
   }
 }
