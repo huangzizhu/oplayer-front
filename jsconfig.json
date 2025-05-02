@@ -3,10 +3,6 @@
     "target": "es5",
     "module": "esnext",
     "baseUrl": "./",
-    "scripts": {
-      "dev": "serve",
-      "build": "build"
-    },
     "moduleResolution": "node",
     "paths": {
       "@/*": [

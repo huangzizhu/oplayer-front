@@ -2,6 +2,14 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
 export const useMusicLibrary = defineStore("musicLibrary", () => {
+  const processAudioPath = (path) => {
+    // 确保路径有扩展名
+    if (!path.match(/\.(mp3|flac|wav|ogg)$/i)) {
+      path += '.mp3'; // 默认添加mp3扩展名
+    }
+    // 编码URL
+    return encodeURI(path);
+  };
   // 曲目库数据
   const musicLibrary = ref([
     {
@@ -17,8 +25,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       mapper: "Sotarks",
       origin: "Original",
       format: "FLAC",
-      description: "The Best of Camellia",
-      audioPath: "/audio/tojita_sekai.mp3" // 添加音频路径便于播放
+      description: "One of the Best of Camellia",
+      audioPath: "/audio/かめりあ - Tojita Sekai.mp3",
     },
     {
       id: 2,
@@ -31,7 +39,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       background: "/images/CyphisoniaEP.jpg",
       tags: ["Breakcore", "Hardcore", "Electronic"],
       format: "MP3",
-      audioPath: "/audio/ghost.mp3"
+      audioPath: "/audio/かめりあ - GHOST.mp3"
     },
     {
       id: 3,
@@ -44,7 +52,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       background: "/images/PLANETSHAPER.jpg",
       tags: ["Electronica", "DnB", "Melodic"],
       format: "FLAC",
-      audioPath: "/audio/planet_shaper.mp3"
+      audioPath: "/audio/かめりあ - Exit This Earth's Atomosphere.mp3"
     },
     {
       id: 4,
@@ -56,7 +64,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       length: "6:08",
       background: "/images/PLANETSHAPER.jpg",
       format: "MP3",
-      audioPath: "/audio/exit_this_earth.mp3"
+      audioPath: "/audio/かめりあ - Exit This Earth's Atomosphere.mp3"
     },
     {
       id: 5,
@@ -68,7 +76,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       length: "4:55",
       background: "/images/crystallized.jpg",
       format: "WAV",
-      audioPath: "/audio/crystallized.mp3"
+      audioPath: "/audio/かめりあ - crystallized.mp3"
     },
     {
       id: 6,
@@ -78,7 +86,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       cover: "/images/cover.jpg",
       length: "4:30",
       format: "MP3",
-      audioPath: "/audio/satellite.mp3"
+      audioPath: "/audio/かめりあ - S.A.T.E.L.L.I.T.E.mp3"
     },
     {
       id: 7,
@@ -90,7 +98,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       length: "3:20",
       background: "/images/bg-lost-woods.jpg",
       format: "FLAC",
-      audioPath: "/audio/terabyte.mp3"
+      audioPath: "/audio/かめりあ - +ERABY+E CONNEC+10N.mp3"
     },
     {
       id: 8,
@@ -124,7 +132,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/crystallized.jpg"
+      background: "/images/crystallized.jpg",
+      audioPath: "/audio/かめりあ - crystallized.mp3"
     },
     {
       id: 11,
@@ -134,7 +143,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/crystallized.jpg"
+      background: "/images/crystallized.jpg",
+      audioPath: "/audio/かめりあ - crystallized.mp3",
     },
     {
       id: 12,
@@ -144,7 +154,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/crystallized.jpg"
+      background: "/images/crystallized.jpg",
+      audioPath: "/audio/かめりあ - crystallized.mp3",
     },
     {
       id: 13,
@@ -154,7 +165,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       cover: "/images/crystallized.jpg",
       difficulty: 8.9,
       length: "4:55",
-      background: "/images/crystallized.jpg"
+      background: "/images/crystallized.jpg",
+      audioPath: "/audio/かめりあ - crystallized.mp3",
     },
     {
       id: 14,
@@ -222,6 +234,13 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
     musicLibrary.value.push(music);
   };
 
+  // 获取处理过的音频路径
+  const getAudioPath = (id) => {
+    const music = getMusicById(id);
+    if (!music || !music.audioPath) return '';
+    return processAudioPath(music.audioPath);
+  };
+
   return {
     musicLibrary,
     getAllMusic,
@@ -229,6 +248,9 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
     filterByTag,
     filterByArtist,
     searchMusic,
-    addMusic
+    addMusic,
+
+    getAudioPath,
+    processAudioPath,
   };
 });

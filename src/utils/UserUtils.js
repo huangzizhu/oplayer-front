@@ -1,8 +1,8 @@
-import {getCaptcha} from "@/utils/api/OtherApi";
-import {ElMessage} from "element-plus";
+import { getCaptcha } from "@/utils/api/OtherApi";
+import { ElMessage } from "element-plus";
 import CryptoJS from "crypto-js";
-import {v4 as uuidv4} from "uuid";
-import {getLoginStatus} from "@/utils/api/UserApi";
+import { v4 as uuidv4 } from "uuid";
+import { getLoginStatus } from "@/utils/api/UserApi";
 import { useRouter } from 'vue-router'
 import {useUserStore} from "@/store/User";
 import {useBgStore} from "@/store/BG";
@@ -25,9 +25,9 @@ export const hashPassword = (hashedPasswordRef, passwordRef) => {
     hashedPasswordRef.value = CryptoJS.SHA256(passwordRef.value).toString();
 }
 
-export const refreshCaptcha = (uuidRef,captchaImageSrcRef) => {
+export const refreshCaptcha = (uuidRef, captchaImageSrcRef) => {
     uuidRef.value = uuidv4()
-    loadCaptcha(uuidRef.value,captchaImageSrcRef)
+    loadCaptcha(uuidRef.value, captchaImageSrcRef)
 };
 export const getUserInfo = async () => {
     const userStore = useUserStore();
@@ -56,7 +56,7 @@ export const getUserInfo = async () => {
             userStore.isLoggedIn = false;
         }
     } catch (error) {
-        if(error.status !== 401){
+        if (error.status !== 401) {
             userStore.isLoggedIn = false;
             router.push('/user')
             ElMessage.error("检查登录状态失败");

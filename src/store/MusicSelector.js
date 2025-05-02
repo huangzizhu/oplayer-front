@@ -37,7 +37,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
 
   // 监听搜索状态变化，重置选中索引
   watch(() => searchBarStore.isSearchActive, () => {
-    selectedIndex.value = 0;
+    // selectedIndex.value = 0;
   });
 
   // 设置选中的曲目
