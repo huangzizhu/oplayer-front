@@ -2,6 +2,7 @@
 node_modules
 /dist
 BACKUP
+/public/audio
 Prompt.txt
 
 # local env files

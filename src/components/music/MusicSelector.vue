@@ -97,7 +97,7 @@ onMounted(() => {
       musicListRef.value.addEventListener('scroll', updateParallax);
       window.addEventListener('resize', updateParallax);
     }
-    musicSelectorStore.selectMusic(0);
+    // musicSelectorStore.selectMusic(0);
   });
 });
 

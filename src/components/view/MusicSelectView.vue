@@ -5,7 +5,9 @@
     <FFT></FFT>
 
     <SearchBar></SearchBar>
-    <ProgressBar></ProgressBar>
+    <MusicVisualization></MusicVisualization>
+    <MusicPlayerControls></MusicPlayerControls>
+
 
     <MusicSelector></MusicSelector>
 
@@ -19,8 +21,9 @@ import MusicCover from '@/components/music/MusicCover.vue'
 import MusicInfo from '@/components/music/MusicInfo.vue'
 import FFT from '@/components/music/FFT.vue'
 import SearchBar from '@/components/music/SearchBar.vue'
-import ProgressBar from '@/components/music/MusicPlayerControls.vue'
+import MusicPlayerControls from '@/components/music/MusicPlayerControls.vue'
 import MusicSelector from '@/components/music/MusicSelector.vue'
+import MusicVisualization from '@/components/music/MusicVisualization.vue'
 // import FooterBar from '@/components/FooterBar.vue'
 
 import { ref } from 'vue'

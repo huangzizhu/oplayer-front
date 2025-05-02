@@ -5,7 +5,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: "http://127.0.0.1:8080/",
+        target: "http://47.108.201.216:9031",
         changeOrigin: true, // 允许跨域
         ws: true, // 支持 WebSocket
         pathRewrite: {
