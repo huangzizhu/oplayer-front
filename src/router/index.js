@@ -3,10 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MusicSelectView from '@/components/view/MusicSelectView.vue'
 import MainView from '@/components/view/MainView.vue'
 import UserView from "@/components/view/UserView.vue";
-import LoginFrame from "@/components/user/login/LoginFrame.vue";
-// // import PlaylistView from '../views/PlaylistView.vue'
-// import SettingsView from '../views/SettingsView.vue'
-// import AboutView from '../views/AboutView.vue'
+import ExploreView from "@/components/view/ExploreView.vue";
 
 const routes = [
       {
@@ -34,17 +31,20 @@ const routes = [
         name: 'User',
         component: UserView,
         meta: {
-          title: 'OPlayer - 选曲界面',
+          title: 'OPlayer - 用户界面',
           showNavBar: true,
           showFooterBar: true
         },
-        children: [
-          {
-            path: 'login', // 修改为相对路径
-            name: 'Login',
-            component: LoginFrame,
-          }
-        ]
+      },
+      {
+        path: '/explore',
+        name: 'Explorer',
+        component: ExploreView,
+        meta: {
+          title: 'OPlayer - 发现界面',
+          showNavBar: true,
+          showFooterBar: true
+        },
       }
 ];
 
