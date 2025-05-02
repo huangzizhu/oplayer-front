@@ -21,10 +21,10 @@
 /*eslint-disable*/
 import { computed, ref, onMounted } from 'vue';
 import {getLoginStatus} from "@/utils/api/UserApi";
-import LoginFrame from "@/components/view/user/login/LoginFrame.vue";
-import RegisterFrame from "@/components/view/user/login/RegisterFrame.vue";
-import UserProfile from '@/components/view/user/profile/UserProfile.vue';
-import TabSwitcher from '@/components/view/user/login/TabSwitcher.vue';
+import LoginFrame from "@/components/user/login/LoginFrame.vue";
+import RegisterFrame from "@/components/user/login/RegisterFrame.vue";
+import UserProfile from '@/components/user/profile/UserProfile.vue';
+import TabSwitcher from '@/components/user/login/TabSwitcher.vue';
 import {ElMessage} from "element-plus";
 import {useUserStore} from "@/store/User";
 
@@ -41,7 +41,7 @@ const emitLoginSuccess = () => {
   userStore.isLoggedIn = true;
 };
 const emitRegSuccess = () => {
-  activeTab.value = 'login';
+  userStore.activeTab = 'login';
 };
 
 const checkLoginStatus = async () => {

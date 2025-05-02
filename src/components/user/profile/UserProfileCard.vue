@@ -74,31 +74,23 @@ import {useUserStore} from '@/store/User'
 import animations from '@/utils/animations';
 import {useNavBarStore} from "@/store/NavBar";
 import {getUserInfo} from "@/utils/UserUtils";
+import {formatDuration} from "@/utils/UserUtils";
 
 const navBarStore = useNavBarStore();
 const userStore = useUserStore();
 const router = useRouter();
 
 const loginStatus = computed(() => userStore.isLoggedIn);
-const avatarUrl = ref(userStore.userAvatarUrl);
+const avatarUrl = ref(userStore.defaultAvatarUrl);
 const username = ref('未登录');
 const uid = ref("unknown");
 const playCount = ref(0);
 const duration = ref(0);
 
-// 格式化时长
-const formatDuration = (minutes) => {
-  const mins = parseInt(minutes)
-  if (mins < 60) return `${mins}min`
-
-  const hours = Math.floor(mins / 60)
-  const remainingMins = mins % 60
-  return `${hours}h${remainingMins > 0 ? `${remainingMins}min` : ''}`
-}
 
 // 头像加载失败处理
 const handleAvatarError = () => {
-  avatarUrl.value = defaultAvatar
+  avatarUrl.value = userStore.defaultAvatarUrl
 }
 
 // 跳转到个人中心
@@ -112,10 +104,12 @@ const navigateToUserProfile = () => {
 // 处理退出登录
 const handleLogout = () => {
   localStorage.removeItem("loginUser");
+  loadInfo();
   animations.hidePanelRight(userStore.profilePanel).then(() => {
     // 动画完成后再更新状态
     navBarStore.toggleProfile();})
   userStore.isLoggedIn = false;
+  userStore.userInfo = null;
   router.push('/user');
 }
 
@@ -140,6 +134,7 @@ const loadInfo = async () => {
   const loginUser = JSON.parse(localStorage.getItem("loginUser"));
   const user = await getUserInfo(loginUser);
   if (!loginUser || !user) {
+    avatarUrl.value = defaultAvatar;
     username.value = "未登录"
     playCount.value = 0
     duration.value = 0
@@ -158,7 +153,7 @@ const loadInfo = async () => {
   username.value = user.username;
 }
 defineExpose({
-  loadInfo
+  loadInfo,
 });
 
 </script>
@@ -273,7 +268,7 @@ defineExpose({
   transition: all 0.3s ease;
   width: 100%;
   overflow: hidden;
-  background: #E6649F;
+  background: #8C66FF;
   box-shadow: 0 2px 10px rgba(230, 100, 159, 0.3);
 }
 

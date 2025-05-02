@@ -4,8 +4,9 @@ import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 import { getLoginStatus } from "@/utils/api/UserApi";
 import { useRouter } from 'vue-router'
-import { useUserStore } from "@/store/User";
-import { useBgStore } from "@/store/BG";
+import {useUserStore} from "@/store/User";
+import {useBgStore} from "@/store/BG";
+import ColorThief from 'colorthief';
 
 const router = useRouter();
 
@@ -34,15 +35,21 @@ export const getUserInfo = async () => {
         const response = await getLoginStatus();
         if (response.code === 1) {
             userStore.isLoggedIn = true;
-            console.log(response.data);
             try {
-                await checkBackgroundImage(response.data.background);
+                await checkImage(response.data.background);
                 useBgStore().currentBgImage = response.data.background;
             } catch (error) {
                 console.error(error.message);
                 useBgStore().currentBgImage = userStore.defaultBackgroundUrl;
                 response.data.background = userStore.defaultBackgroundUrl;
             }
+            try {
+                await checkImage(response.data.avatarUrl);
+            } catch (error) {
+                console.error(error.message);
+                response.data.avatarUrl = userStore.defaultAvatarUrl;
+            }
+            userStore.userInfo = response.data;
             return response.data;
         } else {
             ElMessage.error(response.msg)
@@ -71,11 +78,69 @@ export const formatDate = (dateString) => {
     // 格式化为 "xxxx年xx月xx日"
     return `${year}年${month}月${day}日`;
 }
-const checkBackgroundImage = (imageUrl) => {
+export const checkImage = (imageUrl) => {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.src = imageUrl;
         img.onload = () => resolve(true); // 图片加载成功
-        img.onerror = () => reject(new Error("背景图片加载失败")); // 图片加载失败
+        img.onerror = () => reject(new Error("图片加载失败")); // 图片加载失败
     });
 };
+
+// 格式化时长
+export const formatDuration = (minutes) => {
+    if (minutes === null || minutes === undefined) minutes = 0;
+    const mins = parseInt(minutes)
+    if (mins < 60) return `${mins}min`
+
+    const hours = Math.floor(mins / 60)
+    const remainingMins = mins % 60
+    return `${hours}h${remainingMins > 0 ? `${remainingMins}min` : ''}`
+}
+
+/**
+ * 获取图片的主色调并返回十六进制颜色值
+ * @param {String|HTMLImageElement} img - 图片的 URL 或 DOM 元素
+ * @returns {Promise<String>} 十六进制颜色值（如 #AABBCC）
+ */
+export async function getMainColorHex(img) {
+    return new Promise((resolve, reject) => {
+        let image;
+        if (typeof img === 'string') {
+            // 如果传入的是图片 URL
+            image = new Image();
+            image.crossOrigin = 'Anonymous'; // 防止跨域问题
+            image.onload = () => handleImageLoaded(image);
+            image.onerror = () => reject(new Error('Failed to load image'));
+            image.src = img;
+        } else if (img instanceof HTMLImageElement) {
+            // 如果传入的是图片 DOM 元素
+            image = img;
+            handleImageLoaded(image);
+        } else {
+            reject(new Error('Invalid input: must be a URL or HTMLImageElement'));
+        }
+
+        function handleImageLoaded(imgElement) {
+            try {
+                const colorThief = new ColorThief();
+                const rgb = colorThief.getColor(imgElement); // 获取主色调的 RGB 值
+                const hex = rgbToHex(rgb[0], rgb[1], rgb[2]); // 转换为十六进制
+                resolve(hex);
+            } catch (error) {
+                reject(error);
+            }
+        }
+    });
+}
+
+/**
+ * 将 RGB 颜色值转换为十六进制字符串
+ * @param {Number} r - 红色值
+ * @param {Number} g - 绿色值
+ * @param {Number} b - 蓝色值
+ * @returns {String} 十六进制颜色值（如 #AABBCC）
+ */
+function rgbToHex(r, g, b) {
+    return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+}

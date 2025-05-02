@@ -14,7 +14,6 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
 import './assets/styles/main.scss'
 import './assets/styles/variables.scss'
 import './assets/styles/animations.scss'
@@ -22,6 +21,7 @@ import './assets/styles/fonts.css'
 
 // 将gsap显式暴露到全局
 window.gsap = gsap;
+
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -36,7 +36,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(pinia).use(store).use(router).use(ElementPlus).use(vuetify).mount('#app')
 app.config.globalProperties.$gsap = gsap
 app.config.globalProperties.$anim = animations
-
 // 添加调试信息
 console.log("GSAP version in main.js:", gsap.version);
 

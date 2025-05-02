@@ -25,7 +25,7 @@
            @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
            @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
         <div class="navbar-icon user-avatar">
-          <img :src="userStore.userAvatarUrl" alt="用户头像">
+          <img :src="userAvatar" alt="用户头像"/>
         </div>
         <span class="clock">{{ navBarStore.userName }}</span>
       </div>
@@ -96,11 +96,11 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineProps, ref, watch, nextTick} from 'vue';
+import { onMounted, onUnmounted, defineProps, ref, watch, nextTick,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useNavBarStore } from '@/store/NavBar';
 import animations from '@/utils/animations';
-import UserProfileCard from "@/components/view/user/profile/UserProfileCard.vue";
+import UserProfileCard from "@/components/user/profile/UserProfileCard.vue";
 import {useUserStore} from "@/store/User";
 
 // 按钮引用
@@ -131,7 +131,9 @@ const props = defineProps({
 const router = useRouter();
 const navBarStore = useNavBarStore();
 const userStore = useUserStore();
-
+const userAvatar = computed(() => {
+  return userStore.userInfo?.avatarUrl || userStore.defaultAvatarUrl;
+});
 // 如果通过属性传入了激活的选项，则设置它
 if (props.activeItem) {
   navBarStore.setActiveItem(props.activeItem);
@@ -227,6 +229,7 @@ const handleNotificationsClick = (event) => {
   }
 };
 const userProfileCard = ref(null);
+
 const handleUserProfileClick = (event) => {
   event.stopPropagation(); // 阻止事件冒泡
   animations.buttonPress(profileBtn.value);
