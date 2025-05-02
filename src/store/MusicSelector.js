@@ -10,8 +10,10 @@ export const useMusicSelector = defineStore('musicSelector', () => {
   const searchBarStore = useSearchBar();
   const bgStore = useBgStore();
 
-  // 当前选中的曲目索引
-  const selectedIndex = ref(0);
+  // 当前选中的曲目索引 - 随机初始化
+  const selectedIndex = ref(1);
+  const selectedID = ref(null);
+  const hasInitialized = ref(false);
 
   // 滚动位置
   const scrollPosition = ref(0);
@@ -28,11 +30,17 @@ export const useMusicSelector = defineStore('musicSelector', () => {
 
   // 计算属性：当前选中的曲目
   const selectedMusic = computed(() => {
-    if (musicLibrary.value.length > 0 && selectedIndex.value < musicLibrary.value.length) {
-      return musicLibrary.value[selectedIndex.value];
-    }
-    // 如果没有音乐或索引超出范围，返回第一首曲目或空对象
-    return musicLibrary.value[0] || {};
+    // if (selectedID.value === -1) {
+    //   // if (musicLibrary.value.length > 0 && selectedIndex.value < musicLibrary.value.length) {
+    //   //   return musicLibrary.value[selectedIndex.value];
+    //   // }
+    //   // // 如果没有音乐或索引超出范围，返回第一首曲目或空对象
+    //   // return musicLibrary.value[0] || {};
+    //   return musicLibrary.value[0] || {};
+    // }
+    // else {
+    // }
+    return musicLibraryStore.musicLibrary.find(music => music.id === selectedID.value) || {};
   });
 
   // 监听搜索状态变化，重置选中索引
@@ -44,6 +52,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
   function selectMusic(index) {
     if (index >= 0 && index < musicLibrary.value.length) {
       selectedIndex.value = index;
+      selectedID.value = musicLibrary.value[index].id;
       if (selectedMusic.value.background) {
         bgStore.changeBackground(selectedMusic.value.background);
       }
@@ -67,6 +76,16 @@ export const useMusicSelector = defineStore('musicSelector', () => {
     scrollPosition.value = position;
   }
 
+  function initSelectedIndex() {
+    if (!hasInitialized.value) {
+      hasInitialized.value = true;
+      const indexToSelect = Math.floor(Math.random() * (musicLibrary.value.length || 1));
+      selectMusic(indexToSelect);
+    } else {
+      return;
+    }
+  }
+
   // 获取可见项目
   const getVisibleItems = () => {
     return musicLibrary.value.slice(
@@ -80,10 +99,12 @@ export const useMusicSelector = defineStore('musicSelector', () => {
     scrollPosition,
     musicLibrary,
     selectedMusic,
+    selectedID,
     selectMusic,
     selectNext,
     selectPrevious,
     updateScrollPosition,
     getVisibleItems,
+    initSelectedIndex,
   };
 });
