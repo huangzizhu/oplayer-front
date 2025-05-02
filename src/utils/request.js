@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const request = axios.create({
-  baseURL: "/api",
+  baseURL: "/op",
   timeout: 50000,
 });
 
@@ -28,4 +28,4 @@ request.interceptors.response.use(
   }
 );
 
-export default request;
+export  {request};

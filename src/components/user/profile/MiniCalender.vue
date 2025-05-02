@@ -103,7 +103,8 @@ watch(() => props.birthday, (newVal, oldVal) => {
 .divider {
   width: 1px;
   height: 80%;
-  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  background-color: white;
   position: absolute;
   left: 50%;
   top: 10%;

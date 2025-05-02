@@ -1,5 +1,5 @@
 <template>
-  <div class="favorites-section">
+  <div class="favorites-section" ref="root">
     <div class="section-divider"></div>
     <div class="section-header">
       <h2 class="section-title">我的收藏</h2>
@@ -15,49 +15,54 @@
 
 <script setup>
 /* eslint-disable */
-import { ref } from 'vue';
-import SongItem from '@/components/view/user/profile/mediaDisplay/SongItem.vue';
+import { ref,onMounted,onBeforeUnmount } from 'vue';
+import router from "@/router";
+import {getCollectionList} from "@/utils/api/CollectionApi";
+import SongItem from '@/components/user/profile/mediaDisplay/SongItem.vue';
 
-const songs = ref([
-  {
-    id: 19,
-    name: "3秒ルール",
-    artist: "Tensions",
-    albumId: 10,
-    albumName: "3秒ルール",
-    year: "",
-    duration: 216,
-    format: "mp3",
-    size: 8829852,
-    coverUrl: "https://huangzizhu-java-web.oss-cn-chengdu.aliyuncs.com/2025-04/be4ecff1-5818-4947-8d44-9eb4ae819c53",
-    bitRate: 320,
-    sampleRate: 48000,
-    path: null,
-    md5: "2ae3eb6ce662181543e0ca24f15d7597",
-    isAvailable: true
+const props = defineProps({
+  uid: {
+    type: Number,
+    required: true
   },
-  {
-    id: 20,
-    name: "ダンスフロアの果実 (feat. nicamoq)",
-    artist: "Yunomi",
-    albumId: 11,
-    albumName: "ゆのもきゅ",
-    year: "",
-    duration: 230,
-    format: "mp3",
-    size: 10973495,
-    coverUrl: "https://huangzizhu-java-web.oss-cn-chengdu.aliyuncs.com/2025-04/92ba99f6-f6e9-41ca-9a09-7e58cfb8ca01",
-    bitRate: 320,
-    sampleRate: 44100,
-    path: null,
-    md5: "d15388e8394a2703cb4b2ebc8358dada",
-    isAvailable: true
-  }
-]);
+});
+const songs = ref([]);
 
 const handleMoreFavorites = () => {
-  console.log('更多收藏');
+  router.push('/music')
 };
+const getCollections = async () => {
+  const response = await getCollectionList(props.uid)
+  if (response.code) {
+    songs.value = response.data.list;
+  }
+};
+
+
+const root = ref(null) // 模板引用
+let observer = null
+
+onMounted(() => {
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        getCollections();
+      }
+    })
+  }, {
+    threshold: 0.1 // 当10%的元素可见时触发
+  })
+  if (root.value) {
+    observer.observe(root.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect()
+  }
+})
+
 </script>
 
 <style scoped>
