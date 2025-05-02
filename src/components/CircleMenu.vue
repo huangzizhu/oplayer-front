@@ -436,8 +436,8 @@ onBeforeUnmount(() => {
 /* 粉饼样式 */
 .pink-disc {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 360px;
+  height: 360px;
   /* background: linear-gradient(135deg, #ff66ab, #ff1744); */
   border-radius: 50%;
   display: flex;
@@ -464,7 +464,6 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   transition: transform 0.2s ease;
   font-family: 'Comfortaa-Light'
 }
@@ -489,6 +488,7 @@ onBeforeUnmount(() => {
   transition: transform 0.2s ease;
   z-index: 903;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
 .image-tri {
@@ -499,6 +499,7 @@ onBeforeUnmount(() => {
   top: 0%;
   left: 0%;
   z-index: 902;
+  -webkit-user-drag: none;
   /* filter: brightness(0) invert(1); */
 }
 

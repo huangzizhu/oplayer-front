@@ -24,12 +24,11 @@ const activeNavItem = ref('');
 .app {
   width: 100%;
   height: 100%;
-  position: relative;
+  /* position: relative; */
 }
 
-/* 添加 OSU! Lazer 风格的顶部间距，为导航栏腾出空间 */
 .router-view {
   padding-top: 45px;
-  /* 导航栏高度 */
+
 }
 </style>
