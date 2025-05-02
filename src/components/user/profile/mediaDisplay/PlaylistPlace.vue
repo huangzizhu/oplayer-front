@@ -1,5 +1,5 @@
 <template>
-  <div class="playlist-section">
+  <div class="playlist-section" ref="root">
     <div class="section-divider"></div>
     <div class="section-header">
       <h2 class="section-title">我的歌单</h2>
@@ -13,33 +13,49 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+/* eslint-disable */
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import PlaylistItem from './PlaylistItem.vue';
+import {getAllPlayLists} from "@/utils/api/PlayListApi";
+const props = defineProps({
+  uid: {
+    type: Number,
+    required: true
+  },
+});
+const playlists = ref([]);
 
-const playlists = ref([
-  {
-    id: 2,
-    name: "夏日精选",
-    creatorId: 1,
-    createTime: "2025-04-06T15:11:29",
-    updateTime: "2025-04-06T15:11:29",
-    description: "适合夏天听的清爽歌曲合集",
-    coverUrl: "https://huangzizhu-java-web.oss-cn-chengdu.aliyuncs.com/2025-04/be4ecff1-5818-4947-8d44-9eb4ae819c53",
-    totalDuration: 0,
-    total: null
-  },
-  {
-    id: 1,
-    name: "夏日精选",
-    creatorId: 1,
-    createTime: "2025-04-06T15:10:48",
-    updateTime: "2025-04-06T15:10:48",
-    description: "适合夏天听的清爽歌曲合集",
-    coverUrl: "https://huangzizhu-java-web.oss-cn-chengdu.aliyuncs.com/2025-04/be4ecff1-5818-4947-8d44-9eb4ae819c53",
-    totalDuration: 0,
-    total: null
-  },
-]);
+const getAllPlaylistsInfo = async () => {
+  const response = await getAllPlayLists(props.uid)
+  if (response.code) {
+    playlists.value = response.data.list;
+  } else {
+    console.error('Failed to fetch playlists');
+  }
+};
+//进入视口检测
+const root = ref(null) // 模板引用
+let observer = null
+onMounted(() => {
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        getAllPlaylistsInfo();
+      }
+    })
+  }, {
+    threshold: 0.1 // 当10%的元素可见时触发
+  })
+  if (root.value) {
+    observer.observe(root.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect()
+  }
+})
 </script>
 
 <style scoped>

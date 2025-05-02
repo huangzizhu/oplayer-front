@@ -47,7 +47,7 @@ const truncateText = (text, maxLength) => {
 
 // 格式化总时长
 const formatDuration = (duration) => {
-  if (!duration) return '未知';
+  if (duration !== 0 && !duration) return '未知';
   const minutes = Math.floor(duration / 60);
   const seconds = duration % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;

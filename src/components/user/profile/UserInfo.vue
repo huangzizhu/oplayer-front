@@ -4,13 +4,19 @@
     <!-- 第一行 - 独立的两部分 -->
     <div class="info-row first-row">
       <!-- 每日一言 - 独立卡片 -->
-      <div class="quote-card">
+      <div class="quote-card" @click="fetchDailyQuote">
         <h3 class="card-title">每日一言</h3>
-        <p class="quote-content">{{ dailyQuote || '生活就像音乐，有高潮也有低谷，但都是美妙的旋律。' }}</p>
+        <p class="quote-content">{{ dailyQuote.sentence || '生活就像音乐，有高潮也有低谷，但都是美妙的旋律。' }}</p>
+        <p class="quote-source" v-if="dailyQuote.fromSource">
+          <span class="quote-dash">――</span>
+          <span class="quote-mark">「</span>
+          {{ dailyQuote.fromSource }}
+          <span class="quote-mark">」</span>
+        </p>
       </div>
 
       <!-- 天气信息 - 独立卡片 -->
-      <div class="weather-card">
+      <div class="weather-card" @click="fetchWeather">
         <h3 class="card-title">天气信息</h3>
         <div class="weather-content">
           <div class="weather-item">
@@ -93,8 +99,8 @@
 <script setup>
 /* eslint-disable */
 import { ref, onMounted, onUnmounted } from 'vue';
-import UserClock from "@/components/view/user/profile/UserClock.vue"
-import MiniCalender from "@/components/view/user/profile/MiniCalender.vue";
+import UserClock from "@/components/user/profile/UserClock.vue"
+import MiniCalender from "@/components/user/profile/MiniCalender.vue";
 import {getIp, getRegion, getSays, getWeather} from "@/utils/api/OtherApi";
 import {ElMessage} from "element-plus";
 
@@ -153,18 +159,20 @@ const formatDate = (dateString) => {
 // 获取天气数据
 const fetchWeather = async () => {
   try {
-    let city;
     const ipResponse = await getIp();
-    console.log(ipResponse);
-    if(ipResponse.status !== 200) city = "北京";
-    else city = ipResponse.data.data.city;
-    const weatherResponse = await getWeather(city);
-    console.log(weatherResponse.data);
-    weatherData.value.city = weatherResponse.data.city;
-    weatherData.value.temperature = weatherResponse.data.temperature;
-    weatherData.value.wind_direction = weatherResponse.data.wind_direction;
-    weatherData.value.wind_power = weatherResponse.data.wind_power;
-    weatherData.value.weather = weatherResponse.data.weather;
+    const response = await getWeather(ipResponse.ip);
+    if(response.data.count !== '0' && response.data.lives.length>0){
+      const weather = response.data.lives[0];
+      weatherData.value = {
+        province: weather.province,
+        city: weather.city,
+        temperature: weather.temperature,
+        weather: weather.weather,
+        wind_direction: weather.winddirection,
+        wind_power: weather.windpower,
+        humidity: weather.humidity,
+      };
+    }
   } catch (error) {
     console.error('获取天气数据失败:', error);
   }
@@ -204,14 +212,13 @@ onMounted(() => {
   gap: 20px;
 }
 
-.quote-card, .weather-card{
+.quote-card, .weather-card {
   flex: 1;
   background: rgba(50, 50, 50, 0.3);
   border-radius: 12px;
   padding: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-
 
 .card-title {
   color: var(--primary-color);
@@ -224,6 +231,27 @@ onMounted(() => {
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.quote-source {
+  color: var(--text-secondary);
+  font-size: 12px;
+  opacity: 0.8;
+  text-align: right;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.quote-mark {
+  font-family: "SimSun", "宋体", serif;
+  font-weight: bold;
+}
+
+.quote-dash {
+  font-family: "Arial", sans-serif;
+  letter-spacing: -1px;
+  margin: 0 2px;
 }
 
 /* 天气卡片样式 */

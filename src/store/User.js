@@ -8,20 +8,23 @@ import parallaxImg from '@/assets/images/parallax.jpg'
 
 /* eslint-disable */
 export const useUserStore = defineStore('user', ()=>{
-    const userAvatarUrl = ref(defaultAvatar);
+
+    const defaultAvatarUrl = ref(defaultAvatar);
     const profilePanel = ref(null);
     const isLoggedIn = ref(false);
     const defaultCoverUrl = ref(defaultCover);
     const defaultBackgroundUrl = ref(defaultBackground);
     const parallaxImgUrl = ref(parallaxImg);
     const activeTab = ref('login');
+    const userInfo = ref();
     return{
-        userAvatarUrl,
+        defaultAvatarUrl,
         profilePanel,
         isLoggedIn,
         defaultCoverUrl,
         defaultBackgroundUrl,
         parallaxImgUrl,
         activeTab,
+        userInfo,
     };
 })

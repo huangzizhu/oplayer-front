@@ -5,10 +5,6 @@ const request = axios.create({
   baseURL: "/op",
   timeout: 50000,
 });
-const uapiRequest = axios.create({
-    baseURL: "/uapi",
-    timeout: 50000,
-});
 
 request.interceptors.request.use(
   (config) => {
@@ -32,4 +28,4 @@ request.interceptors.response.use(
   }
 );
 
-export  {request,uapiRequest};
+export  {request};

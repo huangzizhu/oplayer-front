@@ -16,6 +16,7 @@
               :phone="phone"
               :background="background"
               @avatar-error="handleAvatarError"
+              @update:box-visibility="handleEdit"
           />
         </div>
 
@@ -40,10 +41,13 @@
 
       <!-- 下半部分：收藏和歌单 (初始隐藏，滚动时显示) -->
         <div  class="lower-section" ref="lowerSection">
-          <CollectionPlace/>
-          <PlaylistPlace/>
+          <CollectionPlace :uid="id"/>
+          <PlaylistPlace :uid="id"/>
         </div>
     </div>
+  </div>
+  <div>
+    <EditFormView :box-visibility="showEditForm" :primary-color="primaryColor" @update:box-visibility="handleEdit" @update:user-info="getUser"></EditFormView>
   </div>
 </template>
 
@@ -51,15 +55,16 @@
 
 <script setup>
 /* eslint-disable */
-import {onMounted, ref, onUnmounted} from 'vue'
+import {onMounted, ref, onUnmounted, watch} from 'vue'
 import {useBgStore} from '@/store/BG'
 import {useRouter} from 'vue-router'
-import CollectionPlace from "@/components/view/user/profile/mediaDisplay/CollectionPlace.vue";
-import PlaylistPlace from "@/components/view/user/profile/mediaDisplay/PlaylistPlace.vue";
-import UserCard from "@/components/view/user/profile/UserCard.vue";
+import CollectionPlace from "@/components/user/profile/mediaDisplay/CollectionPlace.vue";
+import PlaylistPlace from "@/components/user/profile/mediaDisplay/PlaylistPlace.vue";
+import UserCard from "@/components/user/profile/UserCard.vue";
 import {useUserStore} from "@/store/User";
-import {formatDuration, getUserInfo} from "@/utils/UserUtils";
-import UserInfo from "@/components/view/user/profile/UserInfo.vue";
+import {formatDuration, getUserInfo,getMainColorHex} from "@/utils/UserUtils";
+import UserInfo from "@/components/user/profile/UserInfo.vue";
+import EditFormView from "@/components/user/profile/EditFormView.vue";
 
 const router = useRouter()
 const bgStore = useBgStore()
@@ -78,6 +83,24 @@ const regTime = ref('2023-01-01')
 const id = ref(0);
 const playCount = ref(0);
 const duration = ref('');
+//触发是否显示对话框
+const showEditForm = ref(false);
+//对话框主色调
+const primaryColor = ref('#221A21');
+
+const handleEdit = async (value) => {
+  showEditForm.value = value;
+  if(value) {
+    try {
+      const response = await getMainColorHex(background.value);
+      console.log('主色调:', response);
+      primaryColor.value = response;
+    }catch(err) {
+      console.error('获取主色调失败:', err);
+      primaryColor.value = '#221A21'; // 设置默认值
+    }
+  }
+}
 
 //获取用户数据
 const getUser = async () => {
@@ -90,7 +113,7 @@ const getUser = async () => {
   phone.value = user.phone;
   birthDate.value = user.birthDate;
   regTime.value = user.regTime;
-  gender.value = user.gender === 1 ? '男' : '女';
+  gender.value = user.gender;
   id.value = user.id;
   playCount.value = user.userBehavior.totalPlayCount;
   duration.value = formatDuration(user.userBehavior.totalPlayDuration);
