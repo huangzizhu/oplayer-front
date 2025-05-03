@@ -49,13 +49,37 @@ export const useMusicSelector = defineStore('musicSelector', () => {
   });
 
   // 设置选中的曲目
+  // function selectMusic(index) {
+  //   if (index >= 0 && index < musicLibrary.value.length) {
+  //     selectedIndex.value = index;
+  //     selectedID.value = musicLibrary.value[index].id;
+  //     if (selectedMusic.value.background) {
+  //       bgStore.changeBackground(selectedMusic.value.background);
+  //     }
+  //   }
+  // }
   function selectMusic(index) {
     if (index >= 0 && index < musicLibrary.value.length) {
       selectedIndex.value = index;
-      selectedID.value = musicLibrary.value[index].id;
-      if (selectedMusic.value.background) {
-        bgStore.changeBackground(selectedMusic.value.background);
-      }
+      const music = musicLibrary.value[index];
+      selectedID.value = music.id;
+
+      // 调用 bgStore 的 changeBackground
+      bgStore.changeBackground({
+        coverUrl: music.cover,
+        backgroundUrl: music.background,
+        mode: 'cover' // 默认切换到封面毛玻璃模式
+      });
+    } else if (musicLibrary.value.length > 0) {
+      // 处理索引无效但列表不为空的情况，选中第一个
+      selectedIndex.value = 0;
+      const music = musicLibrary.value[0];
+      selectedID.value = music.id;
+      bgStore.changeBackground({
+        coverUrl: music.cover,
+        backgroundUrl: music.background,
+        mode: 'cover'
+      });
     }
   }
 
