@@ -78,7 +78,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
       // 创建新的Howl实例
       sound = new Howl({
         src: [audioPath.value],
-        html5: true, // 使用HTML5 Audio
+        html5: false, // 使用HTML5 Audio
         volume: volume.value,
         onload: () => {
           duration.value = sound.duration();
@@ -116,7 +116,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
           // 尝试重新加载
           setTimeout(() => {
             loadAndPlay();
-          }, 1000);
+          }, 1500);
         }
       });
     } catch (error) {

@@ -3,7 +3,7 @@
   <div class="music-selector-container" ref="selectorContainerRef">
     <div class="music-list" ref="musicListRef" @wheel="handleWheel">
       <MusicItem v-for="(music, index) in musicSelectorStore.musicLibrary" :key="music.id" :music="music" :index="index"
-        :isActive="index === musicSelectorStore.selectedIndex" />
+        :isActive="music.id === musicSelectorStore.selectedID" />
     </div>
   </div>
 
@@ -97,6 +97,7 @@ onMounted(() => {
       musicListRef.value.addEventListener('scroll', updateParallax);
       window.addEventListener('resize', updateParallax);
     }
+    musicSelectorStore.initSelectedIndex(); // 初始化选中项
     // musicSelectorStore.selectMusic(0);
   });
 });

@@ -96,7 +96,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       cover: "/images/TEAOIO.jpg",
       difficulty: 7.5,
       length: "3:20",
-      background: "/images/bg-lost-woods.jpg",
+      background: "/images/TEAOIO.jpg",
       format: "FLAC",
       audioPath: "/audio/かめりあ - +ERABY+E CONNEC+10N.mp3"
     },

@@ -81,7 +81,7 @@ const startSeeking = (e) => {
   isSeeking.value = true;
 
   // 计算并设置新位置
-  const {  time } = calculatePreview(e.clientX);
+  const { time } = calculatePreview(e.clientX);
   musicPlayerStore.seekTo(time);
 
   // 添加拖拽事件监听
@@ -171,7 +171,7 @@ onUnmounted(() => {
 
   .progress-bar {
     flex: 1;
-    height: 8px;
+    height: 6px;
     position: relative;
     margin: 0 10px;
     cursor: pointer;
