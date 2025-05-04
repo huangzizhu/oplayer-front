@@ -22,9 +22,9 @@
               musicSelector.selectedMusic.artist }}</div>
           </div>
           <div class="info-item">
-            <div class="label">BPM</div>
-            <div class="value" @click="handleInfoClick(`bpm`, musicSelector.selectedMusic.bpm)">{{
-              musicSelector.selectedMusic.bpm
+            <div class="label">专辑 </div>
+            <div class="value" @click="handleInfoClick(`album`, musicSelector.selectedMusic.album)">{{
+              musicSelector.selectedMusic.album
             }}</div>
           </div>
           <div class="info-item">
@@ -33,9 +33,9 @@
               musicSelector.selectedMusic.length }}</div>
           </div>
           <div class="info-item">
-            <div class="label">音频格式</div>
-            <div class="value" @click="handleInfoClick(`format`, musicSelector.selectedMusic.format)">{{
-              musicSelector.selectedMusic.format }}</div>
+            <div class="label">来源</div>
+            <div class="value" @click="handleInfoClick(`sourceType`, musicSelector.selectedMusic.sourceType)">{{
+              musicSelector.selectedMusic.sourceType }}</div>
           </div>
         </div>
 
@@ -53,6 +53,7 @@
 
       <!-- 谱面页 -->
       <div v-else-if="activeTab === 'beatmaps'" class="tab-content beatmaps-content">
+
         <div class="beatmap-list">
           <div class="beatmap-item">
             <div class="difficulty-badge insane">9.2★</div>
@@ -126,9 +127,26 @@
 </template>
 
 <script setup>
+
+// {
+//   id: 1,
+//     title: "Tojita Sekai",
+//       artist: "Camellia",
+//         bpm: 175,
+//           cover: "/images/cover.jpg",
+//             album: "heart of android",
+//               length: "6:59",
+//                 background: "/images/cover.jpg",
+//                   tags: ["Drumstep", "Qualia", "Melodic", "Dubstep"],
+//                       origin: "Original",
+//                         format: "FLAC",
+//                           description: "One of the Best of Camellia",
+//                             audioPath: "/audio/かめりあ - Tojita Sekai.mp3",
+//     },
 import { ref, computed } from 'vue';
 import { useMusicSelector } from '@/store/MusicSelector.js';
 import { useSearchBar } from '@/store/SearchBar';
+// import MusicAnalyzer from '@/components/music/MusicAnalyzer.vue';
 
 const musicSelector = useMusicSelector();
 const SearchBar = useSearchBar();

@@ -117,6 +117,34 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       Math.min(selectedIndex.value + 3, musicLibrary.value.length)
     );
   };
+  // 刷新音乐库和选中状态
+  function refreshLibrary() {
+    // 重新加载音乐库数据
+    const currentLibrary = musicLibraryStore.musicLibrary;
+
+    // 如果当前选中的音乐不存在，则重置选中状态
+    if (selectedID.value && !currentLibrary.some(m => m.id === selectedID.value)) {
+      if (currentLibrary.length > 0) {
+        selectedIndex.value = 0;
+        selectedID.value = currentLibrary[0].id;
+
+        // 触发背景更新
+        bgStore.changeBackground({
+          coverUrl: currentLibrary[0].cover,
+          backgroundUrl: currentLibrary[0].background,
+          mode: 'cover'
+        });
+      } else {
+        selectedIndex.value = 0;
+        selectedID.value = null;
+      }
+    }
+
+    // 重新初始化
+    if (!hasInitialized.value && currentLibrary.length > 0) {
+      initSelectedIndex();
+    }
+  }
 
   return {
     selectedIndex,
@@ -130,5 +158,6 @@ export const useMusicSelector = defineStore('musicSelector', () => {
     updateScrollPosition,
     getVisibleItems,
     initSelectedIndex,
+    refreshLibrary,
   };
 });

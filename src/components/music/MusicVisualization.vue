@@ -28,13 +28,13 @@ const config = {
   lineColor: 'rgb(68, 170, 221)',  // 线条颜色
   gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],  // 渐变色
   lineWidth: 2,  // 线条宽度
-  fftSize: 256,  // 减小FFT大小以提高性能
+  fftSize: 4096,  // 减小FFT大小以提高性能
   smoothingTimeConstant: 0.7,  // 平滑系数 (0-1)
   barSpacing: 0.0,  // 柱形间距占柱宽的比例 (0表示无间距)
   curveTension: 0.6,  // 曲线张力系数 (0-1，越大曲线越圆滑)
   barScaleFactor: 1,  // 柱形高度缩放系数 (降低值以减少过高柱形)
   minHeight: 2,  // 最小高度（像素）
-  barCount: 256,  // 渲染的柱形数量 (降低以提高性能)
+  barCount: 4096,  // 渲染的柱形数量 (降低以提高性能)
   // 频率响应曲线系数
   freqResponseCurve: [
     { freq: 0.0, gain: 1 },  // 最低频
@@ -44,7 +44,7 @@ const config = {
     { freq: 0.8, gain: 1.2 },  // 高频
     { freq: 1.0, gain: 1.5 },  // 最高频
   ],
-  frequencyRange: 0.85,  // 只使用0-85%的频谱数据
+  frequencyRange: 0.2,  // 只使用xx%的频谱数据
 };
 
 // --- 初始化可视化器 ---

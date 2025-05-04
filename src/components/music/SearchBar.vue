@@ -1,5 +1,8 @@
 <template>
   <div class="search-bar-container">
+    <div class="music-analyer-button">
+      <MusicAnalyzer></MusicAnalyzer>
+    </div>
     <div class="input-box">
       <input type="text" placeholder="输入以搜索" class="search-input" ref="searchInput" v-model="searchBarStore.searchText"
         @blur="handleBlur" />
@@ -26,7 +29,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useSearchBar } from '@/store/SearchBar';
-
+import MusicAnalyzer from '@/components/music/MusicAnalyzer.vue'
+// import { indexedDBService } from "@/utils/indexedDBService";
+// import { useMusicAnalysis } from '@/store/MusicAnalysis';
 const searchBarStore = useSearchBar();
 const searchInput = ref(null);
 
@@ -58,7 +63,11 @@ onMounted(() => {
   // 添加键盘快捷键
   window.addEventListener('keydown', handleKeyDown);
 });
-
+// const musicAnalysisStore = useMusicAnalysis();
+onMounted(async () => {
+  // 初始化IndexedDB
+  
+});
 // 组件卸载时移除监听器
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeyDown);
@@ -90,6 +99,13 @@ const handleKeyDown = (e) => {
   z-index: 10;
   background-color: rgba(10, 10, 10, 0.95);
   font-family: "Comfortaa-Light", sans-serif;
+
+  .music-analyer-button {
+    position: absolute;
+    top: 20px;
+    right: 31%;
+    z-index: 11;
+  }
 
   .input-box {
     width: 60%;
