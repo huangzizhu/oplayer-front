@@ -55,14 +55,14 @@
 
 <script setup>
 /* eslint-disable */
-import {onMounted, ref, onUnmounted, watch} from 'vue'
+import {onMounted, ref} from 'vue'
 import {useBgStore} from '@/store/BG'
 import {useRouter} from 'vue-router'
 import CollectionPlace from "@/components/user/profile/mediaDisplay/CollectionPlace.vue";
 import PlaylistPlace from "@/components/user/profile/mediaDisplay/PlaylistPlace.vue";
 import UserCard from "@/components/user/profile/UserCard.vue";
 import {useUserStore} from "@/store/User";
-import {formatDuration, getUserInfo,getMainColorHex} from "@/utils/UserUtils";
+import {formatDuration, getMainColorHex, getUserInfo} from "@/utils/UserUtils";
 import UserInfo from "@/components/user/profile/UserInfo.vue";
 import EditFormView from "@/components/user/profile/EditFormView.vue";
 
@@ -92,9 +92,7 @@ const handleEdit = async (value) => {
   showEditForm.value = value;
   if(value) {
     try {
-      const response = await getMainColorHex(background.value);
-      console.log('主色调:', response);
-      primaryColor.value = response;
+      primaryColor.value = await getMainColorHex(background.value);
     }catch(err) {
       console.error('获取主色调失败:', err);
       primaryColor.value = '#221A21'; // 设置默认值
