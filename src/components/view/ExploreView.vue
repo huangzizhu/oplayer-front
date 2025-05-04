@@ -1,27 +1,15 @@
-<script setup>
-
-</script>
-
 <template>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
-<h1> ajdwhdiowhdowihdwiodhowd</h1>
+<SearchBar class="search-bar"></SearchBar>
 </template>
 
-<style scoped>
+<script setup>
+import SearchBar from "@/components/explore/SearchBar.vue";
+</script>
 
+<style scoped>
+.search-bar{
+  margin-top: 60px;
+  width: 30%;
+  max-width: 600px;
+}
 </style>
