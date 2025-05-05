@@ -310,10 +310,22 @@ const processAudioFiles = async (files) => {
           audioFormat = 'MP3';
         }
 
+        // 处理多个艺术家的情况
+        let artist = 'Unknown Artist';
+        if (common.artist) {
+          // 如果是数组，则用斜杠连接
+          artist = Array.isArray(common.artist) ? common.artist.join('/') : common.artist;
+        } else if (common.artists && common.artists.length > 0) {
+          // 有些文件使用 artists 数组字段存储艺术家信息
+          artist = common.artists.join('/');
+        } else if (common.albumartist) {
+          // 尝试使用专辑艺术家
+          artist = Array.isArray(common.albumartist) ? common.albumartist.join('/') : common.albumartist;
+        }
         // 构建音乐对象
         const music = musicAnalysisStore.markAsLocalFile({
           title: common.title || file.name.replace(/\.[^/.]+$/, ""),
-          artist: common.artist || 'Unknown Artist',
+          artist: artist,
           album: common.album || '',
           bpm: common.bpm || 0,
           cover: coverUrl || '/images/default-cover.jpg',

@@ -201,7 +201,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
       if (char === '"') {
         inQuotes = !inQuotes;
         currentPart += char;
-      } else if (char === ' ' && !inQuotes) {
+      } else if ((char === ' ' || char === '/') && !inQuotes) {
         if (currentPart) {
           parts.push(currentPart);
           currentPart = '';

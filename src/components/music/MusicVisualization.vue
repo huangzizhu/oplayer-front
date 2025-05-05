@@ -29,22 +29,26 @@ const config = {
   gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],  // 渐变色
   lineWidth: 2,  // 线条宽度
   fftSize: 4096,  // 减小FFT大小以提高性能
-  smoothingTimeConstant: 0.7,  // 平滑系数 (0-1)
-  barSpacing: 0.0,  // 柱形间距占柱宽的比例 (0表示无间距)
-  curveTension: 0.6,  // 曲线张力系数 (0-1，越大曲线越圆滑)
-  barScaleFactor: 1,  // 柱形高度缩放系数 (降低值以减少过高柱形)
+  smoothingTimeConstant: 0.68,  // 平滑系数 (0-1)
+  barSpacing: 0.1,  // 柱形间距占柱宽的比例 (0表示无间距)
+  barScaleFactor: 1.1,  // 柱形高度缩放系数 (降低值以减少过高柱形)
   minHeight: 2,  // 最小高度（像素）
-  barCount: 4096,  // 渲染的柱形数量 (降低以提高性能)
+  barCount: 256,  // 渲染的柱形数量 (降低以提高性能)
   // 频率响应曲线系数
+  frequencyRange: 0.9,  // 使用频谱数据的90%（覆盖大部分可听频率）
+  freqScaleFactor: 0.95,  // 频率压缩系数: 1=完全对数分布，0=线性分布
+  useLogFrequency: true,  // 启用对数频率映射
+  minFreq: 1,    // 最低频率 Hz
+  maxFreq: 18000, // 最高频率 Hz
+  // 优化频率响应曲线，根据听觉特性调整
   freqResponseCurve: [
-    { freq: 0.0, gain: 1 },  // 最低频
-    { freq: 0.2, gain: 1 },  // 低频
-    { freq: 0.4, gain: 1 },  // 中低频
-    { freq: 0.6, gain: 1 },  // 中高频
-    { freq: 0.8, gain: 1.2 },  // 高频
-    { freq: 1.0, gain: 1.5 },  // 最高频
+    { freq: 0.0, gain: 0.9 },  // 轻微提升低频（20-100Hz）
+    { freq: 0.1, gain: 0.9 },  // 低频（100-500Hz）
+    { freq: 0.3, gain: 0.95 },  // 中频（500-2000Hz）
+    { freq: 0.6, gain: 1.2 },  // 中高频（2-8kHz）
+    { freq: 0.8, gain: 1.3 }, // 高频（8-14kHz）
+    { freq: 1.0, gain: 1.4 },  // 极高频（14-20kHz）
   ],
-  frequencyRange: 0.2,  // 只使用xx%的频谱数据
 };
 
 // --- 初始化可视化器 ---
@@ -151,6 +155,37 @@ const stopDrawing = () => {
   console.log('停止频谱绘制');
 };
 
+// 生成对数分布的频率边界
+const generateLogFrequencyBands = (minFreq, maxFreq, bandCount) => {
+  const logMin = Math.log10(minFreq);
+  const logMax = Math.log10(maxFreq);
+  const bands = [];
+
+  for (let i = 0; i <= bandCount; i++) {
+    // 计算归一化索引 [0,1]
+    const t = i / bandCount;
+
+    // 混合线性和对数映射
+    // freqScaleFactor=1 时为完全对数分布
+    // freqScaleFactor=0 时为完全线性分布
+    let freq;
+    if (config.useLogFrequency) {
+      const logFreq = Math.pow(10, logMin + t * (logMax - logMin));
+      const linearFreq = minFreq + t * (maxFreq - minFreq);
+
+      // 使用缩放因子混合对数和线性分布
+      freq = linearFreq * (1 - config.freqScaleFactor) + logFreq * config.freqScaleFactor;
+    } else {
+      // 线性分布
+      freq = minFreq + t * (maxFreq - minFreq);
+    }
+
+    bands.push(freq);
+  }
+
+  return bands;
+};
+
 // --- 计算频率响应增益 ---
 const getFrequencyResponseGain = (percent) => {
   const curve = config.freqResponseCurve;
@@ -189,6 +224,7 @@ const drawSpectrum = () => {
     animationFrameId = null;
     return;
   }
+
   // 请求下一帧
   animationFrameId = requestAnimationFrame(drawSpectrum);
 
@@ -214,31 +250,51 @@ const drawSpectrum = () => {
   });
   canvasCtx.fillStyle = grad;
 
+  // 计算频率边界（对数分布）
+  // const bands = generateLogFrequencyBands(config.minFreq, config.maxFreq, config.barCount);
+
+  // 计算奈奎斯特频率（采样率的一半，即频谱最高频率）
+  const nyquistFreq = audioContext.sampleRate / 2;
+
   // 计算柱形参数
-  const N = config.barCount;
-  const barWidth = width / N;
+  const barCount = config.barCount;
+  const barWidth = width / barCount;
+  const bands = generateLogFrequencyBands(config.minFreq, config.maxFreq, barCount);
   const gap = barWidth * config.barSpacing;
   const actualBarWidth = barWidth - gap;
-
+  
   // 绘制频谱柱形
-  for (let i = 0; i < N; i++) {
-    // 频率百分比
-    const percent = (i / (N - 1)) * config.frequencyRange;
-    const freqPercent = percent; // 低频左，高频右
+  for (let i = 0; i < barCount; i++) {
+    // 获取当前柱形对应的频率下边界和上边界
+    const lowerFreq = bands[i];
+    const upperFreq = i < barCount - 1 ? bands[i + 1] : config.maxFreq;
 
-    // 映射到 dataArray
-    const idx = Math.min(bufferLength - 1, Math.floor(freqPercent * bufferLength));
-    let v = dataArray[idx];
+    // 将频率转换为频谱数据索引
+    const lowerIndex = Math.floor((lowerFreq / nyquistFreq) * bufferLength);
+    const upperIndex = Math.min(
+      bufferLength - 1,
+      Math.ceil((upperFreq / nyquistFreq) * bufferLength)
+    );
+
+    // 计算当前频段的平均能量
+    let sum = 0;
+    // let count = 0;
+
+    for (let j = lowerIndex; j <= upperIndex; j++) {
+      sum += dataArray[j] * (j - lowerIndex + 1); // 线性加权
+    }
+    let value = sum / ((upperIndex - lowerIndex + 1) * (upperIndex - lowerIndex + 2) / 2);
 
     // 应用频响增益
-    const gain = getFrequencyResponseGain(freqPercent);
-    v = Math.min(255, v * gain);
+    const freqPercent = (lowerFreq + upperFreq) / (2 * nyquistFreq);
+    const gain = getFrequencyResponseGain(freqPercent * config.frequencyRange);
+    value = Math.min(255, value * gain);
 
     // 动态压缩
-    if (v > 210) v = 210 + (v - 210) * 0.5;
+    if (value > 210) value = 210 + (value - 210) * 0.5;
 
     // 计算柱高
-    const barHeight = Math.max(config.minHeight, (v / 255) * height * config.barScaleFactor);
+    const barHeight = Math.max(config.minHeight, (value / 255) * height * config.barScaleFactor);
 
     // 计算柱形位置
     const x = i * barWidth;
