@@ -206,8 +206,36 @@
         </div>
 
         <div class="modal-footer">
-          <button class="action-button" @click="saveChanges">保存更改</button>
-          <button class="action-button cancel" @click="showEditDialog = false">取消</button>
+          <button class="action-button delete" @click="confirmDelete">
+            <i class="fas fa-trash-alt"></i> 删除曲目
+          </button>
+          <div class="footer-right">
+            <button class="action-button" @click="saveChanges">保存更改</button>
+            <button class="action-button cancel" @click="showEditDialog = false">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 删除确认对话框 -->
+    <div class="confirm-delete-modal" v-if="showDeleteConfirm">
+      <div class="confirm-modal-content">
+        <div class="modal-header">
+          <h3>确认删除</h3>
+        </div>
+        <div class="modal-body">
+          <p class="confirm-message">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            您确定要删除曲目 <strong>{{ editingMusic.title }}</strong> 吗？
+          </p>
+          <p class="confirm-warning">此操作不可撤销，音乐文件和元数据将被永久删除。</p>
+        </div>
+        <div class="modal-footer">
+          <button class="action-button delete-confirm" @click="deleteMusic">
+            确认删除
+          </button>
+          <button class="action-button cancel" @click="showDeleteConfirm = false">
+            取消
+          </button>
         </div>
       </div>
     </div>
@@ -337,6 +365,37 @@ const saveChanges = async () => {
   } catch (error) {
     console.error('保存曲目信息失败:', error);
     // 可以添加错误提示
+  }
+};
+
+
+// 删除相关状态
+const showDeleteConfirm = ref(false);
+
+// 打开删除确认对话框
+const confirmDelete = () => {
+  showDeleteConfirm.value = true;
+};
+
+// 执行删除操作
+const deleteMusic = async () => {
+  try {
+    // 删除音乐
+    const success = await musicAnalysisStore.removeMusic(editingMusic.value.id);
+
+    // 关闭所有对话框
+    showDeleteConfirm.value = false;
+    showEditDialog.value = false;
+
+    if (success) {
+      // 如果有需要，可以显示删除成功的通知
+      console.log(`成功删除曲目: ${editingMusic.value.title}`);
+    } else {
+      // 显示错误提示
+      console.error(`删除曲目失败: ${editingMusic.value.title}`);
+    }
+  } catch (error) {
+    console.error('删除曲目出错:', error);
   }
 };
 </script>
@@ -805,8 +864,13 @@ const saveChanges = async () => {
         padding: 15px 20px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         gap: 10px;
+
+        .footer-right {
+          display: flex;
+          gap: 10px;
+        }
 
         .action-button {
           background: #44AADD;
@@ -828,7 +892,98 @@ const saveChanges = async () => {
               border-color: rgba(255, 255, 255, 0.5);
             }
           }
+
+          &.delete {
+            background: rgba(244, 67, 54, 0.7);
+
+            &:hover {
+              background: rgba(244, 67, 54, 0.9);
+            }
+
+            i {
+              margin-right: 5px;
+            }
+          }
+
+          &.delete-confirm {
+            background: #f44336;
+
+            &:hover {
+              background: darken(#f44336, 10%);
+            }
+          }
         }
+      }
+    }
+  }
+
+  /* 删除确认对话框样式 */
+  .confirm-delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+
+    .confirm-modal-content {
+      background: #222;
+      border-radius: 16px;
+      width: 450px;
+      max-width: 90vw;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+
+      .modal-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(244, 67, 54, 0.2);
+
+        h3 {
+          margin: 0;
+          color: white;
+        }
+      }
+
+      .modal-body {
+        padding: 20px;
+
+        .confirm-message {
+          margin-top: 0;
+          font-size: 16px;
+          color: white;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .warning-icon {
+            color: #f44336;
+            font-size: 20px;
+          }
+
+          strong {
+            color: #f44336;
+          }
+        }
+
+        .confirm-warning {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 14px;
+          margin-top: 15px;
+        }
+      }
+
+      .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid rgba(244, 67, 54, 0.2);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
       }
     }
   }

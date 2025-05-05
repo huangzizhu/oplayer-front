@@ -596,9 +596,10 @@ onUnmounted(() => {
       &:hover {
         color: white;
       }
-
+      
       i {
-        color: #f44336;
+        color: white;
+        // color: #f44336;
       }
     }
 
