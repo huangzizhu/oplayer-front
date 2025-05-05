@@ -4,6 +4,7 @@ import { useMusicSelector } from "./MusicSelector";
 import { useMusicLibrary } from "./MusicLibrary";
 import { Howl } from "howler";
 import { indexedDBService } from "@/utils/indexedDBService";
+import { Howler } from "howler";
 
 export const useMusicPlayer = defineStore("musicPlayer", () => {
   // 引入音乐选择器
@@ -60,6 +61,10 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
     }
   );
 
+  // 添加这些变量用于追踪加载状态
+  const currentLoadingId = ref(null);  // 当前正在加载的音频ID
+  const isLoadingLocked = ref(false);  // 加载锁定状态
+
   // 加载并播放当前选中的音乐
   const loadAndPlay = async () => {
     const music = currentMusic.value;
@@ -69,21 +74,49 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
       return;
     }
 
-    // 停止当前播放的音频
+    // 强制立即卸载上一个实例 - 确保没有多个实例并行
     stopAndUnload();
+
+    // 如果正在加载相同的曲目，则避免重复加载
+    if (isLoadingLocked.value && currentLoadingId.value === music.id) {
+      console.log(`已经在加载: ${music.title}`);
+      return;
+    }
+
+    // 设置加载锁和当前加载ID
+    isLoadingLocked.value = true;
+    currentLoadingId.value = music.id;
+
+    // 记录当前加载的音乐ID用于后续检查
+    const currentMusicId = music.id;
 
     // 设置加载状态
     isLoading.value = true;
     hasError.value = false;
 
     try {
-      // 对于本地文件，如果没有有效的audioPath但有_hasStoredAudio标记，
-      // 从IndexedDB加载音频文件
+      // 对于本地文件，从IndexedDB加载
       if (music.localFile && (!music.audioPath || !music.audioPath.startsWith('blob:')) && music._hasStoredAudio) {
         // 从IndexedDB加载音频
         const audioBlob = await indexedDBService.getAudioFile(music.id);
 
+        // 检查是否在加载过程中切换了曲目
+        if (currentLoadingId.value !== currentMusicId) {
+          console.log('加载过程中切换了曲目，取消加载');
+          isLoadingLocked.value = false;
+          return;
+        }
+
         if (audioBlob) {
+          // 释放旧URL (如果存在)
+          if (music.audioPath && music.audioPath.startsWith('blob:')) {
+            try {
+              URL.revokeObjectURL(music.audioPath);
+            } catch (e) {
+              console.warn('释放旧URL失败:', e);
+            }
+          }
+
           // 创建新的Blob URL
           music.audioPath = URL.createObjectURL(audioBlob);
 
@@ -93,6 +126,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
           isLoading.value = false;
           hasError.value = true;
           errorMessage.value = "无法加载本地音频文件";
+          isLoadingLocked.value = false;
           return;
         }
       }
@@ -103,25 +137,72 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
         isLoading.value = false;
         hasError.value = true;
         errorMessage.value = "无效的音频路径";
+        isLoadingLocked.value = false;
         return;
       }
 
-      // 创建新的Howl实例 - 关键：设置html5:false确保使用Web Audio API
+      // 确保旧的实例被彻底销毁
+      if (sound) {
+        sound.off(); // 移除所有事件监听
+        sound.stop();
+        sound.unload();
+        sound = null;
+      }
+
+      // 创建新的Howl实例 - 注意不使用HTML5模式
       sound = new Howl({
         src: [finalAudioPath],
-        html5: false, // 使用Web Audio API而非HTML5 Audio
+        html5: false, // 坚持使用Web Audio API，不使用HTML5 Audio
         format: music.format ? [music.format.toLowerCase()] : undefined,
         volume: volume.value,
         onload: () => {
+          // 检查加载完成时，当前音乐ID是否仍与加载开始时相同
+          if (currentLoadingId.value !== currentMusicId) {
+            console.log('音频加载完成，但已切换到其他曲目，不播放');
+
+            // 立即卸载此实例
+            if (sound) {
+              sound.off();
+              sound.unload();
+              sound = null;
+            }
+
+            isLoadingLocked.value = false;
+            return;
+          }
+
+          // 加载成功
           duration.value = sound.duration();
           isLoading.value = false;
+          isLoadingLocked.value = false;
+
+          // 检查是否还有其他实例在播放
+          if (Howler._howls.length > 1) {
+            console.warn('发现多个Howl实例，正在停止其他实例');
+
+            // 获取当前实例ID
+            const currentId = sound._id;
+
+            // 停止其他实例
+            Howler._howls.forEach(howl => {
+              if (howl._id !== currentId) {
+                howl.stop();
+                howl.unload();
+              }
+            });
+          }
 
           // 自动播放
           play();
         },
         onplay: () => {
+          // 确保这是当前加载的曲目
+          if (currentLoadingId.value !== currentMusicId) {
+            sound.stop();
+            return;
+          }
+
           isPlaying.value = true;
-          // 设置定时器更新当前时间
           startTimeUpdate();
         },
         onpause: () => {
@@ -136,34 +217,23 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
         },
         onloaderror: (id, err) => {
           console.error('音频加载错误:', err);
+
+          // 检查是否仍是当前请求的音乐
+          if (currentLoadingId.value !== currentMusicId) {
+            isLoadingLocked.value = false;
+            return;
+          }
+
           isLoading.value = false;
           hasError.value = true;
           errorMessage.value = "加载音频失败";
+          isLoadingLocked.value = false;
 
-          // 如果是本地文件，尝试重新从IndexedDB加载
-          if (music.localFile && music._hasStoredAudio) {
-            console.log('尝试重新加载本地音频...');
-            setTimeout(async () => {
-              try {
-                // 重新加载音频文件
-                const audioBlob = await indexedDBService.getAudioFile(music.id);
-                if (audioBlob) {
-                  // 释放旧URL
-                  if (music.audioPath && music.audioPath.startsWith('blob:')) {
-                    URL.revokeObjectURL(music.audioPath);
-                  }
-
-                  // 创建新URL
-                  music.audioPath = URL.createObjectURL(audioBlob);
-                  musicLibraryStore.updateMusicPath(music.id, music.audioPath);
-
-                  // 重试播放
-                  loadAndPlay();
-                }
-              } catch (e) {
-                console.error('重新加载本地音频失败:', e);
-              }
-            }, 1000);
+          // 删除失败的实例
+          if (sound) {
+            sound.off();
+            sound.unload();
+            sound = null;
           }
         },
         onplayerror: (id, err) => {
@@ -171,6 +241,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
           isPlaying.value = false;
           hasError.value = true;
           errorMessage.value = "播放音频失败";
+          isLoadingLocked.value = false;
         }
       });
     } catch (error) {
@@ -178,9 +249,9 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
       isLoading.value = false;
       hasError.value = true;
       errorMessage.value = `播放器错误: ${error.message}`;
+      isLoadingLocked.value = false;
     }
   };
-
   // 时间更新定时器
   let timeUpdateInterval = null;
 
@@ -207,19 +278,41 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
     }
   };
 
-  // 停止并卸载当前音频
+  // 加强停止和卸载函数
   const stopAndUnload = () => {
     stopTimeUpdate();
 
+    // 停止所有可能的Howl实例
+    Howler.stop();
+
     if (sound) {
-      sound.stop();
-      sound.unload();
+      try {
+        sound.off(); // 移除所有事件监听
+        sound.stop();
+        sound.unload();
+      } catch (e) {
+        console.warn('停止音频时出错:', e);
+      }
       sound = null;
+    }
+
+    // 清理额外的howl实例
+    if (Howler._howls && Howler._howls.length > 0) {
+      console.log(`清理 ${Howler._howls.length} 个额外的Howl实例`);
+      for (let i = Howler._howls.length - 1; i >= 0; i--) {
+        try {
+          Howler._howls[i].stop();
+          Howler._howls[i].unload();
+        } catch (e) {
+          console.warn('清理额外实例时出错:', e);
+        }
+      }
     }
 
     currentTime.value = 0;
     duration.value = 0;
     isPlaying.value = false;
+    isLoading.value = false;
   };
 
   // 处理音轨结束
