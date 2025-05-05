@@ -15,6 +15,9 @@
       <!-- 详情页 -->
       <div v-if="activeTab === 'details'" class="tab-content details-content">
         <div class="section-title">曲目信息</div>
+        <button class="edit-button" @click="openEditDialog" v-if="isEditable">
+          <i class="fas fa-edit"></i> 编辑
+        </button>
         <div class="info-grid">
           <div class="info-item">
             <div class="label">艺术家</div>
@@ -123,6 +126,91 @@
         </div>
       </div>
     </div>
+
+
+    <!-- 元信息编辑对话框 -->
+    <div class="edit-modal" v-if="showEditDialog">
+      <div class="edit-modal-content">
+        <div class="modal-header">
+          <h3>编辑曲目信息</h3>
+          <button class="close-button" @click="showEditDialog = false">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="edit-form">
+            <!-- 基本信息 -->
+            <div class="form-section">
+              <h4>基本信息</h4>
+
+              <div class="form-group">
+                <label>标题</label>
+                <input type="text" v-model="editingMusic.title" placeholder="曲目标题">
+              </div>
+
+              <div class="form-group">
+                <label>艺术家</label>
+                <input type="text" v-model="editingMusic.artist" placeholder="艺术家名称">
+              </div>
+
+              <div class="form-group">
+                <label>专辑</label>
+                <input type="text" v-model="editingMusic.album" placeholder="专辑名称">
+              </div>
+
+              <div class="form-group">
+                <label>BPM</label>
+                <input type="number" v-model="editingMusic.bpm" placeholder="0">
+              </div>
+
+              <div class="form-group">
+                <label>时长</label>
+                <input type="text" v-model="editingMusic.length" placeholder="0:00">
+              </div>
+
+              <div class="form-group">
+                <label>格式</label>
+                <select v-model="editingMusic.format">
+                  <option value="MP3">MP3</option>
+                  <option value="FLAC">FLAC</option>
+                  <option value="WAV">WAV</option>
+                  <option value="OGG">OGG</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 标签管理 -->
+            <div class="form-section">
+              <h4>标签管理</h4>
+              <div class="tags-editor">
+                <div class="current-tags">
+                  <span v-for="(tag, index) in editingMusic.tags" :key="index" class="tag-pill">
+                    {{ tag }}
+                    <button @click="removeTag(index)" class="remove-tag">&times;</button>
+                  </span>
+                </div>
+
+                <div class="add-tag-form">
+                  <input type="text" v-model="newTag" @keyup.enter="addTag" placeholder="输入新标签并按回车" class="tag-input">
+                  <button @click="addTag" class="add-tag-btn">添加标签</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 描述编辑 -->
+            <div class="form-section">
+              <h4>描述</h4>
+              <textarea v-model="editingMusic.description" placeholder="输入曲目描述" class="description-editor"
+                rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="action-button" @click="saveChanges">保存更改</button>
+          <button class="action-button cancel" @click="showEditDialog = false">取消</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -146,11 +234,14 @@
 import { ref, computed } from 'vue';
 import { useMusicSelector } from '@/store/MusicSelector.js';
 import { useSearchBar } from '@/store/SearchBar';
+// import { useMusicLibrary } from '@/store/MusicLibrary';
+import { useMusicAnalysis } from '@/store/MusicAnalysis';
 // import MusicAnalyzer from '@/components/music/MusicAnalyzer.vue';
 
 const musicSelector = useMusicSelector();
 const SearchBar = useSearchBar();
-
+// const musicLibraryStore = useMusicLibrary();
+const musicAnalysisStore = useMusicAnalysis();
 // 定义标签页
 const tabs = [
   { id: 'details', name: 'Details' },
@@ -186,6 +277,67 @@ const handleInfoClick = (Infotype, info) => {
   // 处理信息点击事件
   console.log(`Clicked on info: ${info}`);
   SearchBar.searchText = `${info}`
+};
+
+
+// 编辑相关状态
+const showEditDialog = ref(false);
+const editingMusic = ref({});
+const newTag = ref('');
+// 判断当前音乐是否可编辑
+const isEditable = computed(() => {
+  const music = musicSelector.selectedMusic;
+  // 只允许编辑用户导入的音乐，而不是默认音乐
+  return music && (music.sourceType === 'local-file' || music.sourceType === 'remote-api');
+});
+
+// 打开编辑对话框
+const openEditDialog = () => {
+  // 创建一个深拷贝，避免直接修改原始对象
+  editingMusic.value = JSON.parse(JSON.stringify(musicSelector.selectedMusic));
+
+  // 确保标签是数组
+  if (!editingMusic.value.tags) {
+    editingMusic.value.tags = [];
+  }
+
+  showEditDialog.value = true;
+};
+
+// 添加标签
+const addTag = () => {
+  const trimmedTag = newTag.value.trim();
+  if (trimmedTag) {
+    // 确保标签是字符串且不重复
+    if (!editingMusic.value.tags) {
+      editingMusic.value.tags = [];
+    }
+
+    if (!editingMusic.value.tags.includes(trimmedTag)) {
+      editingMusic.value.tags.push(trimmedTag);
+    }
+
+    newTag.value = ''; // 清空输入框
+  }
+};
+
+// 移除标签
+const removeTag = (index) => {
+  editingMusic.value.tags.splice(index, 1);
+};
+
+// 保存更改
+const saveChanges = async () => {
+  try {
+    // 更新音乐库中的元信息
+    await musicAnalysisStore.updateMusicMetadata(editingMusic.value.id, editingMusic.value);
+
+    // 关闭对话框
+    showEditDialog.value = false;
+  } catch (error) {
+    console.error('保存曲目信息失败:', error);
+    // 可以添加错误提示
+  }
 };
 </script>
 
@@ -293,6 +445,7 @@ const handleInfoClick = (Infotype, info) => {
         grid-template-columns: repeat(2, 1fr);
         grid-gap: 15px;
         margin-bottom: 20px;
+        margin-top: 10px;
 
         .info-item {
           .label {
@@ -325,7 +478,7 @@ const handleInfoClick = (Infotype, info) => {
 
         .tag-item {
           color: @text-link;
-          padding: 5px 10px;
+          // padding: 5px 10px;
           border-radius: 15px;
           cursor: pointer;
           // transition: all 0.3s ease;
@@ -458,6 +611,223 @@ const handleInfoClick = (Infotype, info) => {
           width: 80px;
           text-align: right;
           color: @color-normal;
+        }
+      }
+    }
+  }
+
+  // 编辑按钮样式
+  .edit-button {
+    margin-left: 0px;
+    // padding-bottom: 15px;
+    background: rgba(68, 170, 221, 0.2);
+    border: 1px solid #44AADD;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #44AADD;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(68, 170, 221, 0.4);
+    }
+
+    i {
+      margin-right: 4px;
+    }
+  }
+
+  // 编辑对话框样式
+  .edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+
+    .edit-modal-content {
+      background: #222;
+      border-radius: 16px;
+      width: 600px;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      .modal-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h3 {
+          margin: 0;
+          color: white;
+        }
+
+        .close-button {
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 24px;
+          cursor: pointer;
+        }
+      }
+
+      .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        max-height: 60vh;
+
+        .edit-form {
+          .form-section {
+            color: white;
+            margin-bottom: 24px;
+
+            h4 {
+              color: #44AADD;
+              margin-top: 0;
+              margin-bottom: 15px;
+              border-bottom: 1px solid rgba(68, 170, 221, 0.2);
+              padding-bottom: 8px;
+            }
+
+            .form-group {
+              margin-bottom: 15px;
+
+              label {
+                display: block;
+                margin-bottom: 5px;
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 14px;
+              }
+
+              input,
+              select,
+              textarea {
+                width: 100%;
+                padding: 8px 12px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+                color: white;
+                font-size: 14px;
+
+                &:focus {
+                  outline: none;
+                  border-color: #44AADD;
+                }
+              }
+            }
+
+            .tags-editor {
+              .current-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 10px;
+
+                .tag-pill {
+                  background: rgba(68, 170, 221, 0.2);
+                  border: 1px solid rgba(68, 170, 221, 0.4);
+                  border-radius: 15px;
+                  padding: 4px 10px;
+                  display: flex;
+                  align-items: center;
+                  color: #44AADD;
+
+                  .remove-tag {
+                    background: none;
+                    border: none;
+                    color: #44AADD;
+                    margin-left: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 16px;
+                    height: 16px;
+
+                    &:hover {
+                      color: white;
+                    }
+                  }
+                }
+              }
+
+              .add-tag-form {
+                display: flex;
+                gap: 10px;
+
+                .tag-input {
+                  color: white !important;
+                  flex: 1;
+                }
+
+                .add-tag-btn {
+                  background: #44AADD;
+                  border: none;
+                  color: white;
+                  padding: 8px 15px;
+                  border-radius: 4px;
+                  cursor: pointer;
+
+                  &:hover {
+                    background: darken(#44AADD, 10%);
+                  }
+                }
+              }
+            }
+
+            .description-editor {
+              color: white !important;
+              width: 100%;
+              min-height: 100px;
+              resize: vertical;
+              background: rgba(255, 255, 255, 0.1);
+              border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+          }
+        }
+      }
+
+      .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+
+        .action-button {
+          background: #44AADD;
+          border: none;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+
+          &:hover {
+            background: darken(#44AADD, 10%);
+          }
+
+          &.cancel {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            &:hover {
+              border-color: rgba(255, 255, 255, 0.5);
+            }
+          }
         }
       }
     }

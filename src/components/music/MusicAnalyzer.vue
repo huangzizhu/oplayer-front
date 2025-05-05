@@ -68,6 +68,9 @@
       <div class="menu-item" @click="showStorageInfo">
         <i class="fas fa-database"></i> 存储空间信息
       </div>
+      <div class="menu-item menu-item-collapse" @click="showContextMenu = false">
+        <i class="fas fa-times"></i> 收起菜单
+      </div>
     </div>
     <!-- 添加存储信息弹窗 -->
     <div class="storage-info-modal" v-if="showStorage">
@@ -91,7 +94,7 @@
               <span>{{ storageInfo.totalSize }} MB</span>
             </div>
           </div>
-          <div class="storage-warning" v-if="storageInfo.totalSize > 1024*1024">
+          <div class="storage-warning" v-if="storageInfo.totalSize > 1024 * 1024">
             <i class="fas fa-exclamation-triangle"></i>
             存储空间使用较大，可能影响性能，请考虑删除不需要的音乐
           </div>
@@ -585,6 +588,20 @@ onUnmounted(() => {
     min-width: 180px;
     z-index: 1000;
 
+    .menu-item-collapse {
+      margin-top: 5px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+
+      &:hover {
+        color: white;
+      }
+
+      i {
+        color: #f44336;
+      }
+    }
+
     .menu-item {
       padding: 8px 16px;
       cursor: pointer;
@@ -915,85 +932,86 @@ onUnmounted(() => {
       }
     }
   }
-    // 添加到样式部分
-    .storage-info-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+
+  // 添加到样式部分
+  .storage-info-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+
+    .modal-content {
+      background: #222;
+      border-radius: 16px;
+      width: 500px;
+      max-width: 90vw;
+      max-height: 90vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-  
-      .modal-content {
-        background: #222;
-        border-radius: 16px;
-        width: 500px;
-        max-width: 90vw;
-        max-height: 90vh;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+
+      .modal-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-  
-        .modal-header {
-          padding: 15px 20px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-  
-          h3 {
-            margin: 0;
-            color: white;
-            font-weight: 600;
-          }
-  
-          .close-button {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 24px;
-            cursor: pointer;
+        justify-content: space-between;
+        align-items: center;
+
+        h3 {
+          margin: 0;
+          color: white;
+          font-weight: 600;
+        }
+
+        .close-button {
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 24px;
+          cursor: pointer;
+        }
+      }
+
+      .modal-body {
+        padding: 20px;
+
+        .storage-info {
+          .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+            &.total {
+              font-weight: bold;
+              margin-top: 8px;
+              color: #44AADD;
+            }
           }
         }
-  
-        .modal-body {
-          padding: 20px;
-  
-          .storage-info {
-            .info-item {
-              display: flex;
-              justify-content: space-between;
-              padding: 8px 0;
-              border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  
-              &.total {
-                font-weight: bold;
-                margin-top: 8px;
-                color: #44AADD;
-              }
-            }
-          }
-  
-          .storage-warning {
-            margin-top: 15px;
-            padding: 10px;
-            background: rgba(244, 67, 54, 0.1);
-            border-radius: 4px;
-            color: #f44336;
-            display: flex;
-            align-items: center;
-  
-            i {
-              margin-right: 8px;
-            }
+
+        .storage-warning {
+          margin-top: 15px;
+          padding: 10px;
+          background: rgba(244, 67, 54, 0.1);
+          border-radius: 4px;
+          color: #f44336;
+          display: flex;
+          align-items: center;
+
+          i {
+            margin-right: 8px;
           }
         }
       }
     }
+  }
 }
 </style>

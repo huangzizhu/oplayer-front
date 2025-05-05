@@ -72,8 +72,128 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
       return false;
     }
   };
+  // 数据结构迁移
+  const migrateDataStructure = async () => {
+    try {
+      // 检查迁移标记
+      const hasMigrated = localStorage.getItem('oplayer-data-migrated-v2');
+      if (hasMigrated === 'true') {
+        console.log('数据已经迁移到v2结构，跳过迁移');
+        return true;
+      }
 
-  // 添加音乐到库和本地存储
+      console.log('开始数据结构迁移...');
+
+      // 获取所有本地音乐
+      const localMusic = getLocalMusic();
+      if (!localMusic || localMusic.length === 0) {
+        console.log('没有需要迁移的数据');
+        localStorage.setItem('oplayer-data-migrated-v2', 'true');
+        return true;
+      }
+
+      // 确保IndexedDB初始化
+      await indexedDBService.init();
+
+      // 迁移元数据
+      for (const music of localMusic) {
+        try {
+          // 检查是否已经存在元数据
+          const existingMetadata = await indexedDBService.getMetadata(music.id);
+          if (existingMetadata) {
+            console.log(`ID ${music.id} 的元数据已存在，跳过`);
+            continue;
+          }
+
+          // 构建元数据对象
+          const metadata = {
+            id: music.id,
+            title: music.title,
+            artist: music.artist,
+            album: music.album || '',
+            bpm: music.bpm || 0,
+            length: music.length || '0:00',
+            format: music.format,
+            tags: music.tags || [],
+            description: music.description || '',
+            sourceType: music.sourceType || (music.localFile ? 'local-file' :
+              (music.isRemoteSource ? 'remote-api' : 'unknown'))
+          };
+
+          // 保存元数据
+          await indexedDBService.saveMetadata(metadata);
+        } catch (error) {
+          console.error(`迁移ID ${music.id} 的元数据失败:`, error);
+        }
+      }
+
+      // 标记迁移完成
+      localStorage.setItem('oplayer-data-migrated-v2', 'true');
+      console.log('数据结构迁移完成');
+
+      return true;
+    } catch (error) {
+      console.error('数据结构迁移失败:', error);
+      return false;
+    }
+  };
+
+  // 修改 updateMusicMetadata 方法
+  const updateMusicMetadata = async (musicId, updatedData) => {
+    try {
+      // 获取当前的音乐对象
+      const music = musicLibraryStore.getMusicById(musicId);
+
+      if (!music) {
+        throw new Error(`未找到ID为${musicId}的音乐`);
+      }
+
+      // 确保标签是字符串数组
+      if (updatedData.tags) {
+        updatedData.tags = updatedData.tags.filter(tag => typeof tag === 'string');
+      }
+
+      // 更新音乐库中的数据
+      const updatedMusic = { ...music, ...updatedData };
+
+      // 准备用于 IndexedDB 的净化数据
+      const cleanMetadata = {
+        id: updatedMusic.id,
+        title: updatedMusic.title || '',
+        artist: updatedMusic.artist || '',
+        album: updatedMusic.album || '',
+        bpm: Number(updatedMusic.bpm) || 0,
+        length: updatedMusic.length || '',
+        format: updatedMusic.format || '',
+        tags: Array.isArray(updatedMusic.tags)
+          ? updatedMusic.tags.filter(tag => typeof tag === 'string')
+          : [],
+        description: updatedMusic.description || '',
+        sourceType: updatedMusic.sourceType || ''
+      };
+
+      // 保存到 IndexedDB
+      await indexedDBService.saveMetadata(cleanMetadata);
+
+      // 更新内存中的音乐库
+      musicLibraryStore.updateMusic(updatedMusic);
+
+      // 更新本地存储
+      const localMusic = getLocalMusic();
+      const updatedLocalMusic = localMusic.map(m =>
+        m.id === musicId ? { ...m, ...updatedData } : m
+      );
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocalMusic));
+
+      return true;
+    } catch (error) {
+      console.error('更新音乐元数据失败:', error);
+      return false;
+    }
+  };
+
+  // 添加音乐到库和本地存储 - 修改添加元数据存储
   const addMusicToLibrary = async (musicList) => {
     if (!musicList || !musicList.length) return;
 
@@ -87,8 +207,18 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
     isImporting.value = true;
 
     try {
+      // 标记正在初始化，防止重复调用
+      if (isInitializing.value) return;
+      isInitializing.value = true;
+
       // 确保IndexedDB初始化
       await indexedDBService.init();
+
+      // 执行数据迁移
+      await migrateDataStructure();
+
+      // 检查并处理重复项
+      await indexedDBService.mergeDuplicates();
 
       // 处理每首音乐
       for (let i = 0; i < musicList.length; i++) {
@@ -120,6 +250,38 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
             }
           }
 
+          // 保存元数据
+          const metadata = {
+            id: music.id,
+            title: music.title,
+            artist: music.artist,
+            album: music.album || '',
+            bpm: music.bpm || 0,
+            length: music.length || '0:00',
+            format: music.format,
+            tags: music.tags || [],
+            description: music.description || '',
+            sourceType: music.sourceType
+          };
+
+          // 检查是否有重复曲目
+          const saveResult = await indexedDBService.saveMetadata(metadata);
+
+          // 如果发生了合并，需要更新ID
+          if (saveResult.merged) {
+            // 处理ID变更
+            music.id = saveResult.id;
+
+            // 如果已存在音频和封面，不需要重复存储
+            music._hasStoredAudio = true;
+            music._hasStoredCover = true;
+
+            importLog.value.push({
+              type: 'warning',
+              message: `已合并重复曲目: ${music.title} - ${music.artist}`
+            });
+          }
+
           // 添加到音乐库
           musicLibraryStore.addMusic(music);
 
@@ -148,7 +310,7 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
     }
   };
 
-  // 删除音乐
+  // 删除音乐 - 修改为同时删除元数据
   const removeMusic = async (musicId) => {
     try {
       // 先查找该音乐
@@ -171,6 +333,9 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
         if (musicToRemove._hasStoredCover) {
           await indexedDBService.deleteCoverImage(musicId);
         }
+
+        // 删除元数据
+        await indexedDBService.deleteMetadata(musicId);
 
         // 释放可能存在的Blob URL
         if (musicToRemove.audioPath && musicToRemove.audioPath.startsWith('blob:')) {
@@ -230,6 +395,9 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
         // 创建恢复音乐的计数器
         let restoredCount = 0;
 
+        // 先检查并处理重复项
+        await indexedDBService.mergeDuplicates();
+
         for (const music of newMusic) {
           try {
             // 再次检查确保没有重复
@@ -238,6 +406,36 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
             // 修复格式问题
             if (music.format === 'MPEG') {
               music.format = 'MP3';
+            }
+
+            // 先尝试从IndexedDB加载元数据
+            const metadata = await indexedDBService.getMetadata(music.id);
+
+            // 如果有元数据，更新音乐对象
+            if (metadata) {
+              // 合并从IndexedDB获取的元数据
+              Object.assign(music, {
+                title: metadata.title || music.title,
+                artist: metadata.artist || music.artist,
+                album: metadata.album || music.album,
+                bpm: metadata.bpm || music.bpm,
+                tags: metadata.tags || music.tags,
+                description: metadata.description || music.description
+              });
+            } else {
+              // 如果没有元数据，将当前音乐信息保存为元数据
+              await indexedDBService.saveMetadata({
+                id: music.id,
+                title: music.title,
+                artist: music.artist,
+                album: music.album || '',
+                bpm: music.bpm || 0,
+                length: music.length || '0:00',
+                format: music.format,
+                tags: music.tags || [],
+                description: music.description || '',
+                sourceType: music.sourceType
+              });
             }
 
             // 恢复本地文件的资源
@@ -337,6 +535,7 @@ export const useMusicAnalysis = defineStore("musicAnalysis", () => {
     getLocalMusic,
     markAsRemoteSource,
     markAsLocalFile,
-    getStorageUsage
+    getStorageUsage,
+    updateMusicMetadata,
   };
 });

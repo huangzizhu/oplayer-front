@@ -336,6 +336,16 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
     return false;
   };
 
+  // 更新音乐
+  const updateMusic = (updatedMusic) => {
+    const index = musicLibrary.value.findIndex(music => music.id === updatedMusic.id);
+    if (index !== -1) {
+      musicLibrary.value[index] = { ...musicLibrary.value[index], ...updatedMusic };
+      return true;
+    }
+    return false;
+  };
+
   return {
     musicLibrary,
     getAllMusic,
@@ -352,7 +362,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
     removeMusic,
 
     updateMusicPath,
-    updateMusicCover
+    updateMusicCover,
+    updateMusic,
 
   };
 });
