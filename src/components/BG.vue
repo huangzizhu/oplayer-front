@@ -145,8 +145,8 @@ onBeforeUnmount(() => {
 
 	// 清晰层
 	.bg-clear-layer {
-		width: 1000px; // 设置固定宽度
-		height: 1000px; // 设置固定高度
+		width: 900px; // 设置固定宽度
+		height: 900px; // 设置固定高度
 		// 定位到容器中心
 		top: 50%;
 		left: 50%;
