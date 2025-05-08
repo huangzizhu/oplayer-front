@@ -2,7 +2,8 @@
   <div class="playlist-item-container"
        @mouseenter="isHovered = true"
        @mouseleave="isHovered = false"
-       @click="handlePlaylistClick">
+       @click="handlePlaylistClick"
+       :style="{ '--hover-bg-color': hoverBgColor }">
     <div class="playlist-cover">
       <img
           :src="playlist.coverUrl"
@@ -22,9 +23,10 @@
 
 <script setup>
 /* eslint-disable */
-import { ref } from 'vue';
+import {ref, watch} from 'vue';
 import { VideoPlay } from '@element-plus/icons-vue';
 import {useUserStore} from '@/store/User'
+import {getAdaptiveBgColor, getMainColorHex} from "@/utils/UserUtils";
 
 const userStore = useUserStore();
 
@@ -34,7 +36,12 @@ const props = defineProps({
     required: true
   }
 });
-
+const hoverBgColor = ref('#333333');
+watch(() => props.playlist.coverUrl, async (url) => {
+  try {
+    hoverBgColor.value = getAdaptiveBgColor(await getMainColorHex(url));
+  }catch (err){}
+}, { immediate: true });
 const isHovered = ref(false);
 
 // 截断文本方法
@@ -78,7 +85,7 @@ const handleImageError = (event) => {
   height: 80%;
   align-content: center;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
 }
 
 .cover-image {
@@ -109,22 +116,21 @@ const handleImageError = (event) => {
   width: 80%;
   margin: auto auto;
   text-align: left;
+  background: var(--hover-bg-color);
+  border-radius: 0 0 8px 8px;
+  padding: 4px 0;
 }
 
 .playlist-name {
-  font-size: 14px;
+  font-size: 14px; /* 增大字体大小 */
   color: white;
-  margin-bottom: 4px;
+  margin: 4px 0 0 0.5em
 }
 
 .playlist-duration {
-  font-size: 12px;
+  font-size: 12px; /* 增大字体大小 */
   color: rgba(255, 255, 255, 0.8);
+  margin: 4px 0 0 0.8em
 }
 
-.playlist-item-container:hover .playlist-info {
-  background: rgba(230, 100, 159, 0.6);
-  border-radius: 8px;
-  padding: 4px 0;
-}
 </style>

@@ -98,15 +98,12 @@ export const formatDuration = (minutes) => {
     return `${hours}h${remainingMins > 0 ? `${remainingMins}min` : ''}`
 }
 
-/**
- * 获取图片的主色调并返回十六进制颜色值
- * @param {String|HTMLImageElement} img - 图片的 URL 或 DOM 元素
- * @returns {Promise<String>} 十六进制颜色值（如 #AABBCC）
- */
+
 export async function getMainColorHex(img) {
     return new Promise((resolve, reject) => {
         let image;
         if (typeof img === 'string') {
+            console.log(img)
             // 如果传入的是图片 URL
             image = new Image();
             image.crossOrigin = 'Anonymous'; // 防止跨域问题
@@ -143,4 +140,16 @@ export async function getMainColorHex(img) {
  */
 function rgbToHex(r, g, b) {
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+}
+export function getAdaptiveBgColor(hexColor) {
+    // 1. 将十六进制颜色转换为 RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+
+    // 2. 计算亮度（范围 0~1）
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // 3. 如果背景太亮（>70%亮度），返回深灰色；否则返回原始颜色
+    return luminance > 0.9 ? "#333333" : hexColor;
 }

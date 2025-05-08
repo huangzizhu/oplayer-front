@@ -86,7 +86,7 @@ const rightMenuItems = reactive([
     id: 'discover',
     icon: 'search',
     label: '发现',
-    route: '/',
+    route: '/explore',
     position: 'right',
     backgroundColor: 'rgba(165,204,0,1)',
   },
