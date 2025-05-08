@@ -32,7 +32,7 @@ export const indexedDBService = {
           db.createObjectStore(IMAGE_STORE);
         }
 
-        // 创建元数据存储 (新增)
+        // 创建元数据存储
         if (!db.objectStoreNames.contains(METADATA_STORE)) {
           const metadataStore = db.createObjectStore(METADATA_STORE, { keyPath: 'id' });
 
@@ -56,7 +56,7 @@ export const indexedDBService = {
     });
   },
 
-  // 缺少的方法：保存音频文件
+  // 保存音频文件
   async saveAudioFile(id, audioBlob) {
     try {
       await this.init();
@@ -74,7 +74,7 @@ export const indexedDBService = {
     }
   },
 
-  // 缺少的方法：保存封面图
+  // 保存封面图
   async saveCoverImage(id, imageBlob) {
     try {
       await this.init();
@@ -92,7 +92,7 @@ export const indexedDBService = {
     }
   },
 
-  // 缺少的方法：获取音频文件
+  // 获取音频文件
   async getAudioFile(id) {
     try {
       await this.init();
@@ -110,7 +110,7 @@ export const indexedDBService = {
     }
   },
 
-  // 缺少的方法：获取封面图
+  // 获取封面图
   async getCoverImage(id) {
     try {
       await this.init();
@@ -128,7 +128,7 @@ export const indexedDBService = {
     }
   },
 
-  // 缺少的方法：删除音频文件
+  // 删除音频文件
   async deleteAudioFile(id) {
     try {
       await this.init();
@@ -139,7 +139,7 @@ export const indexedDBService = {
     }
   },
 
-  // 缺少的方法：删除封面图
+  // 删除封面图
   async deleteCoverImage(id) {
     try {
       await this.init();
@@ -150,7 +150,7 @@ export const indexedDBService = {
     }
   },
 
-  // 缺少的方法：获取存储大小
+  // 获取存储大小
   async getStorageSize() {
     await this.init();
 

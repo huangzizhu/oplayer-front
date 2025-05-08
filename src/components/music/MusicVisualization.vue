@@ -29,26 +29,40 @@ const config = {
   gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],  // 渐变色
   lineWidth: 2,  // 线条宽度
   fftSize: 4096,  // 减小FFT大小以提高性能
-  smoothingTimeConstant: 0.68,  // 平滑系数 (0-1)
+  smoothingTimeConstant: 0.72,  // 平滑系数 (0-1)
   barSpacing: 0.1,  // 柱形间距占柱宽的比例 (0表示无间距)
-  barScaleFactor: 1.1,  // 柱形高度缩放系数 (降低值以减少过高柱形)
+  barScaleFactor: 0.85,  // 柱形高度缩放系数 (降低值以减少过高柱形)
   minHeight: 2,  // 最小高度（像素）
   barCount: 256,  // 渲染的柱形数量 (降低以提高性能)
+  
   // 频率响应曲线系数
   frequencyRange: 0.9,  // 使用频谱数据的90%（覆盖大部分可听频率）
-  freqScaleFactor: 0.95,  // 频率压缩系数: 1=完全对数分布，0=线性分布
+  freqScaleFactor: 0.94,  // 频率压缩系数: 1=完全对数分布，0=线性分布
   useLogFrequency: true,  // 启用对数频率映射
   minFreq: 1,    // 最低频率 Hz
   maxFreq: 18000, // 最高频率 Hz
-  // 优化频率响应曲线，根据听觉特性调整
+
+  // 频率响应曲线
   freqResponseCurve: [
-    { freq: 0.0, gain: 0.9 },  // 轻微提升低频（20-100Hz）
-    { freq: 0.1, gain: 0.9 },  // 低频（100-500Hz）
-    { freq: 0.3, gain: 0.95 },  // 中频（500-2000Hz）
-    { freq: 0.6, gain: 1.2 },  // 中高频（2-8kHz）
-    { freq: 0.8, gain: 1.3 }, // 高频（8-14kHz）
-    { freq: 1.0, gain: 1.4 },  // 极高频（14-20kHz）
+    { freq: 0.0, gain: 1.0 },  // 极低频（20-100Hz）
+    { freq: 0.001, gain: 1.00 },  
+    { freq: 0.01, gain: 1.1},
+    { freq: 0.1, gain: 1.15 },  // 低频（100-500Hz）
+    { freq: 0.125, gain: 1.3 },  
+    { freq: 0.15, gain: 1.5 }, 
+    { freq: 0.2, gain: 1.5 },  // 中低频（200-500Hz）
+    { freq: 0.3, gain: 1.55 },  // 中频（500-2000Hz）
+    { freq: 0.6, gain: 1.6 },  // 中高频（2-8kHz）
+    { freq: 0.8, gain: 1.8 }, // 高频（8-14kHz）
+    { freq: 1.0, gain: 1.8 },  // 极高频（14-20kHz）
   ],
+  // 动态效果增强参数
+  dynamicRange: 3,         // 动态范围增强因子 (越大对比越强)
+  dynamicThreshold: 30,      // 动态阈值 (低于此值的信号会被进一步压低)
+  lowGainFactor: 0.9,        // 低频信号增益因子 (低于阈值的信号会乘以此因子)
+  highGainFactor: 1.1,       // 高频信号增益因子 (高于阈值的信号会乘以此因子)
+  normalizeOutput: false,     // 是否归一化输出 (确保有柱形达到最大高度)
+
 };
 
 // --- 初始化可视化器 ---
@@ -250,9 +264,6 @@ const drawSpectrum = () => {
   });
   canvasCtx.fillStyle = grad;
 
-  // 计算频率边界（对数分布）
-  // const bands = generateLogFrequencyBands(config.minFreq, config.maxFreq, config.barCount);
-
   // 计算奈奎斯特频率（采样率的一半，即频谱最高频率）
   const nyquistFreq = audioContext.sampleRate / 2;
 
@@ -262,8 +273,11 @@ const drawSpectrum = () => {
   const bands = generateLogFrequencyBands(config.minFreq, config.maxFreq, barCount);
   const gap = barWidth * config.barSpacing;
   const actualBarWidth = barWidth - gap;
-  
-  // 绘制频谱柱形
+
+  // 提前计算所有柱形的值，用于可能的归一化处理
+  const barValues = [];
+
+  // 第一次循环：计算每个柱形的原始值
   for (let i = 0; i < barCount; i++) {
     // 获取当前柱形对应的频率下边界和上边界
     const lowerFreq = bands[i];
@@ -278,7 +292,6 @@ const drawSpectrum = () => {
 
     // 计算当前频段的平均能量
     let sum = 0;
-    // let count = 0;
 
     for (let j = lowerIndex; j <= upperIndex; j++) {
       sum += dataArray[j] * (j - lowerIndex + 1); // 线性加权
@@ -290,10 +303,39 @@ const drawSpectrum = () => {
     const gain = getFrequencyResponseGain(freqPercent * config.frequencyRange);
     value = Math.min(255, value * gain);
 
-    // 动态压缩
-    if (value > 210) value = 210 + (value - 210) * 0.5;
+    // 应用动态范围增强 - 对比度增强处理
+    // 使用幂函数放大差异
+    value = Math.pow(value / 255, config.dynamicRange) * 255;
 
-    // 计算柱高
+    // 高低频增益分离处理，增强动态范围
+    if (value < config.dynamicThreshold) {
+      // 低值进一步压低
+      value = value * config.lowGainFactor;
+    } else {
+      // 高值进一步增强
+      const boost = config.highGainFactor;
+      value = Math.min(255, value * boost);
+    }
+
+    barValues.push(value);
+  }
+
+  // 如果需要归一化，找到最高柱形并归一化
+  if (config.normalizeOutput) {
+    const maxValue = Math.max(...barValues, 1); // 避免除以零
+    if (maxValue > 0) {
+      const scaleFactor = 255 / maxValue;
+      barValues.forEach((_, idx) => {
+        barValues[idx] = barValues[idx] * scaleFactor;
+      });
+    }
+  }
+
+  // 第二次循环：绘制柱形
+  for (let i = 0; i < barCount; i++) {
+    const value = barValues[i];
+
+    // 计算柱高 - 确保最小高度
     const barHeight = Math.max(config.minHeight, (value / 255) * height * config.barScaleFactor);
 
     // 计算柱形位置
@@ -303,7 +345,7 @@ const drawSpectrum = () => {
     // 绘制矩形柱形
     canvasCtx.fillRect(x + gap / 2, y, actualBarWidth, barHeight);
 
-    // 为柱形添加顶部描边 (可选)
+    // 为柱形添加顶部描边
     if (config.lineWidth > 0) {
       canvasCtx.strokeStyle = config.lineColor;
       canvasCtx.lineWidth = config.lineWidth;
@@ -314,6 +356,7 @@ const drawSpectrum = () => {
     }
   }
 };
+
 // --- 调整Canvas尺寸 ---
 const resizeCanvas = () => {
   if (!visualizerCanvas.value) return;

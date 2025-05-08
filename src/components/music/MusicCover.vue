@@ -39,13 +39,13 @@ const titleStyle = computed(() => {
   let fontSize = '22px';
 
   // 只有当标题超过一定长度时才缩小字体
-  if (title.length > 25) {
+  if (title.length > 35) {
     fontSize = '18px';
   }
-  if (title.length > 35) {
+  if (title.length > 45) {
     fontSize = '16px';
   }
-  if (title.length > 45) {
+  if (title.length > 55) {
     fontSize = '14px';
   }
 
@@ -114,7 +114,7 @@ const titleStyle = computed(() => {
         position: absolute;
         left: 3%;
         top: 75%;
-        width: 94%; // 限制最大宽度
+        width: 96%; // 限制最大宽度
         text-align: left;
         color: @text-color;
         z-index: 2;
@@ -134,7 +134,7 @@ const titleStyle = computed(() => {
         position: absolute;
         left: 3%;
         top: 85%;
-        width: 94%; // 限制最大宽度
+        width: 96%; // 限制最大宽度
         text-align: left;
         color: @text-color;
         z-index: 2;

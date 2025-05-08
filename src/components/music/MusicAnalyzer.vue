@@ -94,7 +94,7 @@
               <span>{{ storageInfo.totalSize }} MB</span>
             </div>
           </div>
-          <div class="storage-warning" v-if="storageInfo.totalSize > 1024 * 1024">
+          <div class="storage-warning" v-if="storageInfo.totalSize > 10 * 1024">
             <i class="fas fa-exclamation-triangle"></i>
             存储空间使用较大，可能影响性能，请考虑删除不需要的音乐
           </div>
@@ -307,9 +307,11 @@ const processAudioFiles = async (files) => {
           coverUrl = URL.createObjectURL(coverBlob);
         }
 
-        // 修复格式问题
-        let audioFormat = format.container || extension.toUpperCase();
-        if (audioFormat === 'MPEG') {
+        // 确定音频格式，优先使用文件扩展名
+        let audioFormat = extension.toUpperCase();
+        
+        // 如果扩展名是mp3但格式是MPEG，保持MP3表示
+        if (audioFormat === 'MP3' && format.container === 'MPEG') {
           audioFormat = 'MP3';
         }
 
@@ -596,7 +598,7 @@ onUnmounted(() => {
       &:hover {
         color: white;
       }
-      
+
       i {
         color: white;
         // color: #f44336;
@@ -977,6 +979,22 @@ onUnmounted(() => {
           color: rgba(255, 255, 255, 0.7);
           font-size: 24px;
           cursor: pointer;
+        }
+      }
+
+      .action-button {
+        // background: linear-gradient(135deg, #44AADD 0%, #ff66ab 100%);
+        color: white;
+        border: 2px solid white;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: 500;
+        transform: translateX(420px);
+        transform: tanslateY(-40px);
+
+        &:hover {
+          opacity: 0.9;
         }
       }
 

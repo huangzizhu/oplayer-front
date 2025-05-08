@@ -104,8 +104,8 @@ const handleWheel = (e) => {
   // 使用更高效的动画设置：减少动画持续时间
   gsap.to(musicListRef.value, {
     scrollTop: scrollTarget.value,
-    duration: 0.3, // 减少动画时长，加快滚动感知速度
-    ease: "power2.out", // 更直接的缓动函数
+    duration: 0.3, 
+    ease: "power2.out", 
     onUpdate: updateParallaxThrottled,
     onComplete: () => {
       isScrolling.value = false;
