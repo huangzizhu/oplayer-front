@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <template>
   <tiny-carousel
       height="300px"
@@ -56,4 +57,16 @@ onMounted(() => {
 .carousel-item:nth-child(2n + 1) {
   background-color: rgba(221, 221, 221, 0.1);
 }
+=======
+<script setup>
+
+</script>
+
+<template>
+<h1>111</h1>
+</template>
+
+<style scoped>
+
+>>>>>>> 0068755b159fe41c72e3619e4318008d81234b55
 </style>
