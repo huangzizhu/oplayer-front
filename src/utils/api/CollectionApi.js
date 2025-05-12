@@ -8,13 +8,13 @@ export const getCollectionList = (uid, pageSize = 10, page = 1 ) => request.post
 });
 //修改收藏列表信息
 export const updateCollection = (uid, description, coverUrl) => request.put('/collection', {
-    "id": uid,
+    "userId": uid,
     "description": description,
     "coverUrl": coverUrl,
 })
 
-//一次获取全部收藏歌曲以及信息（不推荐）
-export const getAllCollectionMusic = (uid) => request.get(`/collection/${uid}`)
+//获取收藏信息
+export const getCollectionInfo = (uid) => request.get(`/collection/${uid}`)
 //添加收藏歌曲
 export const addMusicToCollection = (uid, songId) => request.post('/collection/music', {
     "songId": songId,
