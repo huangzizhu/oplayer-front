@@ -1,4 +1,4 @@
-import {request} from '@/utils/request';
+import { request } from '@/utils/request';
 
 //查询音乐 name, artist不能同时为null
 export const getAllMusic = (name, artist, pageSize = 10, page = 1) => request.post('/music/all', {
@@ -12,7 +12,7 @@ export const getAllMusic = (name, artist, pageSize = 10, page = 1) => request.po
 export const getMusicById = (id) => request.get('/music/' + id)
 
 //模糊查询 调用后最好异步
-export const fuzzySearch = (str) => request.get('/music/search?name='+str )
+export const fuzzySearch = (str) => request.get('/music/search?name=' + str)
 
 //根据标签分类获取歌曲
 export const getMusicByTag = (tagId, pageSize = 10, page = 1) => request.post('/music/search/tag', {

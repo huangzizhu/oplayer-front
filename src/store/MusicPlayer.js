@@ -14,7 +14,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
   const isPlaying = ref(false);
   const isLoading = ref(false);
   const isMuted = ref(false);
-  const volume = ref(0.3);
+  const volume = ref(0.23);
   const currentTime = ref(0);
   const duration = ref(0);
   const hasError = ref(false);

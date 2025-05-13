@@ -3,7 +3,7 @@
     :class="{ 'active': isActive, 'hover': isHover }" @mouseenter="isHover = true" @mouseleave="isHover = false"
     @click="handleClick">
     <div class="music-item-info">
-      <div class="music-item-title">{{ music.name }}</div>
+      <div class="music-item-title">{{ music.title }}</div>
       <div class="music-item-artist">{{ music.artist }}</div>
     </div>
 

@@ -141,7 +141,6 @@ onMounted(() => {
         updateParallaxThrottled();
       }, 100);
     }
-    musicSelectorStore.initSelectedIndex();
   });
 });
 

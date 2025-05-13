@@ -157,6 +157,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useMusicAnalysis } from '@/store/MusicAnalysis';
 import { useMusicLibrary } from '@/store/MusicLibrary';
 import { indexedDBService } from "@/utils/indexedDBService";
+import { useMusicSelector } from '@/store/MusicSelector';
 // 导入 Buffer polyfill
 import { Buffer } from 'buffer';
 // 使其在全局可用
@@ -165,6 +166,7 @@ window.Buffer = Buffer;
 import * as mm from 'music-metadata-browser';
 
 const musicAnalysisStore = useMusicAnalysis();
+const musicSelectorStore = useMusicSelector();
 const fileInput = ref(null);
 const dirInput = ref(null);
 const showContextMenu = ref(false);
@@ -531,6 +533,8 @@ onMounted(async () => {
       await musicAnalysisStore.initFromLocalStorage();
 
       initialized = true;
+
+      musicSelectorStore.initSelectedIndex();
     } catch (error) {
       console.error('初始化失败:', error);
     }

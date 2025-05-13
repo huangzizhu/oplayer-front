@@ -28,4 +28,4 @@ request.interceptors.response.use(
   }
 );
 
-export  {request};
+export { request };

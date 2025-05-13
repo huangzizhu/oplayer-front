@@ -28,16 +28,16 @@ const config = {
   lineColor: 'rgb(68, 170, 221)',  // 线条颜色
   gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],  // 渐变色
   lineWidth: 2,  // 线条宽度
-  fftSize: 4096,  // 减小FFT大小以提高性能
-  smoothingTimeConstant: 0.72,  // 平滑系数 (0-1)
+  fftSize: 8192,  // 减小FFT大小以提高性能
+  smoothingTimeConstant: 0.5,  // 平滑系数 (0-1)
   barSpacing: 0.1,  // 柱形间距占柱宽的比例 (0表示无间距)
   barScaleFactor: 0.85,  // 柱形高度缩放系数 (降低值以减少过高柱形)
   minHeight: 2,  // 最小高度（像素）
   barCount: 256,  // 渲染的柱形数量 (降低以提高性能)
-  
+
   // 频率响应曲线系数
   frequencyRange: 0.9,  // 使用频谱数据的90%（覆盖大部分可听频率）
-  freqScaleFactor: 0.94,  // 频率压缩系数: 1=完全对数分布，0=线性分布
+  freqScaleFactor: 0.945,  // 频率压缩系数: 1=完全对数分布，0=线性分布
   useLogFrequency: true,  // 启用对数频率映射
   minFreq: 1,    // 最低频率 Hz
   maxFreq: 18000, // 最高频率 Hz
@@ -45,16 +45,17 @@ const config = {
   // 频率响应曲线
   freqResponseCurve: [
     { freq: 0.0, gain: 1.0 },  // 极低频（20-100Hz）
-    { freq: 0.001, gain: 1.00 },  
-    { freq: 0.01, gain: 1.1},
+    { freq: 0.0001, gain: 1.02 },
+    { freq: 0.001, gain: 1.04 },
+    { freq: 0.01, gain: 1.1 },
     { freq: 0.1, gain: 1.15 },  // 低频（100-500Hz）
-    { freq: 0.125, gain: 1.3 },  
-    { freq: 0.15, gain: 1.5 }, 
+    { freq: 0.125, gain: 1.3 },
+    { freq: 0.15, gain: 1.5 },
     { freq: 0.2, gain: 1.5 },  // 中低频（200-500Hz）
     { freq: 0.3, gain: 1.55 },  // 中频（500-2000Hz）
     { freq: 0.6, gain: 1.6 },  // 中高频（2-8kHz）
-    { freq: 0.8, gain: 1.8 }, // 高频（8-14kHz）
-    { freq: 1.0, gain: 1.8 },  // 极高频（14-20kHz）
+    { freq: 0.8, gain: 1.7 }, // 高频（8-14kHz）
+    { freq: 1.0, gain: 1.7 },  // 极高频（14-20kHz）
   ],
   // 动态效果增强参数
   dynamicRange: 3,         // 动态范围增强因子 (越大对比越强)
@@ -82,6 +83,7 @@ const initializeVisualizer = () => {
     analyser.fftSize = config.fftSize;
     analyser.smoothingTimeConstant = config.smoothingTimeConstant;
     bufferLength = analyser.frequencyBinCount;
+    // bufferLength = config.barCount * 64;
     dataArray = new Uint8Array(bufferLength);
 
     // 连接到Howler的主增益节点
