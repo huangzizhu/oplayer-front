@@ -16,7 +16,7 @@ export const getPlayListSongs = (listId, pageSize=10, page=1) => request.post('/
     "playListId": listId,
 })
 //根据ID获取歌单信息
-export const getPlayListInfoById = (listId) => request.post('/list/'+ listId)
+export const getPlayListInfoById = (listId) => request.get('/list/'+ listId)
 //从歌单中删除歌曲
 export const deleteSongFromPlayList = (data) => request.delete('/list/music', data);
 //删除歌单

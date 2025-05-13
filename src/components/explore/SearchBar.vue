@@ -142,8 +142,8 @@ const animateCharacter = (char, position) => {
     id: charId++,
     value: char,
     style: {
-      left: `${totalWidth + 20}px`,
-      opacity: 0.7,
+      left: `${totalWidth + 22}px`,
+      opacity: 0,
     }
   }
   animatedChars.value.push(newChar)
@@ -152,13 +152,13 @@ const animateCharacter = (char, position) => {
   nextTick(() => {
     const element = document.querySelector(`.falling-char[key="${newChar.id}"]`)
     if (element) {
-      element.style.animation = 'fall 0.8s ease-out forwards'
+      element.style.animation = 'fall 1s ease-out forwards'
     }
   })
 
   setTimeout(() => {
     animatedChars.value = animatedChars.value.filter(c => c.id !== newChar.id);
-  }, 100);
+  }, 700);
 }
 
 const performSearch = () => {
@@ -202,7 +202,7 @@ const handleKeyDown = (e) => {
 .search-container {
   position: relative;
   width: 100%;
-  margin: 20px auto;
+  margin: 5px auto;
   display: flex;
   align-items: center;
 }
@@ -306,7 +306,7 @@ const handleKeyDown = (e) => {
 @keyframes fall {
   0% {
     transform: translateY(0) scale(1);
-    opacity: 0.7;
+    opacity: 1;
   }
   100% {
     transform: translateY(60px) scale(0.5);

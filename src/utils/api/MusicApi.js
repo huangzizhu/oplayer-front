@@ -26,3 +26,8 @@ export const getMusicStream = (md5) => request.get('/music/stream/' + md5);
 
 //下载
 export const downloadMusic = (md5) => request.get('/music/download/' + md5);
+
+//随机获取歌曲
+export const getRandomMusic = (count = 5) => request.post('/music/recommend',{"count": count});
+//每日推荐
+export const getDailyMusic = (userId) => request.post('/music/recommend/daily',{"userId": userId});
