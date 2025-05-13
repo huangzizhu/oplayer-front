@@ -145,7 +145,6 @@ const handleBGSuccess =  (res, file) => {
 }
 const setFormData = (data) => {
   Object.assign(formData, data);
-  console.log(formData)
 };
 
 const getFormData = () => {

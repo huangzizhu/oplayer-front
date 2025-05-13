@@ -385,7 +385,7 @@ onMounted(()=>{
   padding: 30px;
   flex-direction: column;
   position: relative; /* 新增 */
-  overflow-y: hidden;
+  overflow: hidden;
 }
 .register-box::before,
 .register-box::after {

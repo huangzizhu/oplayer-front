@@ -151,7 +151,8 @@ onMounted(() => {
   getUser();
   const container = document.querySelector('.profile-container');
   container.addEventListener('wheel', (e)=> {
-    handleScroll(e)
+    handleScroll(e);
+    setTimeout(() => handleScroll(e),300)
   });
 });
 
