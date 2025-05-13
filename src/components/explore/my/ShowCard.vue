@@ -75,7 +75,7 @@ const handleImageError = (e) => {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 替代原来的 background-size: cover */
+  object-fit: cover;
   opacity: 0.8;
   transition: opacity 0.3s ease;
 }
@@ -94,6 +94,17 @@ const handleImageError = (e) => {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
   transform: translateY(20px);
   transition: transform 0.3s ease;
+}
+.title{
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  color: #fff;
+}
+.content{
+  font-size: 0.9em;
+  margin: 0;
+  color: #fff;
 }
 .title, .content {
   white-space: nowrap; /* 禁止换行 */

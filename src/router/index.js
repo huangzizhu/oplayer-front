@@ -4,7 +4,7 @@ import MusicSelectView from '@/components/view/MusicSelectView.vue'
 import MainView from '@/components/view/MainView.vue'
 import UserView from "@/components/view/UserView.vue";
 import ExploreView from "@/components/view/ExploreView.vue";
-import RecommendView from "@/components/explore/RecommendView.vue";
+import RecommendView from "@/components/explore/recommendView/RecommendView.vue";
 import HistoryView from "@/components/explore/history/HistoryView.vue";
 import MyView from "@/components/explore/my/MyView.vue";
 import CollectionDisplay from "@/components/explore/my/collection/CollectionDisplay.vue";

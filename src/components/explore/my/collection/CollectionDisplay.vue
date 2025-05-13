@@ -1,10 +1,8 @@
 <script setup>
 /*eslint-disable*/
-<<<<<<< HEAD
+
 import PlaylistInfo from "@/components/explore/my/playListInfoPart/PlaylistInfo.vue";
-=======
-import PlaylistInfo from "@/components/explore/my/PlaylistInfo.vue";
->>>>>>> 0068755b159fe41c72e3619e4318008d81234b55
+
 import ShowCard from "@/components/explore/my/ShowCard.vue";
 import CollectionForm from "@/components/explore/my/collection/CollectionForm.vue";
 import {ref, onMounted, onUnmounted} from "vue";
@@ -25,11 +23,8 @@ const loading = ref(true)
 const loadingMore = ref(false)
 const noMoreData = ref(false)
 const currentPage = ref(1)
-<<<<<<< HEAD
 const pageSize = 24 // 每页条数
-=======
-const pageSize = 12 // 每页条数
->>>>>>> 0068755b159fe41c72e3619e4318008d81234b55
+
 const songsContainer = ref(null);
 
 
@@ -212,13 +207,8 @@ onUnmounted(() => {
   gap: 3%;
   width: 100%;
 }
-<<<<<<< HEAD
 
 .loading-more,
-=======
-.loading-more,
-
->>>>>>> 0068755b159fe41c72e3619e4318008d81234b55
 .no-more-data {
   padding: 20px;
   color: #888;

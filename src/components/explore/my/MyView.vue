@@ -100,6 +100,8 @@ onMounted(() => {
 
 <style scoped>
 .my-content {
+  width: 90%;
+  margin: 2em auto;
   height: 74vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;

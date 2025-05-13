@@ -101,8 +101,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import UserClock from "@/components/user/profile/UserClock.vue"
 import MiniCalender from "@/components/user/profile/MiniCalender.vue";
-import {getIp, getRegion, getSays, getWeather} from "@/utils/api/OtherApi";
-import {ElMessage} from "element-plus";
+import {getIp, getSays, getWeather} from "@/utils/api/OtherApi";
 
 const props = defineProps({
   birthDate: {
