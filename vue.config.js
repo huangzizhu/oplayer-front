@@ -6,7 +6,7 @@ module.exports = defineConfig({
     open: false, // 可选：自动打开浏览器
     proxy: {
       '/op': {
-        target: 'http://localhost:8081',
+        target: 'http://47.108.201.216:9031',
         changeOrigin: true,
         pathRewrite: { '^/op': '' },
         onProxyReq: function (proxyReq, req) {

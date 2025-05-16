@@ -158,6 +158,8 @@ import { useMusicAnalysis } from '@/store/MusicAnalysis';
 import { useMusicLibrary } from '@/store/MusicLibrary';
 import { indexedDBService } from "@/utils/indexedDBService";
 import { useMusicSelector } from '@/store/MusicSelector';
+import { useSearchBar } from '@/store/SearchBar';
+import { nextTick } from 'vue';
 // 导入 Buffer polyfill
 import { Buffer } from 'buffer';
 // 使其在全局可用
@@ -167,6 +169,7 @@ import * as mm from 'music-metadata-browser';
 
 const musicAnalysisStore = useMusicAnalysis();
 const musicSelectorStore = useMusicSelector();
+const searchBarStore = useSearchBar();
 const fileInput = ref(null);
 const dirInput = ref(null);
 const showContextMenu = ref(false);
@@ -535,6 +538,9 @@ onMounted(async () => {
       initialized = true;
 
       musicSelectorStore.initSelectedIndex();
+      nextTick(() => {
+        searchBarStore.scrollToSelected();
+      });
     } catch (error) {
       console.error('初始化失败:', error);
     }
@@ -567,12 +573,14 @@ onUnmounted(() => {
     min-width: 100px;
 
     &:hover {
-      transform: translateY(-2px);
+      // transform: translateY(-2px);
+      transform: scale(1.02);
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
     }
 
     &:active {
-      transform: translateY(1px);
+      transform: scale(1.01);
+      // transform: translateY(1px);
     }
 
     &:disabled {

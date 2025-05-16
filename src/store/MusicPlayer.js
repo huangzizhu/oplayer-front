@@ -14,7 +14,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
   const isPlaying = ref(false);
   const isLoading = ref(false);
   const isMuted = ref(false);
-  const volume = ref(0.23);
+  const volume = ref(0.35);
   const currentTime = ref(0);
   const duration = ref(0);
   const hasError = ref(false);
@@ -149,10 +149,10 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
         sound = null;
       }
 
-      // 创建新的Howl实例 - 注意不使用HTML5模式
+      // 创建新的Howl实例 - 注意不使用HTML5
       sound = new Howl({
         src: [finalAudioPath],
-        html5: false, // 坚持使用Web Audio API，不使用HTML5 Audio
+        html5: true,
         format: music.format ? [music.format.toLowerCase()] : undefined,
         volume: volume.value,
         onload: () => {

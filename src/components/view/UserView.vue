@@ -3,15 +3,10 @@
     <UserProfile v-if="isLoggedIn" />
     <div v-else class="auth-container">
       <!-- 使用新的 TabSwitcher 组件 -->
-      <TabSwitcher
-          v-model:activeTab="userStore.activeTab"
-          @update:activeTab="userStore.activeTab = $event"
-      />
+      <TabSwitcher v-model:activeTab="userStore.activeTab" @update:activeTab="userStore.activeTab = $event" />
 
-      <transition
-          :name="activeTab === 'login' ? 'fade-slide-login' : 'fade-slide-register'"
-      >
-        <component :is="currentComponent" @login-success="emitLoginSuccess" @reg-success="emitRegSuccess"/>
+      <transition :name="activeTab === 'login' ? 'fade-slide-login' : 'fade-slide-register'">
+        <component :is="currentComponent" @login-success="emitLoginSuccess" @reg-success="emitRegSuccess" />
       </transition>
     </div>
   </div>
@@ -20,13 +15,13 @@
 <script setup>
 /*eslint-disable*/
 import { computed, ref, onMounted } from 'vue';
-import {getLoginStatus} from "@/utils/api/UserApi";
+import { getLoginStatus } from "@/utils/api/UserApi";
 import LoginFrame from "@/components/user/login/LoginFrame.vue";
 import RegisterFrame from "@/components/user/login/RegisterFrame.vue";
 import UserProfile from '@/components/user/profile/UserProfile.vue';
 import TabSwitcher from '@/components/user/login/TabSwitcher.vue';
-import {ElMessage} from "element-plus";
-import {useUserStore} from "@/store/User";
+import { ElMessage } from "element-plus";
+import { useUserStore } from "@/store/User";
 
 const userStore = useUserStore();
 
@@ -62,7 +57,7 @@ const checkLoginStatus = async () => {
   }
 };
 
-onMounted(()=> {
+onMounted(() => {
   checkLoginStatus();
 });
 </script>

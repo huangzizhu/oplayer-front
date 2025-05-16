@@ -104,8 +104,8 @@ const handleWheel = (e) => {
   // 使用更高效的动画设置：减少动画持续时间
   gsap.to(musicListRef.value, {
     scrollTop: scrollTarget.value,
-    duration: 0.3, 
-    ease: "power2.out", 
+    duration: 0.3,
+    ease: "power2.out",
     onUpdate: updateParallaxThrottled,
     onComplete: () => {
       isScrolling.value = false;
@@ -125,6 +125,7 @@ watch(() => searchBarStore.searchResults, () => {
       // 延迟调用更新视差，确保列表已渲染
       setTimeout(updateParallaxThrottled, 100);
     }
+    searchBarStore.scrollToSelected();
   });
 }, { deep: true });
 
@@ -136,11 +137,11 @@ onMounted(() => {
       musicListRef.value.addEventListener('scroll', updateParallaxThrottled, { passive: true });
       window.addEventListener('resize', updateParallaxThrottled);
 
-      // 立即初始化视差效果，而不是等待滚动
       setTimeout(() => {
         updateParallaxThrottled();
       }, 100);
     }
+    searchBarStore.scrollToSelected();
   });
 });
 
@@ -162,7 +163,7 @@ onUnmounted(() => {
   bottom: -15px;
   background-color: rgba(10, 10, 10, 0);
   z-index: 5;
-  
+
   .music-list {
     position: absolute;
     padding-left: 38%;
@@ -177,18 +178,18 @@ onUnmounted(() => {
     overflow-y: overlay;
     width: calc(100%);
     will-change: transform;
-    
+
     &::-webkit-scrollbar {
       width: 6px;
       background: transparent;
     }
-    
+
     &::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.4);
       border-radius: 4px;
       border: 2px solid transparent;
     }
-    
+
     &::-webkit-scrollbar-button {
       display: none;
     }

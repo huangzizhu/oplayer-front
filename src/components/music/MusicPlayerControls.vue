@@ -5,6 +5,11 @@
 
     <!-- 播放控制区域 -->
     <div class="controls-area">
+
+      <div class="control-button locate-button" @click="scrollToSelected">
+        <div class="icon icon-locate"></div>
+      </div>
+
       <!-- 播放模式切换 -->
       <div class="control-button mode-button" @click="cyclePlayMode">
         <div class="icon" :class="playModeIconClass"></div>
@@ -52,10 +57,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import { useMusicPlayer } from '@/store/MusicPlayer';
 import MusicProgressBar from './MusicProgressBar.vue';
-
+import { useSearchBar } from '@/store/SearchBar';
+const searchBarStore = useSearchBar();
 const musicPlayerStore = useMusicPlayer();
 
 // 从store中获取状态
@@ -67,6 +73,11 @@ const volume = computed(() => musicPlayerStore.volume);
 const isMuted = computed(() => musicPlayerStore.isMuted);
 const playMode = computed(() => musicPlayerStore.playMode);
 
+const scrollToSelected = () => {
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
+};
 // 播放控制方法
 const togglePlay = () => {
   musicPlayerStore.togglePlay();
@@ -74,10 +85,16 @@ const togglePlay = () => {
 
 const playNext = () => {
   musicPlayerStore.playNext();
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
 };
 
 const playPrevious = () => {
   musicPlayerStore.playPrevious();
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
 };
 
 // 音量控制
@@ -210,6 +227,16 @@ const playModeTooltip = computed(() => {
     // 图标样式
     .icon {
       color: #ffffff;
+
+      &.icon-locate:before {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background-image: url('@/assets/images/locate.svg');
+        background-size: contain;
+        background-position: center;
+      }
 
       &.icon-play:before {
         content: "";

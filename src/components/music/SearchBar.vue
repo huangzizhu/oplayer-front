@@ -15,24 +15,31 @@
     </div>
 
     <!-- 搜索结果统计 -->
-    <div class="search-results-info" v-if="searchBarStore.isSearchActive">
-      <div class="result-count" v-if="searchBarStore.searchResults.length > 0">
-        找到 {{ searchBarStore.searchResults.length }} 个结果
+    <div class="search-results-info" v-if="true">
+      <div class="result-count" v-if="!searchBarStore.isSearchActive">
+        {{ musicLibraryStore.musicLibrary.length + " " }} matches
       </div>
+
+      <div class="result-count" v-else-if="searchBarStore.searchResults.length > 0">
+        {{ searchBarStore.searchResults.length + " " }} matches
+      </div>
+
       <div class="no-results" v-else>
-        未找到匹配结果
+        Not found
       </div>
     </div>
+    <hr class="divider" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+// import gsap from 'gsap';
 import { useSearchBar } from '@/store/SearchBar';
 import MusicAnalyzer from '@/components/music/MusicAnalyzer.vue'
-// import { indexedDBService } from "@/utils/indexedDBService";
-// import { useMusicAnalysis } from '@/store/MusicAnalysis';
+import { useMusicLibrary } from '@/store/MusicLibrary';
 const searchBarStore = useSearchBar();
+const musicLibraryStore = useMusicLibrary();
 const searchInput = ref(null);
 
 // 清除搜索
@@ -63,11 +70,6 @@ onMounted(() => {
   // 添加键盘快捷键
   window.addEventListener('keydown', handleKeyDown);
 });
-// const musicAnalysisStore = useMusicAnalysis();
-onMounted(async () => {
-  // 初始化IndexedDB
-  
-});
 // 组件卸载时移除监听器
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeyDown);
@@ -86,7 +88,20 @@ const handleKeyDown = (e) => {
     e.preventDefault();
     clearSearch();
   }
+
+  // Alt+L 定位到当前选中项
+  if (e.altKey && e.key === 'l') {
+    e.preventDefault();
+    scrollToSelected();
+  }
 };
+
+const scrollToSelected = () => {
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
+};
+
 </script>
 
 <style lang="less" scoped>
@@ -165,6 +180,18 @@ const handleKeyDown = (e) => {
     .no-results {
       color: #ff6666;
     }
+  }
+
+  .divider {
+    position: absolute;
+    top: 100px;
+    left: 200px;
+    width: 75%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0;
+    padding: 0;
+    border: none;
   }
 }
 </style>
