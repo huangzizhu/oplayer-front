@@ -38,7 +38,7 @@ const config = {
   lineColor: 'rgb(68, 170, 221)',  // 线条颜色
   gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],  // 渐变色
   lineWidth: 2,  // 线条宽度
-  fftSize: 32768,  // 减小FFT大小以提高性能
+  fftSize: 32768,  // FFT大小
   smoothingTimeConstant: 0.70,  // 平滑系数 (0-1)
   barSpacing: 0.1,  // 柱形间距占柱宽的比例 (0表示无间距)
   barScaleFactor: 0.90,  // 柱形高度缩放系数 (降低值以减少过高柱形)
