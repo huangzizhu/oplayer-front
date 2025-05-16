@@ -102,28 +102,9 @@
         </div>
       </div>
 
-      <!-- 排行榜页 -->
-      <div v-else-if="activeTab === 'leaderboard'" class="tab-content leaderboard-content">
-        <div class="score-list">
-          <div class="score-item">
-            <div class="rank">1</div>
-            <div class="player">WhiteCat</div>
-            <div class="score">9,999,999</div>
-            <div class="accuracy">99.87%</div>
-          </div>
-          <div class="score-item">
-            <div class="rank">2</div>
-            <div class="player">Vaxei</div>
-            <div class="score">9,986,753</div>
-            <div class="accuracy">99.42%</div>
-          </div>
-          <div class="score-item">
-            <div class="rank">3</div>
-            <div class="player">Mrekk</div>
-            <div class="score">9,954,321</div>
-            <div class="accuracy">99.21%</div>
-          </div>
-        </div>
+      <!-- 服务器曲目管理 -->
+      <div v-else-if="activeTab === 'management'" class="tab-content ">
+        <MusicManagement></MusicManagement>
       </div>
     </div>
 
@@ -262,9 +243,9 @@
 import { ref, computed } from 'vue';
 import { useMusicSelector } from '@/store/MusicSelector.js';
 import { useSearchBar } from '@/store/SearchBar';
+import MusicManagement from '@/components/music/MusicManagement.vue';
 // import { useMusicLibrary } from '@/store/MusicLibrary';
 import { useMusicAnalysis } from '@/store/MusicAnalysis';
-// import MusicAnalyzer from '@/components/music/MusicAnalyzer.vue';
 
 const musicSelector = useMusicSelector();
 const SearchBar = useSearchBar();
@@ -274,7 +255,7 @@ const musicAnalysisStore = useMusicAnalysis();
 const tabs = [
   { id: 'details', name: 'Details' },
   { id: 'beatmaps', name: 'Beatmaps' },
-  { id: 'leaderboard', name: 'Leaderboard' }
+  { id: 'management', name: 'Management' }
 ];
 
 // 当前激活的标签页
@@ -629,50 +610,6 @@ const deleteMusic = async () => {
       }
     }
 
-    // 排行榜页样式
-    .leaderboard-content {
-      .score-list {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .score-item {
-        display: flex;
-        align-items: center;
-        padding: 15px 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .rank {
-          width: 40px;
-          font-weight: bold;
-          font-size: 18px;
-          color: @highlight-color;
-        }
-
-        .player {
-          flex: 1;
-          font-size: 16px;
-          color: white;
-        }
-
-        .score {
-          width: 120px;
-          text-align: right;
-          font-weight: bold;
-          color: white;
-        }
-
-        .accuracy {
-          width: 80px;
-          text-align: right;
-          color: @color-normal;
-        }
-      }
-    }
   }
 
   // 编辑按钮样式

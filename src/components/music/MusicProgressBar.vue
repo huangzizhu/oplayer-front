@@ -147,7 +147,7 @@ onUnmounted(() => {
 <style lang="less" scoped>
 .music-progress-bar-container {
   width: 100%;
-  height: 40px;
+  height: 30px;
   display: flex;
   align-items: center;
   padding: 0 15px;

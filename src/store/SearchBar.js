@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed, watch } from 'vue';
 import { useMusicLibrary } from './MusicLibrary';
+import { gsap } from 'gsap';
+import { nextTick } from 'vue';
 
 export const useSearchBar = defineStore('searchBar', () => {
   const searchText = ref('');
@@ -105,6 +107,32 @@ export const useSearchBar = defineStore('searchBar', () => {
     currentFieldQueries.value = [];
   };
 
+  const scrollToSelected = () => {
+    nextTick(() => {
+      // 找到音乐列表容器
+      const musicList = document.querySelector('.music-list');
+      if (!musicList) return;
+
+      // 找到激活的音乐项
+      const activeItem = musicList.querySelector('.music-item-container.active');
+      if (!activeItem) return;
+
+      // 计算滚动位置，使选中项居中显示
+      const listRect = musicList.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+
+      // 计算相对滚动位置
+      const targetScroll = musicList.scrollTop + (itemRect.top - listRect.top) - (listRect.height / 2) + (itemRect.height / 2);
+
+      // 使用GSAP平滑滚动
+      gsap.to(musicList, {
+        scrollTop: targetScroll,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    });
+  };
+
   return {
     searchText,
     searchResults,
@@ -112,6 +140,8 @@ export const useSearchBar = defineStore('searchBar', () => {
     currentFieldQueries,
     isSearchActive,
     performSearch,
-    clearSearch
+    clearSearch,
+    parseSearchTerms,
+    scrollToSelected,
   };
 });

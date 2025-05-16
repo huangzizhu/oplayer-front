@@ -1,12 +1,12 @@
 /**
- * IndexedDB 服务 - 用于存储音频文件和封面图
+ * IndexedDB 服务 - 用于存储音频文件和封面图及元数据
  */
 
 const DB_NAME = 'oplayer-db';
-const DB_VERSION = 2; // 版本升级到2，添加元数据存储
+const DB_VERSION = 2; 
 const AUDIO_STORE = 'audio-files';
 const IMAGE_STORE = 'cover-images';
-const METADATA_STORE = 'music-metadata'; // 新增元数据存储
+const METADATA_STORE = 'music-metadata';
 
 export const indexedDBService = {
   db: null,

@@ -1,4 +1,4 @@
-import {request} from '@/utils/request';
+import { request } from '@/utils/request';
 
 //查询音乐 name, artist不能同时为null
 export const getAllMusic = (name, artist, pageSize = 10, page = 1) => request.post('/music/all', {
@@ -12,7 +12,7 @@ export const getAllMusic = (name, artist, pageSize = 10, page = 1) => request.po
 export const getMusicById = (id) => request.get('/music/' + id)
 
 //模糊查询 调用后最好异步
-export const fuzzySearch = (str) => request.get('/music/search?name='+str )
+export const fuzzySearch = (str) => request.get('/music/search?name=' + str)
 
 //根据标签分类获取歌曲
 export const getMusicByTag = (tagId, pageSize = 10, page = 1) => request.post('/music/search/tag', {
@@ -26,3 +26,8 @@ export const getMusicStream = (md5) => request.get('/music/stream/' + md5);
 
 //下载
 export const downloadMusic = (md5) => request.get('/music/download/' + md5);
+
+//随机获取歌曲
+export const getRandomMusic = (count = 5) => request.post('/music/recommend',{"count": count});
+//每日推荐
+export const getDailyMusic = (userId) => request.post('/music/recommend/daily',{"userId": userId});

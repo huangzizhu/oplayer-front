@@ -9,9 +9,7 @@
 
 
     <MusicSelector></MusicSelector>
-    <!-- <MusicAnalyzer></MusicAnalyzer> -->
 
-    <!-- <FooterBar></FooterBar> -->
   </div>
 </template>
 
@@ -25,7 +23,6 @@ import MusicVisualization from '@/components/music/MusicVisualization.vue'
 import { indexedDBService } from "@/utils/indexedDBService";
 import { useMusicAnalysis } from '@/store/MusicAnalysis';
 
-// import FooterBar from '@/components/FooterBar.vue'
 
 import { ref,onMounted } from 'vue'
 const musicCover = ref(null)
