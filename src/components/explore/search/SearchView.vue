@@ -1,6 +1,6 @@
 <script setup>
 /* eslint-disable */
-import {ref, onMounted, watch, computed, watchEffect} from 'vue';
+import  {ref, onMounted, watch, computed, watchEffect} from 'vue';
 import {getAllMusic} from "@/utils/api/MusicApi";
 import SongBar from "@/components/explore/recommendView/SongBar.vue";
 import {useRoute} from "vue-router";

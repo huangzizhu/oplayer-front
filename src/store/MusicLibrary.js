@@ -98,6 +98,10 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
     //   audioPath: "/audio/かめりあ - +ERABY+E CONNEC+10N.mp3"
     // },
   ]);
+  //清空列表
+  const clearList = () => {
+    musicLibrary.value = [];
+  }
 
   // 获取所有音乐
   const getAllMusic = computed(() => musicLibrary.value);
@@ -358,7 +362,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
 
     getAudioPath,
     processAudioPath,
-
+    clearList,
     removeMusic,
 
     updateMusicPath,

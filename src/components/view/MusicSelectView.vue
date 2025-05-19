@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+/* eslint-disable */
 import MusicCover from '@/components/music/MusicCover.vue'
 import MusicInfo from '@/components/music/MusicInfo.vue'
 import SearchBar from '@/components/music/SearchBar.vue'
@@ -22,14 +23,18 @@ import MusicSelector from '@/components/music/MusicSelector.vue'
 import MusicVisualization from '@/components/music/MusicVisualization.vue'
 import { indexedDBService } from "@/utils/indexedDBService";
 import { useMusicAnalysis } from '@/store/MusicAnalysis';
+import {useOnlineMusicStore} from '@/store/OnlineMusicStore'
+import {useMusicLibrary} from "@/store/MusicLibrary";
 
 
-import { ref,onMounted } from 'vue'
+import {ref, onMounted, computed, watchEffect, watch} from 'vue'
 const musicCover = ref(null)
 const musicInfo = ref(null)
 const musicAnalysisStore = useMusicAnalysis();
-onMounted(async () => {
-  // 初始化IndexedDB
+const onlineMusicStore = useOnlineMusicStore();
+const isOnlineMode = computed(()=>onlineMusicStore.isOnlineMode);
+
+const loadDataBase = async () => {
   try {
     await indexedDBService.init();
     console.log('IndexedDB 初始化成功');
@@ -39,6 +44,16 @@ onMounted(async () => {
 
   } catch (error) {
     console.error('IndexedDB 初始化失败:', error);
+  }
+}
+watch(isOnlineMode, (newVal, oldVal) => {
+  console.log(`isOnlineMode changed from ${oldVal} to ${newVal}`);
+  // 在这里执行你需要的操作
+});
+
+onMounted(async () => {
+  if(!isOnlineMode.value){
+    await loadDataBase();
   }
 });
 
