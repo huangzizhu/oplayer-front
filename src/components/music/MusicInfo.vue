@@ -226,19 +226,19 @@
 <script setup>
 
 // {
-//   id: 1,
-//     title: "Tojita Sekai",
-//       artist: "Camellia",
-//         bpm: 175,
-//           cover: "/images/cover.jpg",
-//             album: "heart of android",
-//               length: "6:59",
-//                 background: "/images/cover.jpg",
-//                   tags: ["Drumstep", "Qualia", "Melodic", "Dubstep"],
-//                       origin: "Original",
-//                         format: "FLAC",
-//                           description: "One of the Best of Camellia",
-//                             audioPath: "/audio/かめりあ - Tojita Sekai.mp3",
+//id: 1,
+//title: "Tojita Sekai",
+//artist: "Camellia",
+//bpm: 175,
+//cover: "/images/cover.jpg",
+//album: "heart of android",
+//length: "6:59",
+//background: "/images/cover.jpg",
+//tags: ["Drumstep", "Qualia", "Melodic", "Dubstep"],
+//origin: "Original",
+//format: "FLAC",
+//description: "One of the Best of Camellia",
+//audioPath: "/audio/かめりあ - Tojita Sekai.mp3",
 //     },
 import { ref, computed } from 'vue';
 import { useMusicSelector } from '@/store/MusicSelector.js';

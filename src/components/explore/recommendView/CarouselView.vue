@@ -39,8 +39,8 @@ onMounted(() => {
 
 <style scoped>
 .tiny-carousel__item {
-  width: 550px;
-  margin-left: 85px;
+  width: 40%;
+  margin-left: 5%;
   backdrop-filter: blur(6px);
   background-image: linear-gradient(45deg, rgba(66, 60, 90, 0.35), rgba(66, 60, 90, 0.35));
   border-radius: 10px;

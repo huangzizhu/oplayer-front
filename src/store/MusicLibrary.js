@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import {getAudioBlobUrl} from "@/utils/MusicUtils";
 
 export const useMusicLibrary = defineStore("musicLibrary", () => {
   const processAudioPath = (path) => {
@@ -98,6 +99,10 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
     //   audioPath: "/audio/かめりあ - +ERABY+E CONNEC+10N.mp3"
     // },
   ]);
+  //清空列表
+  const clearList = () => {
+    musicLibrary.value = [];
+  }
 
   // 获取所有音乐
   const getAllMusic = computed(() => musicLibrary.value);
@@ -302,6 +307,12 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
   // 获取处理过的音频路径
   const getAudioPath = (id) => {
     const music = getMusicById(id);
+    if(music.sourceType){
+      if (music.sourceType === "remote-api") {
+        console.log(111)
+        return getAudioBlobUrl(music.md5)
+      }
+    }
     if (!music || !music.audioPath) return '';
     // 如果音乐存在但没有audioPath，这可能是刚刚加载的本地音乐
     if (!music.audioPath && music._hasStoredAudio) {
@@ -358,7 +369,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
 
     getAudioPath,
     processAudioPath,
-
+    clearList,
     removeMusic,
 
     updateMusicPath,

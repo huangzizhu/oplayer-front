@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+/* eslint-disable */
 import MusicCover from '@/components/music/MusicCover.vue'
 import MusicInfo from '@/components/music/MusicInfo.vue'
 import SearchBar from '@/components/music/SearchBar.vue'
@@ -22,14 +23,22 @@ import MusicSelector from '@/components/music/MusicSelector.vue'
 import MusicVisualization from '@/components/music/MusicVisualization.vue'
 import { indexedDBService } from "@/utils/indexedDBService";
 import { useMusicAnalysis } from '@/store/MusicAnalysis';
+import {useOnlineMusicStore} from '@/store/OnlineMusicStore'
+import { useMusicPlayer } from '@/store/MusicPlayer';
+import {useMusicLibrary} from "@/store/MusicLibrary";
+import {getLastPlayList,translateMusicInfo} from "@/utils/MusicUtils";
 
 
-import { ref,onMounted } from 'vue'
+import {ref, onMounted, computed, watchEffect, watch, nextTick} from 'vue'
+import {useMusicSelector} from "@/store/MusicSelector";
 const musicCover = ref(null)
 const musicInfo = ref(null)
 const musicAnalysisStore = useMusicAnalysis();
-onMounted(async () => {
-  // 初始化IndexedDB
+const onlineMusicStore = useOnlineMusicStore();
+const isOnlineMode = computed(()=>onlineMusicStore.isOnlineMode);
+const musicLibraryStore = useMusicLibrary();
+const musicSelectorStore = useMusicSelector();
+const loadDataBase = async () => {
   try {
     await indexedDBService.init();
     console.log('IndexedDB 初始化成功');
@@ -39,6 +48,32 @@ onMounted(async () => {
 
   } catch (error) {
     console.error('IndexedDB 初始化失败:', error);
+  }
+}
+const  loadOnlineMusic = async () => {
+  const data = await getLastPlayList();
+  console.log(data);
+  for (let song of data.list) {
+    musicLibraryStore.addMusic(translateMusicInfo(song));
+  }
+}
+watch(isOnlineMode, (newVal, oldVal) => {
+  musicLibraryStore.clearList();
+  musicSelectorStore.refreshLibrary();
+  useMusicPlayer().stopAndUnload();
+  if(newVal){
+    loadOnlineMusic();
+  }
+});
+
+
+
+onMounted(async () => {
+  if(!isOnlineMode.value){
+    await loadDataBase();
+  }
+  else {
+    await loadOnlineMusic();
   }
 });
 
