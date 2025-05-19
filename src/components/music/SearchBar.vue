@@ -174,7 +174,8 @@ const scrollToSelected = () => {
     font-size: 14px;
 
     .result-count {
-      color: #44AADD;
+      // color: #44AADD;
+      color: rgb(255, 200, 0);
     }
 
     .no-results {

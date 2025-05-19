@@ -14,12 +14,12 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import './assets/styles/main.scss'
-import './assets/styles/variables.scss'
-import './assets/styles/animations.scss'
+// import './assets/styles/main.scss'
+// import './assets/styles/variables.scss'
+// import './assets/styles/animations.scss'
 import './assets/styles/fonts.css'
 import '@fortawesome/fontawesome-free/css/all.css'
-
+import '@/assets/styles/Variables.less'
 // 将gsap显式暴露到全局
 window.gsap = gsap;
 
