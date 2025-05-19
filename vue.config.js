@@ -2,6 +2,8 @@
 
 module.exports = defineConfig({
   devServer: {
+    port: 8080, // 设置端口号
+    open: false, // 可选：自动打开浏览器
     proxy: {
       '/op': {
         target: 'http://47.108.201.216:9031',

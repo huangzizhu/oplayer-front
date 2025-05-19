@@ -213,47 +213,47 @@ const hoverOverlay = (element) => {
 
 // 背景相关动画
 // 背景淡入效果
-const fadeInBackground = (element) => {
-    if (!element) return;
+// const fadeInBackground = (element) => {
+//     if (!element) return;
 
-    gsap.fromTo(element,
-        { opacity: 0 },
-        { opacity: 1, duration: 1, }
-    );
-};
+//     gsap.fromTo(element,
+//         { opacity: 0 },
+//         { opacity: 1, duration: 1, }
+//     );
+// };
 
 // 背景切换效果
-const transitionBackground = (element, callback) => {
-    if (!element) return;
+// const transitionBackground = (element, callback) => {
+//     if (!element) return;
 
-    gsap.to(element, {
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.in",
-        onComplete: () => {
-            if (callback) callback();
+//     gsap.to(element, {
+//         opacity: 0,
+//         duration: 0.5,
+//         ease: "power2.in",
+//         onComplete: () => {
+//             if (callback) callback();
 
-            gsap.to(element, {
-                opacity: 1,
-                duration: 0.5,
-                // ease: "power2.out"
-            });
-        }
-    });
-};
+//             gsap.to(element, {
+//                 opacity: 1,
+//                 duration: 0.5,
+//                 // ease: "power2.out"
+//             });
+//         }
+//     });
+// };
 
 // 为背景添加脉动呼吸效果
-const pulseBackground = (element) => {
-    if (!element) return;
+// const pulseBackground = (element) => {
+//     if (!element) return;
 
-    gsap.to(element, {
-        scale: 1.00,
-        duration: 6,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-    });
-};
+//     gsap.to(element, {
+//         scale: 1.00,
+//         duration: 6,
+//         repeat: -1,
+//         yoyo: true,
+//         ease: "sine.inOut"
+//     });
+// };
 
 // // 粉饼菜单展开动画
 // const expandCircleMenu = (discElement, stripElement, callback) => {
@@ -397,9 +397,9 @@ export default {
     leaveOverlay,
 
     //背景
-    fadeInBackground,
-    transitionBackground,
-    pulseBackground,
+    // fadeInBackground,
+    // transitionBackground,
+    // pulseBackground,
 
     // 粉饼菜单
     // expandCircleMenu,

@@ -40,7 +40,7 @@ export const useCircleMenuStore = defineStore('circleMenu', () => {
         isTransitioning,
         exitDirection,
         activeMenuItem,
-        
+
         setExpanded,
         setTransitioning,
         setExitDirection,

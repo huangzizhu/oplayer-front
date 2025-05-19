@@ -413,6 +413,7 @@ onBeforeUnmount(() => {
     const rightItemsArray = Array.from(rightItems.value.children);
     gsap.killTweensOf([...leftItemsArray, ...rightItemsArray]);
   }
+  collapseMenu();
 });
 </script>
 

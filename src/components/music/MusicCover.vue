@@ -7,8 +7,10 @@
           <!-- 添加实际图片 -->
           <!-- <img src="../../../public/images/cover.jpg" alt="Album Cover"> -->
         </div>
-        <div class="cover-text">
-          <p class="cover-song-title">{{ musicCoverStore.songTitle }}</p>
+        <div class="cover-text-title">
+          <p class="cover-song-title" :style="titleStyle">{{ musicCoverStore.songTitle }}</p>
+        </div>
+        <div class="cover-text-artist">
           <p class="cover-song-artist">{{ musicCoverStore.songArtist }}</p>
         </div>
       </div>
@@ -30,6 +32,27 @@ const coverStyle = computed(() => ({
   'background-size': 'cover',
 }));
 
+// 根据标题长度自适应字体大小
+const titleStyle = computed(() => {
+  const title = musicCoverStore.songTitle || '';
+  // 默认字体大小
+  let fontSize = '22px';
+
+  // 只有当标题超过一定长度时才缩小字体
+  if (title.length > 35) {
+    fontSize = '18px';
+  }
+  if (title.length > 45) {
+    fontSize = '16px';
+  }
+  if (title.length > 55) {
+    fontSize = '14px';
+  }
+
+  return {
+    fontSize
+  };
+});
 </script>
 
 <style lang="less" scoped>
@@ -86,25 +109,44 @@ const coverStyle = computed(() => ({
         }
       }
 
-      .cover-text {
+      // 修改为分开的标题和艺术家样式
+      .cover-text-title {
         position: absolute;
         left: 3%;
         top: 75%;
+        width: 96%; // 限制最大宽度
         text-align: left;
         color: @text-color;
-        font-size: 24px;
-        font-family: 'Comfortaa-Light', sans-serif;
         z-index: 2;
         text-shadow: 0 2px 4px @shadow-color-light;
 
         .cover-song-title {
-          font-size: 24px;
-
+          margin: 0;
+          font-size: 22px; // 默认大小，会被计算属性覆盖
+          font-family: 'Comfortaa-Light', sans-serif;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
+      }
+
+      .cover-text-artist {
+        position: absolute;
+        left: 3%;
+        top: 85%;
+        width: 96%; // 限制最大宽度
+        text-align: left;
+        color: @text-color;
+        z-index: 2;
+        text-shadow: 0 2px 4px @shadow-color-light;
 
         .cover-song-artist {
+          margin: 0;
           font-size: 16px;
-
+          font-family: 'Comfortaa-Light', sans-serif;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

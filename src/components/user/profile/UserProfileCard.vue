@@ -75,7 +75,7 @@ import animations from '@/utils/animations';
 import {useNavBarStore} from "@/store/NavBar";
 import {getUserInfo} from "@/utils/UserUtils";
 import {formatDuration} from "@/utils/UserUtils";
-
+import {useCircleMenuStore} from "@/store/CircleMenu";
 const navBarStore = useNavBarStore();
 const userStore = useUserStore();
 const router = useRouter();
@@ -95,6 +95,8 @@ const handleAvatarError = () => {
 
 // 跳转到个人中心
 const navigateToUserProfile = () => {
+
+
   animations.hidePanelRight(userStore.profilePanel).then(() => {
     // 动画完成后再更新状态
     navBarStore.toggleProfile();})

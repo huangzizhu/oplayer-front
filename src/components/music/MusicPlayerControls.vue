@@ -5,6 +5,11 @@
 
     <!-- 播放控制区域 -->
     <div class="controls-area">
+
+      <div class="control-button locate-button" @click="scrollToSelected">
+        <div class="icon icon-locate"></div>
+      </div>
+
       <!-- 播放模式切换 -->
       <div class="control-button mode-button" @click="cyclePlayMode">
         <div class="icon" :class="playModeIconClass"></div>
@@ -52,10 +57,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import { useMusicPlayer } from '@/store/MusicPlayer';
 import MusicProgressBar from './MusicProgressBar.vue';
-
+import { useSearchBar } from '@/store/SearchBar';
+const searchBarStore = useSearchBar();
 const musicPlayerStore = useMusicPlayer();
 
 // 从store中获取状态
@@ -67,6 +73,11 @@ const volume = computed(() => musicPlayerStore.volume);
 const isMuted = computed(() => musicPlayerStore.isMuted);
 const playMode = computed(() => musicPlayerStore.playMode);
 
+const scrollToSelected = () => {
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
+};
 // 播放控制方法
 const togglePlay = () => {
   musicPlayerStore.togglePlay();
@@ -74,10 +85,16 @@ const togglePlay = () => {
 
 const playNext = () => {
   musicPlayerStore.playNext();
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
 };
 
 const playPrevious = () => {
   musicPlayerStore.playPrevious();
+  nextTick(() => {
+    searchBarStore.scrollToSelected();
+  });
 };
 
 // 音量控制
@@ -133,7 +150,7 @@ const playModeTooltip = computed(() => {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.4);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0px 0;
   z-index: 100;
@@ -143,15 +160,16 @@ const playModeTooltip = computed(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 15px 0;
+    margin-top: 5px;
+    // margin-bottom: 5px;
     position: relative;
   }
 
   // 按钮通用样式
   .control-button {
-    width: 40px;
-    height: 40px;
-    margin: 0 10px;
+    width: 28px;
+    height: 28px;
+    margin: 0 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -165,20 +183,20 @@ const playModeTooltip = computed(() => {
 
       .tooltip {
         opacity: 1;
-        transform: translateY(0px);
+        // transform: translateY(-25%);
       }
     }
 
     // 播放按钮特殊样式
     &.play-button {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #44AADD 0%, #ff66ab 100%);
-      box-shadow: 0 0 15px rgba(255, 102, 171, 0.7);
+      width: 28px;
+      height: 28px;
+      // background: linear-gradient(135deg, #44AADD 0%, #ff66ab 100%);
+      // box-shadow: 0 0 15px rgba(255, 102, 171, 0.7);
 
       &:hover {
         transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(255, 102, 171, 0.9);
+        // box-shadow: 0 0 20px rgba(255, 102, 171, 0.9);
       }
 
       &:active {
@@ -186,7 +204,7 @@ const playModeTooltip = computed(() => {
       }
 
       .icon {
-        font-size: 24px;
+        font-size: 28px;
       }
     }
 
@@ -194,8 +212,7 @@ const playModeTooltip = computed(() => {
     .tooltip {
       position: absolute;
       bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
+      left: -50%;
       background-color: rgba(0, 0, 0, 0.8);
       color: white;
       padding: 4px 8px;
@@ -210,14 +227,22 @@ const playModeTooltip = computed(() => {
     // 图标样式
     .icon {
       color: #ffffff;
-      font-size: 24px;
 
-      // 各种图标的具体样式（可以使用字体图标或SVG）
-      &.icon-play:before {
+      &.icon-locate:before {
         content: "";
         display: inline-block;
         width: 24px;
         height: 24px;
+        background-image: url('@/assets/images/locate.svg');
+        background-size: contain;
+        background-position: center;
+      }
+
+      &.icon-play:before {
+        content: "";
+        display: inline-block;
+        width: 28px;
+        height: 28px;
         background-image: url('@/assets/images/play.svg');
         background-size: contain;
         background-position: center;
@@ -226,8 +251,8 @@ const playModeTooltip = computed(() => {
       &.icon-pause:before {
         content: "";
         display: inline-block;
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         background-image: url('@/assets/images/pause.svg');
         background-size: contain;
         background-position: center;
@@ -322,8 +347,10 @@ const playModeTooltip = computed(() => {
     margin-left: 15px;
 
     .volume-slider-container {
+      height: 22px;
+      position: relative;
       width: 80px;
-      margin-left: 10px;
+      // margin-left: 10px;
       opacity: 0.7;
       transition: opacity 0.2s ease;
 
@@ -332,6 +359,7 @@ const playModeTooltip = computed(() => {
       }
 
       .volume-slider {
+        bottom: 40%;
         width: 100%;
         height: 4px;
         -webkit-appearance: none;
@@ -339,6 +367,7 @@ const playModeTooltip = computed(() => {
         background: rgba(255, 255, 255, 0.3);
         border-radius: 2px;
         outline: none;
+        position: relative;
 
         &::-webkit-slider-thumb {
           -webkit-appearance: none;
