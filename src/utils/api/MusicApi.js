@@ -24,8 +24,6 @@ export const getMusicByTag = (tagId, pageSize = 10, page = 1) => request.post('/
 //流媒体获取
 export const getMusicStream = (md5) => request.get('/music/stream/' + md5);
 
-//下载
-export const downloadMusic = (md5) => request.get('/music/download/' + md5);
 
 //随机获取歌曲
 export const getRandomMusic = (count = 5) => request.post('/music/recommend',{"count": count});
