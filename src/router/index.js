@@ -9,6 +9,7 @@ import HistoryView from "@/components/explore/history/HistoryView.vue";
 import MyView from "@/components/explore/my/MyView.vue";
 import CollectionDisplay from "@/components/explore/my/collection/CollectionDisplay.vue";
 import PlaylistDisplay from "@/components/explore/my/playList/PlaylistDisplay.vue";
+import SearchView from "@/components/explore/search/SearchView.vue";
 
 const routes = [
       {
@@ -72,6 +73,12 @@ const routes = [
           name: 'My',
           component: MyView,
         },
+        // 搜索（动态路由）
+        {
+          path: 'search',
+          name: 'Search',
+          component: SearchView,
+        },
           // 收藏歌单
           {
             path: 'my/collection',
@@ -84,7 +91,7 @@ const routes = [
             name: 'PlaylistDetail',
             component: PlaylistDisplay,
             props: true // 将路由参数作为props传递给组件
-          }
+          },
       ],
     }
 ];

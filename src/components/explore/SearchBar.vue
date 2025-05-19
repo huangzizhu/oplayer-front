@@ -19,7 +19,10 @@
           placeholder="搜索..."
           @focus="isActive = true"
           @blur="handleBlur"
-          @keyup.enter="performSearch"
+          @keyup.enter="performSearch({
+          name: query.split('-')[0].trim(),
+          artist: query.split('-')[1] ? query.split('-')[1].trim() : ''
+          })"
           @keydown="handleKeyDown"
       />
       <div class="character-animation-container">
@@ -46,7 +49,7 @@
           :key="index"
           class="suggestion-item"
           :class="{ highlighted: index === highlightedIndex }"
-          @mousedown="selectSuggestion(suggestion)"
+          @mousedown="selectSuggestion(index)"
           @mouseenter="highlightedIndex = index"
       >
         {{ suggestion }}
@@ -62,6 +65,7 @@ import {useRouter} from 'vue-router'
 import {debounce} from 'lodash-es'
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiMagnify } from '@mdi/js';
+import {fuzzySearch} from "@/utils/api/MusicApi";
 
 const router = useRouter()
 const searchInput = ref(null)
@@ -69,6 +73,7 @@ const searchInput = ref(null)
 const query = ref('')
 const isActive = ref(false)
 const suggestions = ref([])
+const suggestionsDataList = ref([])
 const showSuggestions = ref(false)
 const highlightedIndex = ref(-1)
 const animatedChars = ref([])
@@ -87,20 +92,21 @@ const fetchSuggestions = async (searchTerm) => {
     return
   }
 
-  await new Promise(resolve => setTimeout(resolve, 50))
-
-  const mockResults = [
-    `${searchTerm}结果1`,
-    `${searchTerm}结果2`,
-    `${searchTerm}测试3`,
-    `相关${searchTerm}4`,
-    `其他${searchTerm}5`
-  ].filter(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
-
-  suggestions.value = mockResults.slice(0, 10)
+  fuzzySearch(searchTerm).then((response) => {
+    if (response.code) {
+      const data = response.data.map(item => item.name+' - '+item.artist)
+      suggestionsDataList.value = response.data
+      suggestions.value = data.slice(0, 10)
+    } else {
+      suggestions.value = []
+    }
+  }).catch((error) => {
+    console.error('Error fetching suggestions:', error)
+    suggestions.value = []
+  })
 }
 
-const debouncedSearch = debounce(fetchSuggestions, 300)
+const debouncedSearch = debounce(fetchSuggestions, 100)
 
 watch(query, (newVal, oldVal) => {
   showSuggestions.value = true
@@ -161,16 +167,24 @@ const animateCharacter = (char, position) => {
   }, 700);
 }
 
-const performSearch = () => {
-  if (query.value.trim()) {
-    router.push({ path: '/search', query: { q: query.value } })
-    showSuggestions.value = false
-  }
+const lastPerformSearch = ref(0)
+const performSearch = (data) => {
+  if(Date.now() - lastPerformSearch.value < 300) return
+  lastPerformSearch.value = Date.now();
+  router.push({
+    name:"Search",
+    query:{
+      name: data.name,
+      artist: data.artist,
+    }
+  })
+  showSuggestions.value = false
+  highlightedIndex.value = -1;
 }
 
-const selectSuggestion = (suggestion) => {
-  query.value = suggestion
-  performSearch()
+const selectSuggestion = (index) => {
+  query.value = suggestions.value[index];
+  performSearch(suggestionsDataList.value[index])
 }
 
 const handleBlur = () => {
@@ -193,7 +207,7 @@ const handleKeyDown = (e) => {
     highlightedIndex.value = Math.max(highlightedIndex.value - 1, -1)
   } else if (e.key === 'Enter' && highlightedIndex.value >= 0) {
     e.preventDefault()
-    selectSuggestion(suggestions.value[highlightedIndex.value])
+    selectSuggestion(highlightedIndex.value)
   }
 }
 </script>
