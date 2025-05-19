@@ -22,6 +22,10 @@ export const addMusicToCollection = (uid, songId) => request.post('/collection/m
 })
 //删除收藏歌曲
 export const deleteMusicFromCollection = (uid, songId) => request.delete('/collection/music', {
-    "songId": songId,
-    "userId": uid,
+    data:{
+            "songId": songId,
+            "userId": uid,
+        }
 })
+//获取收藏列表中的歌曲id
+export const getSongIdsInCollection = (uid) => request.get(`/collection/music/in/${uid}`)
