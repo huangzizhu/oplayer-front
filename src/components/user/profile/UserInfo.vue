@@ -195,7 +195,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="less">
 /* 信息展示区样式 */
 .info-container {
   width: 100%;
@@ -220,21 +220,21 @@ onMounted(() => {
 }
 
 .card-title {
-  color: var(--primary-color);
+  color: (#ffffff);
   margin-bottom: 12px;
   font-size: 16px;
   font-weight: 600;
 }
 
 .quote-content {
-  color: var(--text-secondary);
+  color: (rgba(255, 255, 255, 0.7));
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 8px;
 }
 
 .quote-source {
-  color: var(--text-secondary);
+  color: (rgba(255, 255, 255, 0.7));
   font-size: 12px;
   opacity: 0.8;
   text-align: right;
@@ -266,13 +266,13 @@ onMounted(() => {
 }
 
 .weather-label {
-  color: var(--text-secondary);
+  color: (rgba(255, 255, 255, 0.7));
   font-size: 12px;
   margin-bottom: 4px;
 }
 
 .weather-value {
-  color: var(--text-primary);
+  color: (#ffffff);
   font-size: 14px;
   font-weight: 500;
 }
@@ -310,13 +310,13 @@ onMounted(() => {
 }
 
 .stat-value {
-  color: var(--primary-color);
+  color: (#ffffff);
   font-size: 24px;
   font-weight: bold;
 }
 
 .stat-label {
-  color: var(--text-secondary);
+  color: (rgba(255, 255, 255, 0.7));
   font-size: 14px;
   margin-top: 5px;
 }
@@ -343,13 +343,13 @@ onMounted(() => {
 }
 
 .detail-label {
-  color: var(--text-secondary);
+  color: (rgba(255, 255, 255, 0.7));
   font-size: 12px;
   margin-bottom: 5px;
 }
 
 .detail-value {
-  color: var(--text-primary);
+  color: (#ffffff);
   font-size: 16px;
   font-weight: 500;
 }

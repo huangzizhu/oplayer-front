@@ -1,49 +1,55 @@
 <template>
   <header class="navbar" @mouseenter="handleMouseEnterOverlay(overlayNavBar)"
-          @mouseleave="handleMouseLeaveOverlay(overlayNavBar)" ref="overlayNavBar">
+    @mouseleave="handleMouseLeaveOverlay(overlayNavBar)" ref="overlayNavBar">
     <div class="navbar-left">
       <div class="navbar-item" ref="settingsBtn" :class="{ 'active': navBarStore.isSettingsActive }"
-           @click="handleSettingsClick" @mouseenter="handleMouseEnter(settingsBtn, navBarStore.isSettingsActive)"
-           @mouseleave="handleMouseLeave(settingsBtn, navBarStore.isSettingsActive)">
+        @click="handleSettingsClick" @mouseenter="handleMouseEnter(settingsBtn, navBarStore.isSettingsActive)"
+        @mouseleave="handleMouseLeave(settingsBtn, navBarStore.isSettingsActive)">
         <img src="@/assets/images/settings.svg" alt="" width="48" height="24" class="navbar-icon-settings" />
       </div>
 
-      <div class="navbar-item" ref="homeBtn" @click="handleHomeClick"
-           @mouseenter="handleMouseEnter(homeBtn, false)" @mouseleave="handleMouseLeave(homeBtn, false)">
+      <div class="navbar-item" ref="homeBtn" @click="handleHomeClick" @mouseenter="handleMouseEnter(homeBtn, false)"
+        @mouseleave="handleMouseLeave(homeBtn, false)">
         <img src="@/assets/images/home.svg" alt="" width="48" height="24" class="navbar-icon-home" />
       </div>
 
-      <div class="navbar-item" ref="aboutBtn" :class="{ 'active': navBarStore.isAboutActive }"
-           @click="handleAboutClick" @mouseenter="handleMouseEnter(aboutBtn, navBarStore.isAboutActive)"
-           @mouseleave="handleMouseLeave(aboutBtn, navBarStore.isAboutActive)">
+      <div class="navbar-item" ref="aboutBtn" :class="{ 'active': navBarStore.isAboutActive }" @click="handleAboutClick"
+        @mouseenter="handleMouseEnter(aboutBtn, navBarStore.isAboutActive)"
+        @mouseleave="handleMouseLeave(aboutBtn, navBarStore.isAboutActive)">
         <img src="@/assets/images/info.svg" alt="" width="48" height="24" class="navbar-icon-info" />
       </div>
     </div>
 
     <div class="navbar-right">
-      <div class="navbar-item" id='profile' ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
-           @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
-           @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)">
-        <div class="navbar-icon user-avatar">
-          <img :src="userAvatar" alt="用户头像"/>
-        </div>
-        <span class="clock">{{ navBarStore.userName }}</span>
+      <div class="navbar-item" ref="profileBtn" :class="{ 'active': navBarStore.isProfileActive }"
+        @click="handleUserProfileClick" @mouseenter="handleMouseEnter(profileBtn, navBarStore.isProfileActive)"
+        @mouseleave="handleMouseLeave(profileBtn, navBarStore.isProfileActive)"
+        :style="{ display: 'flex', flexDirection: 'row', alignItems: 'center' }">
+        <span class="clock" :style="{ fontSize: '16px', marginRight: '10px' }">
+          <p>{{ navBarStore.username }}</p>
+        </span>
+        <img :src="userAvatar" alt="用户头像" width="32" height="32" :style="{ borderRadius: '50%', }" />
       </div>
 
-      <div class="navbar-item-clock" ref="clockBtn" @mouseenter="handleMouseEnter(clockBtn, false)"
-           @mouseleave="handleMouseLeave(clockBtn, false)">
-        <img src="@/assets/images/clock.svg" alt="" width="25" height="25" class="navbar-icon-clock" />
-        <span class="clock">{{ navBarStore.currentTime }}</span>
+      <div class="navbar-item" ref="clockBtn" @mouseenter="handleMouseEnter(clockBtn, false)"
+        @mouseleave="handleMouseLeave(clockBtn, false)"
+        :style="{ display: 'flex', flexDirection: 'row', alignItems: 'center' }">
+        <img src="@/assets/images/clock.svg" alt="" width="24" height="24" class="navbar-icon-clock" />
+        <span class="clock" :style="{ marginLeft: '5px', fontSize: '14px' }">
+          <p>{{ navBarStore.currentTime }}</p>
+        </span>
+      </div>
+      <div class="navbar-item" ref="playerBtn" :class="{ 'active': navBarStore.isPlayerActive }"
+        @click="handlePlayerClick" @mouseenter="handleMouseEnter(playerBtn, navBarStore.isPlayerActive)"
+        @mouseleave="handleMouseLeave(playerBtn, navBarStore.isPlayerActive)">
+        <img src="@/assets/images/music.svg" alt="" width="48" height="24" />
       </div>
 
       <div class="navbar-item" ref="notificationsBtn" :class="{ 'active': navBarStore.isNotificationsActive }"
-           @click="handleNotificationsClick"
-           @mouseenter="handleMouseEnter(notificationsBtn, navBarStore.isNotificationsActive)"
-           @mouseleave="handleMouseLeave(notificationsBtn, navBarStore.isNotificationsActive)">
-        <div class="navbar-icon">
-          <img src="@/assets/images/notification.svg" alt="" width="24" height="24"
-               class="navbar-icon-settings" />
-        </div>
+        @click="handleNotificationsClick"
+        @mouseenter="handleMouseEnter(notificationsBtn, navBarStore.isNotificationsActive)"
+        @mouseleave="handleMouseLeave(notificationsBtn, navBarStore.isNotificationsActive)">
+        <img src="@/assets/images/notification.svg" alt="" width="48" height="24" />
       </div>
 
 
@@ -72,17 +78,28 @@
       <h3>关于面板</h3>
       <div class="panel-content">
         <!-- 关于面板内容 -->
-        <p>这里是关于面板内容</p>
+        <div class="hyperlink-about"><a href="https://app.apifox.com/project/6126503"
+            :style="{ color: '#44AADD' }">API文档</a>
+        </div>
+        <!-- <div class="info"><span> 快捷键：'alt+l' 快速定位、'/'或'ctrl+f'搜索</span></div> -->
+
       </div>
     </div>
 
     <!-- 通知面板 -->
     <div ref="notificationsPanel" class="notifications-panel panel" v-show="navBarStore.isNotificationsPanelVisible"
-         @click.stop>
+      @click.stop>
       <h3>通知面板</h3>
       <div class="panel-content">
         <!-- 通知面板内容 -->
         <p>这里是通知面板内容</p>
+      </div>
+    </div>
+
+    <!-- 小型播放器面板 -->
+    <div ref="playerPanel" class="player-panel panel" v-show="navBarStore.isPlayerPanelVisible" @click.stop>
+      <div class="panel-content">
+        <MiniPlayer ref="playerPanel"></MiniPlayer>
       </div>
     </div>
 
@@ -96,13 +113,14 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineProps, ref, watch, nextTick,computed } from 'vue';
+
+import { onMounted, onUnmounted, defineProps, ref, watch, nextTick, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useNavBarStore } from '@/store/NavBar';
 import animations from '@/utils/animations';
 import UserProfileCard from "@/components/user/profile/UserProfileCard.vue";
-import {useUserStore} from "@/store/User";
-
+import { useUserStore } from "@/store/User";
+import MiniPlayer from "@/components/MiniPlayer.vue";
 // 按钮引用
 const settingsBtn = ref(null);
 const homeBtn = ref(null);
@@ -112,12 +130,14 @@ const clockBtn = ref(null);
 const profileBtn = ref(null);
 const overlay = ref(null);
 const overlayNavBar = ref(null);
+const playerBtn = ref(null);
 
 // 面板引用
 const settingsPanel = ref(null);
 const aboutPanel = ref(null);
 const notificationsPanel = ref(null);
 const profilePanel = ref(null);
+const playerPanel = ref(null);
 
 // 定义属性和事件
 const props = defineProps({
@@ -197,6 +217,33 @@ const handleAboutClick = (event) => {
       });
     } else {
       navBarStore.toggleAbout();
+    }
+  }
+};
+const handlePlayerClick = (event) => {
+  event.stopPropagation(); // 阻止事件冒泡
+  animations.buttonPress(playerBtn.value);
+
+  // 获取当前状态
+  const currentlyActive = navBarStore.isPlayerActive;
+
+  if (!currentlyActive) {
+    // 如果当前未激活，先更新状态再显示面板
+    navBarStore.togglePlayer();
+    nextTick(() => {
+      if (playerPanel.value) {
+        animations.showPanelRight(playerPanel.value);
+      }
+    });
+  } else {
+    // 如果当前已激活，先执行动画再更新状态
+    if (playerPanel.value) {
+      animations.hidePanelRight(playerPanel.value).then(() => {
+        // 动画完成后再更新状态
+        navBarStore.togglePlayer();
+      });
+    } else {
+      navBarStore.togglePlayer();
     }
   }
 };
@@ -282,13 +329,16 @@ const handleOverlayClick = (event) => {
   if (navBarStore.isProfilePanelVisible && profilePanel.value) {
     activePanels.push({ panel: profilePanel.value, type: 'right' });
   }
+  if (navBarStore.isPlayerPanelVisible && playerPanel.value) {
+    activePanels.push({ panel: playerPanel.value, type: 'right' });
+  }
 
   // 如果有激活的面板，先执行动画再更新状态
   if (activePanels.length > 0) {
     Promise.all(activePanels.map(item => {
       return item.type === 'left' ?
-          animations.hidePanelLeft(item.panel) :
-          animations.hidePanelRight(item.panel);
+        animations.hidePanelLeft(item.panel) :
+        animations.hidePanelRight(item.panel);
     })).then(() => {
       // 所有动画完成后更新状态
       navBarStore.clearActiveItems();
@@ -349,6 +399,13 @@ watch(() => navBarStore.isProfileActive, (newVal) => {
     animations.removeHighlight(profileBtn.value);
   }
 });
+watch(() => navBarStore.isPlayerActive, (newVal) => {
+  if (newVal) {
+    animations.highlightNavItem(playerBtn.value);
+  } else {
+    animations.removeHighlight(playerBtn.value);
+  }
+});
 
 // 监视遮罩层状态
 watch(() => navBarStore.hasVisiblePanel, (newVal) => {
@@ -368,7 +425,8 @@ onMounted(() => {
       home: !!homeBtn.value,
       about: !!aboutBtn.value,
       notifications: !!notificationsBtn.value,
-      profile: !!profileBtn.value
+      profile: !!profileBtn.value,
+      player: !!playerBtn.value,
     });
 
     // 应用任何初始状态
@@ -384,6 +442,9 @@ onMounted(() => {
     if (navBarStore.isProfileActive && profileBtn.value) {
       animations.highlightNavItem(profileBtn.value);
     }
+    if (navBarStore.isPlayerActive && playerBtn.value) {
+      animations.highlightNavItem(playerBtn.value);
+    }
   });
 
   navBarStore.startClock();
@@ -398,7 +459,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -445,10 +506,12 @@ onUnmounted(() => {
   cursor: pointer;
   border-radius: 8px;
 }
-#profile{
-  width: 5em;
-  margin-right: 3em;
+
+#profile {
+  width: 5px;
+  margin-left: 30px;
 }
+
 .navbar-item-clock {
   display: flex;
   align-items: center;
@@ -581,18 +644,21 @@ onUnmounted(() => {
   height: 450px;
 }
 
-.panel-content {
-  position: relative;  /* 创建定位上下文 */
-  width: 100%;        /* 确保容器有宽度 */
-  height: 100%;
-  background: radial-gradient(
-      circle at 70% 30%,
-      rgba(230, 100, 159, 0.15) 0%,
-      transparent 40%
-  );
+.player-panel {
+  right: 0px;
+  width: 30%;
+  height: 90px;
 }
 
-.panel-content > * {
+.panel-content {
+  position: relative;
+  /* 创建定位上下文 */
+  width: 100%;
+  /* 确保容器有宽度 */
+  height: 100%;
+}
+
+.panel-content>* {
   position: absolute;
   top: 0;
   left: 0;

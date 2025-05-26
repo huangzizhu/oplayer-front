@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, reactive } from 'vue'
+import { useUserStore } from '@/store/User.js'
 
 export const useNavBarStore = defineStore('navBar', () => {
     // 状态 - 使用对象存储多个激活项状态
@@ -8,7 +9,14 @@ export const useNavBarStore = defineStore('navBar', () => {
         home: false,
         about: false,
         notifications: false,
-        profile: false
+        profile: false,
+        player: false,
+    });
+
+    // const username = ref('Guest');
+    const userStore = useUserStore();
+    const username = computed(() => {
+        return userStore.userInfo ? userStore.userInfo.username : "Guest";
     });
 
     // 面板显示状态 - 与激活项分开管理
@@ -16,7 +24,8 @@ export const useNavBarStore = defineStore('navBar', () => {
         settings: false,
         about: false,
         notifications: false,
-        profile: false
+        profile: false,
+        player: false,
     });
 
     const currentTime = ref('00:00');
@@ -28,12 +37,14 @@ export const useNavBarStore = defineStore('navBar', () => {
     const isAboutActive = computed(() => activeItems.about);
     const isNotificationsActive = computed(() => activeItems.notifications);
     const isProfileActive = computed(() => activeItems.profile);
+    const isPlayerActive = computed(() => activeItems.player);
 
     // 面板显示计算属性
     const isSettingsPanelVisible = computed(() => panelVisibility.settings);
     const isAboutPanelVisible = computed(() => panelVisibility.about);
     const isNotificationsPanelVisible = computed(() => panelVisibility.notifications);
     const isProfilePanelVisible = computed(() => panelVisibility.profile);
+    const isPlayerPanelVisible = computed(() => activeItems.player);
 
     // 方法
     const toggleActiveItem = (item) => {
@@ -123,6 +134,11 @@ export const useNavBarStore = defineStore('navBar', () => {
         return isProfileActive.value;
     };
 
+    const togglePlayer = () => {
+        toggleActiveItem('player');
+        return isPlayerActive.value;
+    };
+
     // 检查是否有任何弹出组件处于活动状态
     const hasActiveOverlay = computed(() => {
         return Object.values(activeItems).some(isActive => isActive);
@@ -138,6 +154,7 @@ export const useNavBarStore = defineStore('navBar', () => {
         activeItems,
         panelVisibility,
         currentTime,
+        username,
 
         // 计算属性
         isSettingsActive,
@@ -145,12 +162,14 @@ export const useNavBarStore = defineStore('navBar', () => {
         isAboutActive,
         isNotificationsActive,
         isProfileActive,
+        isPlayerActive,
 
         // 面板显示计算属性
         isSettingsPanelVisible,
         isAboutPanelVisible,
         isNotificationsPanelVisible,
         isProfilePanelVisible,
+        isPlayerPanelVisible,
 
         hasActiveOverlay,
         hasVisiblePanel,
@@ -171,6 +190,7 @@ export const useNavBarStore = defineStore('navBar', () => {
         toggleSettings,
         toggleAbout,
         toggleNotifications,
-        toggleProfile
+        toggleProfile,
+        togglePlayer,
     };
 });

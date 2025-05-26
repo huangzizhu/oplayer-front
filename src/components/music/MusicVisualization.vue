@@ -1,11 +1,11 @@
 <template>
-  <div class="music-visualization-container">
-    <canvas ref="visualizerCanvas" class="visualizer-canvas"></canvas>
+  <div class="music-visualization-container" :style="containerStyle">
+    <canvas ref="visualizerCanvas" class="visualizer-canvas" :style="canvasStyle"></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, nextTick, defineExpose } from 'vue';
+import { ref, onMounted, onUnmounted, watch, nextTick, defineExpose, defineProps, computed } from 'vue';
 import { useMusicPlayer } from '@/store/MusicPlayer';
 import { Howler } from 'howler';
 import { debounce } from 'lodash-es';
@@ -22,6 +22,44 @@ let dataArray = null;
 let bufferLength = 0;
 let isInitialized = false;
 let isActive = false;
+
+const props = defineProps({
+  // 可视化样式配置
+  visualStyleConfig: {
+    type: Object,
+    default: () => ({
+      primaryColor: 'rgb(68, 170, 221)',
+      gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],
+      height: '90px',
+      bottom: '60px',
+      width: '100vw',
+      opacity: 0.90,
+      mode: 'bars' // 'bars' 或 'curve'
+    })
+  }
+});
+// 使用计算属性处理样式变量
+const containerStyle = computed(() => ({
+  height: props.visualStyleConfig.height,
+  width: props.visualStyleConfig.width,
+  bottom: props.visualStyleConfig.bottom,
+}));
+
+const canvasStyle = computed(() => ({
+  opacity: props.visualStyleConfig.opacity
+}));
+
+// 更新可视化配置
+watch(() => props.visualStyleConfig, (newConfig) => {
+  // 更新颜色配置
+  config.lineColor = newConfig.primaryColor;
+  config.gradientColors = newConfig.gradientColors;
+
+  // 更新可视化模式
+  if (newConfig.mode !== config.visualizationMode) {
+    setVisualizationMode(newConfig.mode);
+  }
+}, { deep: true });
 
 // 创建全局连接注册表，确保在组件重新挂载时不会丢失连接信息
 if (!window._audioSystem) {
@@ -763,11 +801,11 @@ const handleResize = debounce(resizeCanvas, 150);
 <style lang="less" scoped>
 .music-visualization-container {
   position: fixed;
-  bottom: 60px;
+  // bottom: 60px;
   left: 0;
   right: 0;
-  width: 100vw;
-  height: 90px;
+  // width: 100vw;
+  // height: 90px;
   overflow: hidden;
   pointer-events: none;
   z-index: 50;

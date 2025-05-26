@@ -1,5 +1,5 @@
 <template>
-  <div class="music-player-controls-container">
+  <div class="music-player-controls-container" :style="playerContainerStyle">
     <!-- 播放器进度条 -->
     <MusicProgressBar />
 
@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick } from 'vue';
+import { computed, nextTick, defineProps } from 'vue';
 import { useMusicPlayer } from '@/store/MusicPlayer';
 import MusicProgressBar from './MusicProgressBar.vue';
 import { useSearchBar } from '@/store/SearchBar';
@@ -72,6 +72,36 @@ const errorMessage = computed(() => musicPlayerStore.errorMessage);
 const volume = computed(() => musicPlayerStore.volume);
 const isMuted = computed(() => musicPlayerStore.isMuted);
 const playMode = computed(() => musicPlayerStore.playMode);
+
+const props = defineProps({
+  playerStyleConfig: {
+    type: Object,
+    default: () => ({
+      position: 'fixed',
+      bottom: '0px',
+      left: '0px',
+      width: '100%',
+      background: 'rgba(0, 0, 0, 0.4)',
+      borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+      padding: '0px 0',
+      zIndex: 100,
+    }),
+  }
+});
+
+const playerContainerStyle = computed(() => {
+  return {
+    position: props.playerStyleConfig.position,
+    bottom: props.playerStyleConfig.bottom,
+    left: props.playerStyleConfig.left,
+    width: props.playerStyleConfig.width,
+    background: props.playerStyleConfig.background,
+    borderTop: props.playerStyleConfig.borderTop,
+    padding: props.playerStyleConfig.padding,
+    zIndex: props.playerStyleConfig.zIndex,
+  };
+});
+
 
 const scrollToSelected = () => {
   nextTick(() => {
@@ -146,7 +176,7 @@ const playModeTooltip = computed(() => {
 
 <style lang="less" scoped>
 .music-player-controls-container {
-  position: fixed;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
