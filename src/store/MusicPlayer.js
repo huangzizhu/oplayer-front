@@ -1,10 +1,9 @@
-import { defineStore } from "pinia";
-import { ref, computed, watch } from "vue";
-import { useMusicSelector } from "./MusicSelector";
-import { useMusicLibrary } from "./MusicLibrary";
-import { Howl } from "howler";
-import { indexedDBService } from "@/utils/indexedDBService";
-import { Howler } from "howler";
+import {defineStore} from "pinia";
+import {computed, ref, watch} from "vue";
+import {useMusicSelector} from "./MusicSelector";
+import {useMusicLibrary} from "./MusicLibrary";
+import {Howl, Howler} from "howler";
+import {indexedDBService} from "@/utils/indexedDBService";
 
 export const useMusicPlayer = defineStore("musicPlayer", () => {
   // 引入音乐选择器
@@ -30,12 +29,10 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
   const currentMusic = computed(() => musicSelectorStore.selectedMusic);
 
   // 计算属性：音频路径
-  const audioPath = computed(() => {
+  const audioPath = computed( () => {
 
     const currentMusic = musicSelectorStore.selectedMusic;
-    const audioPath = musicLibraryStore.getAudioPath(currentMusic.id);
-    // return currentMusic.value?.audioPath || ""
-    return audioPath
+    return musicLibraryStore.getAudioPath(currentMusic.id)
   });
 
   // 计算属性：格式化的当前时间
@@ -99,7 +96,6 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
       if (music.localFile && (!music.audioPath || !music.audioPath.startsWith('blob:')) && music._hasStoredAudio) {
         // 从IndexedDB加载音频
         const audioBlob = await indexedDBService.getAudioFile(music.id);
-
         // 检查是否在加载过程中切换了曲目
         if (currentLoadingId.value !== currentMusicId) {
           console.log('加载过程中切换了曲目，取消加载');
@@ -148,8 +144,7 @@ export const useMusicPlayer = defineStore("musicPlayer", () => {
         sound.unload();
         sound = null;
       }
-
-      // 创建新的Howl实例 - 注意不使用HTML5
+      // 创建新的Howl实例
       sound = new Howl({
         src: [finalAudioPath],
         html5: true,

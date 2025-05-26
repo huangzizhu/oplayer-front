@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import {getAudioBlobUrl} from "@/utils/MusicUtils";
 
 export const useMusicLibrary = defineStore("musicLibrary", () => {
   const processAudioPath = (path) => {
@@ -288,8 +287,7 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
         music.sourceType = 'remote-api';
       } else {
         music.sourceType = 'default';
-      }
-    }
+      }    }
 
     musicLibrary.value.push(music);
   };
@@ -305,15 +303,14 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
   };
 
   // 获取处理过的音频路径
-  const getAudioPath = (id) => {
+  const getAudioPath =  (id) => {
     const music = getMusicById(id);
-    if(music.sourceType){
+    if (music.sourceType) {
       if (music.sourceType === "remote-api") {
-        console.log(111)
-        return getAudioBlobUrl(music.md5)
+        return `/op/music/stream/${music.md5}`
       }
     }
-    if (!music || !music.audioPath) return '';
+        if (!music || !music.audioPath) return '';
     // 如果音乐存在但没有audioPath，这可能是刚刚加载的本地音乐
     if (!music.audioPath && music._hasStoredAudio) {
       return ''; // 返回空，让播放器等待加载
@@ -323,8 +320,8 @@ export const useMusicLibrary = defineStore("musicLibrary", () => {
 
     // 处理和返回正确的音频路径
     return music.audioPath.startsWith('blob:')
-      ? music.audioPath // 如果已经是Blob URL，直接返回
-      : processAudioPath(music.audioPath);
+        ? music.audioPath // 如果已经是Blob URL，直接返回
+        : processAudioPath(music.audioPath);
   };
 
   // 更新音乐的音频路径

@@ -52,29 +52,7 @@ axiosInstance.interceptors.request.use(
                 });
             });
     };
-/**
- * 获取音频流并返回 Blob URL
- * @param {string} md5 - 音频文件的 MD5 值
- * @returns {Promise<string>} - 返回一个 Promise，解析为 Blob URL
- */
-export const getAudioBlobUrl = (md5) => {
 
-    // 发起请求
-    return axiosInstance.get(`/music/stream/${md5}`)
-        .then(response => {
-            // 将响应数据转换为 Blob
-            const blob = new Blob([response.data], { type: 'audio/mpeg' });
-
-            // 创建一个对象 URL
-            const url = URL.createObjectURL(blob);
-            // 返回对象 URL
-            return url;
-        })
-        .catch(error => {
-            console.error('获取音频流失败:', error);
-            throw new Error(`获取音频流失败: ${error.message}`);
-        });
-};
 //获取上次播放的
 export const getLastPlayList = async () =>{
     const user = await getUserInfo();
