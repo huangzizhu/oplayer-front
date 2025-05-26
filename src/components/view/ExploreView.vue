@@ -47,6 +47,7 @@
         </div>
       </v-layout>
     </v-card>
+    <MusicVisualization :visualStyleConfig="configStore.mainVisualStyle"></MusicVisualization>
   </div>
 </template>
 
@@ -55,10 +56,13 @@
 import SearchBar from "@/components/explore/SearchBar.vue";
 import { mdiMusicCircleOutline, mdiHistory, mdiPlaylistMusic } from '@mdi/js';
 import SvgIcon from '@jamescoyle/vue-icon';
+import MusicVisualization from '@/components/music/MusicVisualization.vue';
 import { useUserStore } from "@/store/User";
 import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { getUserInfo } from "@/utils/UserUtils";
+import { useConfigStore } from '@/store/Config';
+const configStore = useConfigStore();
 
 const info = ref({
   username: "",

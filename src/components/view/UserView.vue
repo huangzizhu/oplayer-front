@@ -9,6 +9,7 @@
         <component :is="currentComponent" @login-success="emitLoginSuccess" @reg-success="emitRegSuccess" />
       </transition>
     </div>
+    <MusicVisualization :visualStyleConfig="configStore.mainVisualStyle"></MusicVisualization>
   </div>
 </template>
 
@@ -20,8 +21,12 @@ import LoginFrame from "@/components/user/login/LoginFrame.vue";
 import RegisterFrame from "@/components/user/login/RegisterFrame.vue";
 import UserProfile from '@/components/user/profile/UserProfile.vue';
 import TabSwitcher from '@/components/user/login/TabSwitcher.vue';
+import MusicVisualization from '@/components/music/MusicVisualization.vue';
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/User";
+import { useConfigStore } from '@/store/Config';
+
+const configStore = useConfigStore();
 
 const userStore = useUserStore();
 

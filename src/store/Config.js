@@ -16,10 +16,11 @@ export const useConfigStore = defineStore("config", () => {
 
   const playerContainerStyle = reactive({
     position: 'relative',
-    top: '0px',
+    top: '90%',
+    bottom: '0px',
     right: '0px',
     width: '100%',
-    background: 'rgba(0, 0, 0, 0)',
+    background: 'rgba(0, 0, 0, 0.0)',
     borderTop: '1px solid rgba(255, 255, 255, 0.0)',
     padding: '0px 0',
   });
@@ -29,6 +30,6 @@ export const useConfigStore = defineStore("config", () => {
   return {
     mainVisualStyle,
     playerContainerStyle,
-    
+
   }
 });

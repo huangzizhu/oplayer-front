@@ -646,8 +646,8 @@ onUnmounted(() => {
 
 .player-panel {
   right: 0px;
-  width: 30%;
-  height: 90px;
+  width: 40%;
+  height: 120px;
 }
 
 .panel-content {
