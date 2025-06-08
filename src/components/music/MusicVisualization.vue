@@ -1,11 +1,11 @@
 <template>
-  <div class="music-visualization-container">
-    <canvas ref="visualizerCanvas" class="visualizer-canvas"></canvas>
+  <div class="music-visualization-container" :style="containerStyle">
+    <canvas ref="visualizerCanvas" class="visualizer-canvas" :style="canvasStyle"></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, nextTick, defineExpose } from 'vue';
+import { ref, onMounted, onUnmounted, watch, nextTick, defineExpose, defineProps, computed } from 'vue';
 import { useMusicPlayer } from '@/store/MusicPlayer';
 import { Howler } from 'howler';
 import { debounce } from 'lodash-es';
@@ -23,6 +23,44 @@ let bufferLength = 0;
 let isInitialized = false;
 let isActive = false;
 
+const props = defineProps({
+  // 可视化样式配置
+  visualStyleConfig: {
+    type: Object,
+    default: () => ({
+      primaryColor: 'rgb(68, 170, 221)',
+      gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],
+      height: '90px',
+      bottom: '60px',
+      width: '100vw',
+      opacity: 0.90,
+      mode: 'bars' // 'bars' 或 'curve'
+    })
+  }
+});
+// 使用计算属性处理样式变量
+const containerStyle = computed(() => ({
+  height: props.visualStyleConfig.height,
+  width: props.visualStyleConfig.width,
+  bottom: props.visualStyleConfig.bottom,
+}));
+
+const canvasStyle = computed(() => ({
+  opacity: props.visualStyleConfig.opacity
+}));
+
+// 更新可视化配置
+watch(() => props.visualStyleConfig, (newConfig) => {
+  // 更新颜色配置
+  config.lineColor = newConfig.primaryColor;
+  config.gradientColors = newConfig.gradientColors;
+
+  // 更新可视化模式
+  if (newConfig.mode !== config.visualizationMode) {
+    setVisualizationMode(newConfig.mode);
+  }
+}, { deep: true });
+
 // 创建全局连接注册表，确保在组件重新挂载时不会丢失连接信息
 if (!window._audioSystem) {
   window._audioSystem = {
@@ -38,12 +76,12 @@ const config = {
   lineColor: 'rgb(68, 170, 221)',  // 线条颜色
   gradientColors: ['rgba(68, 170, 221, 0.6)', 'rgba(255, 102, 171, 0.3)', 'rgba(0, 0, 0, 0)'],  // 渐变色
   lineWidth: 2,  // 线条宽度
-  fftSize: 8192,  // FFT大小
-  smoothingTimeConstant: 0.70,  // 平滑系数 (0-1)
+  fftSize: 8192,  // FFT大小 32768/8192
+  smoothingTimeConstant: 0.6,  // 平滑系数 (0-1)
   barSpacing: 0.1,  // 柱形间距占柱宽的比例 (0表示无间距)
   barScaleFactor: 0.90,  // 柱形高度缩放系数 (降低值以减少过高柱形)
-  minHeight: 2,  // 最小高度（像素）
-  barCount: 256,  // 渲染的柱形数量 (降低以提高性能)
+  minHeight: 2,  // 最小高度（px）
+  barCount: 256,  // 渲染的柱形数量
 
   // 频率响应曲线系数
   frequencyRange: 0.9,  // 使用频谱数据的90%（覆盖大部分可听频率）
@@ -54,11 +92,11 @@ const config = {
 
   // 频率响应曲线
   freqResponseCurve: [
-    { freq: 0.0, gain: 1.0 },  // 极低频（20-100Hz）
-    { freq: 0.0001, gain: 1.02 },
-    { freq: 0.001, gain: 1.0 },
-    { freq: 0.005, gain: 1.20 },
-    { freq: 0.01, gain: 1.20 },
+    { freq: 0.0, gain: 1.02 },  // 极低频（20-100Hz）
+    { freq: 0.0001, gain: 1.00 },
+    { freq: 0.001, gain: 1.00 },
+    { freq: 0.005, gain: 1.00 },
+    { freq: 0.01, gain: 1.12 },
     { freq: 0.05, gain: 1.20 },
     { freq: 0.1, gain: 1.20 },  // 低频（100-500Hz）
     { freq: 0.125, gain: 1.3 },
@@ -763,11 +801,11 @@ const handleResize = debounce(resizeCanvas, 150);
 <style lang="less" scoped>
 .music-visualization-container {
   position: fixed;
-  bottom: 60px;
+  // bottom: 60px;
   left: 0;
   right: 0;
-  width: 100vw;
-  height: 90px;
+  // width: 100vw;
+  // height: 90px;
   overflow: hidden;
   pointer-events: none;
   z-index: 50;

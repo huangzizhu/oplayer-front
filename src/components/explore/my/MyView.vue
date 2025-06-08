@@ -2,10 +2,10 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import ShowCard from "@/components/explore/my/ShowCard.vue";
-import {getCollectionInfo} from "@/utils/api/CollectionApi";
-import {getAllPlayLists} from "@/utils/api/PlayListApi";
-import {useUserStore} from "@/store/User";
-import {getUserInfo} from "@/utils/UserUtils";
+import { getCollectionInfo } from "@/utils/api/CollectionApi";
+import { getAllPlayLists } from "@/utils/api/PlayListApi";
+import { useUserStore } from "@/store/User";
+import { getUserInfo } from "@/utils/UserUtils";
 
 const router = useRouter();
 const favoritePlaylist = ref(null);
@@ -69,30 +69,14 @@ onMounted(() => {
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else class="grid-container">
       <!-- 收藏歌单卡片 -->
-      <div
-          v-if="favoritePlaylist"
-          class="playlist-card"
-          @click="handleCardClick('favorite')"
-      >
-        <ShowCard
-            title="收藏"
-            :image="favoritePlaylist.coverUrl"
-            @image-error="handleImageError"
-        />
+      <div v-if="favoritePlaylist" class="playlist-card" @click="handleCardClick('favorite')">
+        <ShowCard title="收藏" :image="favoritePlaylist.coverUrl" @image-error="handleImageError" />
       </div>
 
       <!-- 普通歌单卡片 -->
-      <div
-          v-for="playlist in playlists"
-          :key="playlist.id"
-          class="playlist-card"
-          @click="handleCardClick('playlist', playlist.id)"
-      >
-        <ShowCard
-            :title="playlist.name"
-            :image="playlist.coverUrl"
-            @image-error="handleImageError"
-        />
+      <div v-for="playlist in playlists" :key="playlist.id" class="playlist-card"
+        @click="handleCardClick('playlist', playlist.id)">
+        <ShowCard :title="playlist.name" :image="playlist.coverUrl" @image-error="handleImageError" />
       </div>
     </div>
   </div>
@@ -124,7 +108,8 @@ onMounted(() => {
   transform: translateY(-5px);
 }
 
-.loading, .error {
+.loading,
+.error {
   display: flex;
   justify-content: center;
   align-items: center;

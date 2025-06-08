@@ -68,7 +68,7 @@ export const useMusicSelector = defineStore('musicSelector', () => {
       bgStore.changeBackground({
         coverUrl: music.cover,
         backgroundUrl: music.background,
-        mode: 'cover' // 默认切换到封面毛玻璃模式
+        mode: 'cover' // 默认为封面
       });
     } else if (musicLibrary.value.length > 0) {
       // 处理索引无效但列表不为空的情况，选中第一个

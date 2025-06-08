@@ -1,57 +1,28 @@
 <template>
   <div class="search-container">
-    <div
-        class="search-icon"
-        :class="{ hidden: isActive || query }"
-        @click="activateSearch"
-    >
+    <div class="search-icon" :class="{ hidden: isActive || query }" @click="activateSearch">
       <svg-icon type="mdi" :path="mdiMagnify"></svg-icon>
     </div>
-    <div
-        class="search-box"
-        :class="{ active: isActive || query, expanded: isActive || query }"
-    >
-      <input
-          ref="searchInput"
-          v-model="query"
-          type="text"
-          maxlength="50"
-          placeholder="搜索..."
-          @focus="isActive = true"
-          @blur="handleBlur"
-          @keyup.enter="performSearch({
+    <div class="search-box" :class="{ active: isActive || query, expanded: isActive || query }">
+      <input ref="searchInput" v-model="query" type="text" maxlength="50" placeholder="搜索..." @focus="isActive = true"
+        @blur="handleBlur" @keyup.enter="performSearch({
           name: query.split('-')[0].trim(),
           artist: query.split('-')[1] ? query.split('-')[1].trim() : ''
-          })"
-          @keydown="handleKeyDown"
-      />
+        })" @keydown="handleKeyDown" />
       <div class="character-animation-container">
         <transition-group name="fall">
-          <span
-              v-for="(char, index) in animatedChars"
-              :key="char.id"
-              class="falling-char"
-              :style="char.style"
-              :id="index"
-          >
+          <span v-for="(char, index) in animatedChars" :key="char.id" class="falling-char" :style="char.style"
+            :id="index">
             {{ char.value }}
           </span>
         </transition-group>
       </div>
     </div>
 
-    <div
-        v-if="showSuggestions && suggestions.length > 0"
-        class="suggestions-box"
-    >
-      <div
-          v-for="(suggestion, index) in suggestions"
-          :key="index"
-          class="suggestion-item"
-          :class="{ highlighted: index === highlightedIndex }"
-          @mousedown="selectSuggestion(index)"
-          @mouseenter="highlightedIndex = index"
-      >
+    <div v-if="showSuggestions && suggestions.length > 0" class="suggestions-box">
+      <div v-for="(suggestion, index) in suggestions" :key="index" class="suggestion-item"
+        :class="{ highlighted: index === highlightedIndex }" @mousedown="selectSuggestion(index)"
+        @mouseenter="highlightedIndex = index">
         {{ suggestion }}
       </div>
     </div>
@@ -60,12 +31,12 @@
 
 <script setup>
 /* eslint-disable */
-import {nextTick, ref, watch} from 'vue'
-import {useRouter} from 'vue-router'
-import {debounce} from 'lodash-es'
+import { nextTick, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { debounce } from 'lodash-es'
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiMagnify } from '@mdi/js';
-import {fuzzySearch} from "@/utils/api/MusicApi";
+import { fuzzySearch } from "@/utils/api/MusicApi";
 
 const router = useRouter()
 const searchInput = ref(null)
@@ -94,7 +65,7 @@ const fetchSuggestions = async (searchTerm) => {
 
   fuzzySearch(searchTerm).then((response) => {
     if (response.code) {
-      const data = response.data.map(item => item.name+' - '+item.artist)
+      const data = response.data.map(item => item.name + ' - ' + item.artist)
       suggestionsDataList.value = response.data
       suggestions.value = data.slice(0, 10)
     } else {
@@ -169,11 +140,11 @@ const animateCharacter = (char, position) => {
 
 const lastPerformSearch = ref(0)
 const performSearch = (data) => {
-  if(Date.now() - lastPerformSearch.value < 300) return
+  if (Date.now() - lastPerformSearch.value < 300) return
   lastPerformSearch.value = Date.now();
   router.push({
-    name:"Search",
-    query:{
+    name: "Search",
+    query: {
       name: data.name,
       artist: data.artist,
     }
@@ -313,6 +284,7 @@ const handleKeyDown = (e) => {
 .fall-enter-active {
   animation: fall 0.8s ease-out forwards;
 }
+
 .fall-leave-active {
   opacity: 0;
 }
@@ -322,6 +294,7 @@ const handleKeyDown = (e) => {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
+
   100% {
     transform: translateY(60px) scale(0.5);
     opacity: 0;
@@ -340,7 +313,8 @@ const handleKeyDown = (e) => {
   overflow: hidden;
   transition: height 0.1s ease;
   z-index: 100;
-  height: auto; /* 根据内容自动调整高度 */
+  height: auto;
+  /* 根据内容自动调整高度 */
 }
 
 .suggestion-item {

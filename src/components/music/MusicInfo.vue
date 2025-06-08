@@ -55,51 +55,8 @@
       </div>
 
       <!-- 谱面页 -->
-      <div v-else-if="activeTab === 'beatmaps'" class="tab-content beatmaps-content">
-
-        <div class="beatmap-list">
-          <div class="beatmap-item">
-            <div class="difficulty-badge insane">9.2★</div>
-            <div class="beatmap-info">
-              <div class="beatmap-name">Extreme</div>
-              <div class="mapper">mapped by peppy</div>
-              <div class="stats">
-                <span>AR9</span>
-                <span>CS4.2</span>
-                <span>HP6</span>
-                <span>OD8.5</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="beatmap-item">
-            <div class="difficulty-badge hard">7.5★</div>
-            <div class="beatmap-info">
-              <div class="beatmap-name">Insane</div>
-              <div class="mapper">mapped by RLC</div>
-              <div class="stats">
-                <span>AR8.5</span>
-                <span>CS4</span>
-                <span>HP5</span>
-                <span>OD8</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="beatmap-item">
-            <div class="difficulty-badge normal">4.8★</div>
-            <div class="beatmap-info">
-              <div class="beatmap-name">Normal</div>
-              <div class="mapper">mapped by Sotarks</div>
-              <div class="stats">
-                <span>AR7</span>
-                <span>CS3.5</span>
-                <span>HP4</span>
-                <span>OD7</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div v-else-if="activeTab === 'list'" class="tab-content List-content">
+        <MusicList></MusicList>
       </div>
 
       <!-- 服务器曲目管理 -->
@@ -244,6 +201,7 @@ import { ref, computed } from 'vue';
 import { useMusicSelector } from '@/store/MusicSelector.js';
 import { useSearchBar } from '@/store/SearchBar';
 import MusicManagement from '@/components/music/MusicManagement.vue';
+import MusicList from '@/components/music/MusicList.vue';
 // import { useMusicLibrary } from '@/store/MusicLibrary';
 import { useMusicAnalysis } from '@/store/MusicAnalysis';
 
@@ -254,7 +212,7 @@ const musicAnalysisStore = useMusicAnalysis();
 // 定义标签页
 const tabs = [
   { id: 'details', name: 'Details' },
-  { id: 'beatmaps', name: 'Beatmaps' },
+  { id: 'List', name: 'List' },
   { id: 'management', name: 'Management' }
 ];
 
@@ -538,77 +496,7 @@ const deleteMusic = async () => {
     }
 
     // 谱面页样式
-    .beatmaps-content {
-      .beatmap-list {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .beatmap-item {
-        display: flex;
-        align-items: center;
-        background-color: rgba(0, 0, 0, 0.3);
-        border-radius: 8px;
-        padding: 12px;
-        transition: transform 0.2s;
-
-        &:hover {
-          transform: translateX(5px);
-          background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .difficulty-badge {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          margin-right: 15px;
-
-          &.normal {
-            background-color: @color-normal;
-          }
-
-          &.hard {
-            background-color: @color-hard;
-          }
-
-          &.insane {
-            background-color: @color-insane;
-          }
-        }
-
-        .beatmap-info {
-          flex: 1;
-
-          .beatmap-name {
-            font-size: 18px;
-            color: white;
-          }
-
-          .mapper {
-            font-size: 14px;
-            color: @text-dim;
-            margin-bottom: 5px;
-          }
-
-          .stats {
-            display: flex;
-            gap: 15px;
-
-            span {
-              font-size: 13px;
-              background-color: rgba(255, 255, 255, 0.1);
-              padding: 3px 8px;
-              border-radius: 4px;
-            }
-          }
-        }
-      }
-    }
+    .List-content {}
 
   }
 

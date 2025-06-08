@@ -22,7 +22,7 @@ const searchBarStore = useSearchBar();
 const scrollTarget = ref(0);
 const isScrolling = ref(false);
 
-// 虚拟列表优化 - 只显示可见项和部分缓冲区项
+// 虚拟列表优化(现未实现)
 const displayedMusicList = computed(() => {
   const fullList = musicSelectorStore.musicLibrary;
   // 返回完整列表，但在大列表时可以优化为虚拟列表

@@ -115,10 +115,10 @@ const scrollToSelected = () => {
   top: 45px;
   left: 30%;
   width: 100%;
-  height: 200px;
+  height: 150px;
   position: absolute;
   z-index: 10;
-  background-color: rgba(10, 10, 10, 0.95);
+  background-color: rgba(10, 10, 10, 0.80);
   font-family: "Comfortaa-Light", sans-serif;
 
   .select-button {
@@ -187,7 +187,8 @@ const scrollToSelected = () => {
     font-size: 14px;
 
     .result-count {
-      color: #44AADD;
+      // color: #44AADD;
+      color: rgb(255, 200, 0);
     }
 
     .no-results {

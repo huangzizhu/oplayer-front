@@ -2,16 +2,11 @@
   <div class="user-profile-card">
     <!-- 头像 -->
     <div class="avatar-container">
-      <img
-          :src="avatarUrl"
-          alt="用户头像"
-          class="avatar"
-          @error="handleAvatarError"
-      >
+      <img :src="avatarUrl" alt="用户头像" class="avatar" @error="handleAvatarError">
     </div>
 
     <!-- 用户名 -->
-    <h2 class="username">{{ username }}</h2>
+    <h2 class="username">{{ navBarStore.username }}</h2>
 
     <!-- 用户数据 -->
     <div class="user-stats">
@@ -31,33 +26,21 @@
 
     <!-- 按钮组 -->
     <div class="button-group" v-if="loginStatus">
-      <button
-          class="profile-button"
-          @click="navigateToUserProfile"
-      >
+      <button class="profile-button" @click="navigateToUserProfile">
         个人中心
         <span class="shooting-star"></span>
       </button>
-      <button
-          class="logout-button"
-          @click="handleLogout"
-      >
+      <button class="logout-button" @click="handleLogout">
         退出登录
         <span class="shooting-star"></span>
       </button>
     </div>
     <div class="button-group" v-else>
-      <button
-          class="profile-button"
-          @click="handleLogin"
-      >
+      <button class="profile-button" @click="handleLogin">
         登录
         <span class="shooting-star"></span>
       </button>
-      <button
-          class="logout-button"
-          @click="handleReg"
-      >
+      <button class="logout-button" @click="handleReg">
         注册
         <span class="shooting-star"></span>
       </button>
@@ -66,23 +49,24 @@
 </template>
 
 <script setup>
-  /* eslint-disable */
-import { ref, computed, onMounted } from 'vue'
+/* eslint-disable */
+import { ref, computed, onMounted, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import defaultAvatar from '@/assets/images/avatar.jpg'
-import {useUserStore} from '@/store/User'
+import { useUserStore } from '@/store/User'
 import animations from '@/utils/animations';
-import {useNavBarStore} from "@/store/NavBar";
-import {getUserInfo} from "@/utils/UserUtils";
-import {formatDuration} from "@/utils/UserUtils";
-import {useCircleMenuStore} from "@/store/CircleMenu";
+import { useNavBarStore } from "@/store/NavBar";
+import { getUserInfo } from "@/utils/UserUtils";
+import { formatDuration } from "@/utils/UserUtils";
+import { useCircleMenuStore } from "@/store/CircleMenu";
 const navBarStore = useNavBarStore();
 const userStore = useUserStore();
 const router = useRouter();
 
 const loginStatus = computed(() => userStore.isLoggedIn);
 const avatarUrl = ref(userStore.defaultAvatarUrl);
-const username = ref('未登录');
+
+const username = ref('Guest');
 const uid = ref("unknown");
 const playCount = ref(0);
 const duration = ref(0);
@@ -99,7 +83,8 @@ const navigateToUserProfile = () => {
 
   animations.hidePanelRight(userStore.profilePanel).then(() => {
     // 动画完成后再更新状态
-    navBarStore.toggleProfile();})
+    navBarStore.toggleProfile();
+  })
   router.push(`/user`)
 }
 
@@ -109,7 +94,8 @@ const handleLogout = () => {
   loadInfo();
   animations.hidePanelRight(userStore.profilePanel).then(() => {
     // 动画完成后再更新状态
-    navBarStore.toggleProfile();})
+    navBarStore.toggleProfile();
+  })
   userStore.isLoggedIn = false;
   userStore.userInfo = null;
   router.push('/user');
@@ -119,7 +105,8 @@ const handleLogout = () => {
 const handleLogin = () => {
   animations.hidePanelRight(userStore.profilePanel).then(() => {
     // 动画完成后再更新状态
-    navBarStore.toggleProfile();})
+    navBarStore.toggleProfile();
+  })
   userStore.activeTab = "login";
   router.push('/user');
 }
@@ -127,7 +114,8 @@ const handleLogin = () => {
 const handleReg = () => {
   animations.hidePanelRight(userStore.profilePanel).then(() => {
     // 动画完成后再更新状态
-    navBarStore.toggleProfile();})
+    navBarStore.toggleProfile();
+  })
   userStore.activeTab = "register";
   router.push('/user');
 }
@@ -137,7 +125,7 @@ const loadInfo = async () => {
   const user = await getUserInfo(loginUser);
   if (!loginUser || !user) {
     avatarUrl.value = defaultAvatar;
-    username.value = "未登录"
+    username.value = "Guest"
     playCount.value = 0
     duration.value = 0
     uid.value = 'unknown';
@@ -153,6 +141,7 @@ const loadInfo = async () => {
     duration.value = 0;
   }
   username.value = user.username;
+  // navBarStore.username = user.username;
 }
 defineExpose({
   loadInfo,
@@ -172,15 +161,20 @@ defineExpose({
   color: #FFFFFF;
   position: relative;
   z-index: 1;
-  background: rgba(29, 28, 31, 0.85); /* 半透明背景 */
-  backdrop-filter: blur(8px); /* 毛玻璃效果 */
-  border: 1px solid rgba(255, 255, 255, 0.08); /* 微妙的边框 */
+  background: rgba(29, 28, 31, 0.85);
+  /* 半透明背景 */
+  backdrop-filter: blur(8px);
+  /* 毛玻璃效果 */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  /* 微妙的边框 */
   /* 边缘发光效果 */
   box-shadow:
-      0 0 0 1px rgba(230, 100, 159, 0.05),
-      0 4px 20px rgba(0, 0, 0, 0.3),
-      0 0 30px rgba(230, 100, 159, 0.1); /* 粉色光晕 */
+    0 0 0 1px rgba(230, 100, 159, 0.05),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(230, 100, 159, 0.1);
+  /* 粉色光晕 */
 }
+
 /* 卡片边缘的渐变装饰（可选） */
 .user-profile-card::before {
   content: '';
@@ -188,14 +182,12 @@ defineExpose({
   inset: 0;
   border-radius: 12px;
   padding: 1px;
-  background: linear-gradient(
-      135deg,
+  background: linear-gradient(135deg,
       rgba(230, 100, 159, 0.3),
-      rgba(29, 28, 31, 0)
-  );
+      rgba(29, 28, 31, 0));
   -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -292,7 +284,7 @@ defineExpose({
   left: -50%;
   width: 20px;
   height: 2px;
-  background: linear-gradient(90deg, rgba(255,255,255,0), #FFFFFF);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #FFFFFF);
   transform: rotate(-45deg);
   opacity: 0;
 }
@@ -308,12 +300,15 @@ defineExpose({
     top: -50%;
     opacity: 0;
   }
+
   20% {
     opacity: 1;
   }
+
   90% {
     opacity: 1;
   }
+
   100% {
     left: 150%;
     top: 150%;

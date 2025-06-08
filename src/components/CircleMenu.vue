@@ -77,7 +77,7 @@ const rightMenuItems = reactive([
   {
     id: 'userSystem',
     icon: 'user',
-    label: '用户系统',
+    label: '用户',
     route: '/user',
     position: 'right',
     backgroundColor: 'rgba(238, 170, 0, 1)',

@@ -120,18 +120,18 @@ const hideSeekPreview = () => {
 // 监听键盘事件（左右方向键调整进度）
 const handleKeyDown = (e) => {
   if (!musicPlayerStore.isPlaying) return;
+  if (e.repeat) return; // 防止重复触发
+  // // 左箭头：后退5秒
+  // if (e.key === 'ArrowLeft') {
+  //   const newTime = Math.max(0, musicPlayerStore.currentTime - 5);
+  //   musicPlayerStore.seekTo(newTime);
+  // }
 
-  // 左箭头：后退5秒
-  if (e.key === 'ArrowLeft') {
-    const newTime = Math.max(0, musicPlayerStore.currentTime - 5);
-    musicPlayerStore.seekTo(newTime);
-  }
-
-  // 右箭头：前进5秒
-  if (e.key === 'ArrowRight') {
-    const newTime = Math.min(musicPlayerStore.duration, musicPlayerStore.currentTime + 5);
-    musicPlayerStore.seekTo(newTime);
-  }
+  // // 右箭头：前进5秒
+  // if (e.key === 'ArrowRight') {
+  //   const newTime = Math.min(musicPlayerStore.duration, musicPlayerStore.currentTime + 5);
+  //   musicPlayerStore.seekTo(newTime);
+  // }
 };
 
 onMounted(() => {
