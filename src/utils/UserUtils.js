@@ -4,8 +4,8 @@ import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 import { getLoginStatus } from "@/utils/api/UserApi";
 import { useRouter } from 'vue-router'
-import {useUserStore} from "@/store/User";
-import {useBgStore} from "@/store/BG";
+import { useUserStore } from "@/store/User";
+import { useBgStore } from "@/store/BG";
 import ColorThief from 'colorthief';
 
 const router = useRouter();

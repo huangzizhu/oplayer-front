@@ -57,7 +57,8 @@
 </template>
 
 <script setup>
-import { computed, nextTick, defineProps } from 'vue';
+/*eslint-disable*/
+import { computed, nextTick, defineProps, onMounted, onBeforeUnmount } from 'vue';
 import { useMusicPlayer } from '@/store/MusicPlayer';
 import MusicProgressBar from './MusicProgressBar.vue';
 import { useSearchBar } from '@/store/SearchBar';

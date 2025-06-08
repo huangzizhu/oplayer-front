@@ -112,7 +112,7 @@ const scrollToSelected = () => {
   height: 150px;
   position: absolute;
   z-index: 10;
-  background-color: rgba(10, 10, 10, 0.95);
+  background-color: rgba(10, 10, 10, 0.80);
   font-family: "Comfortaa-Light", sans-serif;
 
   .music-analyer-button {
